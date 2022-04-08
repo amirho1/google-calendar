@@ -1,0 +1,27 @@
+:root {
+  box-sizing: border-box;
+}
+
+*,
+*::after,
+*::before,
+body {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+}
+
+body {
+  color: var(--dark);
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  justify-content: center;
+  align-items: center;
+  text-decoration-color: var(--dark-blue);
+}

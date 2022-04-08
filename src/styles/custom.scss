@@ -1,0 +1,51 @@
+.f-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // margin: auto;
+}
+
+.f-around {
+  display: flex;
+  justify-content: space-around !important;
+  justify-content: center;
+}
+
+.f-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.absolute-center {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.bg-danger {
+  background-color: var(--danger);
+}
+
+.link {
+  text-decoration: underline;
+  color: var(--light-blue);
+}
+
+.owl-mtop {
+  & > * + * {
+    margin-top: 1em;
+  }
+}
+
+.dark {
+  background-color: var(--dark-background);
+  color: white;
+}
+
+.light {
+  background-color: var(--light-background);
+}
