@@ -1,0 +1,8 @@
+.HoverCircle {
+  padding: 0.5em;
+  border-radius: 50%;
+
+  &:hover {
+    background-color: var(--gray);
+  }
+}
