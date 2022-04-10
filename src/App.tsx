@@ -12,7 +12,7 @@ function App() {
   useTitle("تقویم فارسی گوگل");
 
   return (
-    <div className={`${styles.App} f-center`}>
+    <div className={`${styles.App} f-center`} data-testid="App">
       {<CalMonth width="300px" height="300px" />}
       <ReactTooltipAsAny />
     </div>
