@@ -8,7 +8,7 @@
 .f-around {
   display: flex;
   justify-content: space-around !important;
-  justify-content: center;
+  align-items: center;
 }
 
 .f-between {
@@ -48,4 +48,23 @@
 
 .light {
   background-color: var(--light-background);
+}
+
+.width-f-content {
+  width: fit-content;
+  display: block;
+}
+.height-f-content {
+  height: fit-content;
+  display: block;
+}
+
+.d-table {
+  height: 100%;
+  width: 100%;
+}
+
+#btn-next,
+#btn-previous {
+  font-family: "Vazir";
 }
