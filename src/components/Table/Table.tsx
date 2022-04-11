@@ -94,7 +94,9 @@ const Table: FC<TableProps> = ({
   return (
     <table className={`${styles.Table} ${className}`} data-testid="Table">
       <thead className={theadClassName}>{mappedHeaders}</thead>
-      <tbody className={tbodyClassName}>{mappedRows}</tbody>
+      <tbody className={tbodyClassName} date-testid="tbody">
+        {mappedRows}
+      </tbody>
     </table>
   );
 };
