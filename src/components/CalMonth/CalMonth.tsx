@@ -1,8 +1,9 @@
-import { Moment } from "moment-jalaali";
-import React, { FC, useCallback, useMemo } from "react";
+import moment, { Moment } from "moment-jalaali";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import {
+  convertFinglishMonthToPersian,
   weekDaysInPersianLetters,
   weekDaysInPersianWord,
 } from "../../utils/helpers";
@@ -18,9 +19,16 @@ interface CalMonthProps {
 }
 
 const CalMonth: FC<CalMonthProps> = ({ width = "100%", height = "100%" }) => {
-  const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
+  const [currentMonthName, currentYear] = useSelector<
+    ReduxStateI,
+    [string, string]
+  >(state => [state.date.monthName, state.date.date.format("jYYYY")]);
 
-  const days = useMemo(() => calculateDaysOrder(date), [date]);
+  const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
+  const [days, setDays] = useState(calculateDaysOrder(date));
+  const [month, setMonth] = useState(+date.format("jMM"));
+  const [year, setYear] = useState(+currentYear);
+  const [monthName, setMonthName] = useState(currentMonthName);
 
   const mappedRows = useMemo(() => {
     return days.map(row => {
@@ -28,7 +36,8 @@ const CalMonth: FC<CalMonthProps> = ({ width = "100%", height = "100%" }) => {
       weekDaysInPersianLetters.forEach(
         (letter, index) =>
           (newRow[letter] = (
-            <HoverCircle>
+            <HoverCircle
+              style={{ width: "30px", height: "30px", cursor: "pointer" }}>
               <div>{row[index]}</div>
             </HoverCircle>
           ))
@@ -37,16 +46,38 @@ const CalMonth: FC<CalMonthProps> = ({ width = "100%", height = "100%" }) => {
     });
   }, [days]);
 
-  const [monthName, year] = useSelector<ReduxStateI, [string, string]>(
-    state => [state.date.monthName, state.date.date.format("jYYYY")]
+  useEffect(() => {
+    const dMoment = moment(`${year}/${month}`, "jYYYY/jMM");
+    setMonthName(convertFinglishMonthToPersian(dMoment.format("jMMMM")));
+    setDays(calculateDaysOrder(dMoment));
+  }, [month, year]);
+
+  const onCLickNext = useCallback<onCLickT>(
+    e => {
+      e.stopPropagation();
+      if (month + 1 > 12) {
+        setMonth(1);
+        setYear(previous => previous + 1);
+      } else {
+        setMonth(previous => previous + 1);
+      }
+    },
+    [month]
   );
 
-  const onClickPrevious = useCallback<onCLickT>(event => {
-    console.log("previous");
-  }, []);
-  const onCLickNext = useCallback<onCLickT>(event => {
-    console.log("next");
-  }, []);
+  const onClickPrevious = useCallback<onCLickT>(
+    e => {
+      e.stopPropagation();
+
+      if (month - 1 < 1) {
+        setMonth(12);
+        setYear(previous => previous - 1);
+      } else {
+        setMonth(previous => previous - 1);
+      }
+    },
+    [month]
+  );
 
   const headers = useMemo<HeadersI>(
     () =>

@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from "redux";
-import dateReducer, { DateI } from "./reducers/date";
+import dateReducer, { DateI } from "./reducers/date/date";
 
 export interface InitialValueI {
   status: "loading" | "success" | "error" | "idle";

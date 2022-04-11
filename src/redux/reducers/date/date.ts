@@ -1,7 +1,9 @@
 import { Action } from "redux";
-import { InitialValueI } from "..";
+import { InitialValueI } from "../..";
 import moment, { Moment } from "moment-jalaali";
-import { convertFinglishMonthToPersian } from "../../utils/helpers";
+import { convertFinglishMonthToPersian } from "../../../utils/helpers";
+import { dateIncreaseMonth } from "./actions";
+import { Map } from "immutable";
 
 export type PersianMonthNameT =
   | "فروردین"
@@ -38,7 +40,7 @@ export interface DateI extends InitialValueI {
   weekday: string;
 }
 
-const defaultValue = ((): DateI => {
+export const defaultValue = ((): DateI => {
   const date = moment();
 
   const year = +date.format("jYYYY"),
@@ -67,6 +69,11 @@ export default function dateReducer(
   action: Action
 ) {
   switch (action.type) {
+    case dateIncreaseMonth.type: {
+      let imuCopy = Map(state);
+      imuCopy = imuCopy.set("month", state.month + 1);
+      return imuCopy.toJS();
+    }
     default:
       return state;
   }
