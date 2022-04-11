@@ -32,6 +32,7 @@ describe("<CalMonth />", () => {
     const [year, month, day] = new Intl.DateTimeFormat("fa")
       .format(new Date())
       .split("/");
+
     const monthElement = query("#month");
     const yearElement = query("#year");
     const monthName = convertMonthNumberToName(
@@ -42,6 +43,8 @@ describe("<CalMonth />", () => {
     expect(yearElement).toBeInTheDocument();
     expect(monthElement?.innerHTML).toBe(monthName);
     expect(yearElement).toBeInTheDocument();
-    expect(yearElement?.innerHTML).toBe(year);
+    expect(+(yearElement?.innerHTML as any)).toBe(
+      convertPersianNumToEnglish(year)
+    );
   });
 });

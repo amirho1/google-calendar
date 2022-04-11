@@ -4,10 +4,12 @@
   "private": true,
   "dependencies": {
     "@types/jest": "^27.0.1",
+    "@types/moment-jalaali": "^0.7.5",
     "@types/node": "^16.7.13",
     "@types/react": "^17.0.20",
     "@types/react-dom": "17",
     "memoize-one": "^6.0.0",
+    "moment-jalaali": "^0.9.6",
     "node-sass": "^7.0.1",
     "react": "17",
     "react-dom": "17",

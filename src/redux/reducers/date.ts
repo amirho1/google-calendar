@@ -1,5 +1,7 @@
 import { Action } from "redux";
 import { InitialValueI } from "..";
+import moment, { Moment } from "moment-jalaali";
+import { convertFinglishMonthToPersian } from "../../utils/helpers";
 
 export type PersianMonthNameT =
   | "فروردین"
@@ -27,8 +29,8 @@ export type PersianWeekDaysNameT =
 export type EnglishMonthNames = "";
 
 export interface DateI extends InitialValueI {
-  currentDate: Date;
-  date: Date;
+  currentDate: moment.Moment;
+  date: Moment;
   day: number;
   month: number;
   monthName: string;
@@ -37,25 +39,22 @@ export interface DateI extends InitialValueI {
 }
 
 const defaultValue = ((): DateI => {
-  const date = new Date();
+  const date = moment();
 
-  const year = date.getFullYear(),
-    month = date.getMonth(),
-    day = date.getDate() + 1;
+  const year = +date.format("jYYYY"),
+    month = +date.format("jMM"),
+    day = +date.format("jDD") + 1;
 
-  const weekday = date.toLocaleDateString("fa-ir", { weekday: "long" });
-
-  const monthName = new Intl.DateTimeFormat("fa", {
-    month: "long",
-  }).format(date);
+  const weekday = date.format("dddd");
+  const monthName = convertFinglishMonthToPersian(date.format("jMMMM"));
 
   return {
     status: "idle",
     currentDate: date,
-    day,
-
-    year,
     date,
+
+    day,
+    year,
     month,
 
     monthName,

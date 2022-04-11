@@ -1,7 +1,7 @@
 /* eslint-disable testing-library/no-node-access */
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
-import Table, { HeadersI, HeadersObjI, Row } from "./Table";
+import Table, { HeadersObjI, Row } from "./Table";
 import { before, Query } from "../../utils/testHelper";
 import { cleanup } from "@testing-library/react";
 import { weekDaysInPersianLetters } from "../../utils/helpers";

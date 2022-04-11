@@ -1,3 +1,4 @@
+import { Moment } from "moment-jalaali";
 import React, { FC, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
@@ -17,15 +18,27 @@ interface CalMonthProps {
 }
 
 const CalMonth: FC<CalMonthProps> = ({ width = "100%", height = "100%" }) => {
-  const date = useSelector<ReduxStateI, Date>(state => state.date.date);
+  const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
+
+  const days = useMemo(() => calculateDaysOrder(date), [date]);
+
+  const mappedRows = useMemo(() => {
+    return days.map(row => {
+      const newRow: { [props: string]: JSX.Element } = {};
+      weekDaysInPersianLetters.forEach(
+        (letter, index) =>
+          (newRow[letter] = (
+            <HoverCircle>
+              <div>{row[index]}</div>
+            </HoverCircle>
+          ))
+      );
+      return newRow;
+    });
+  }, [days]);
 
   const [monthName, year] = useSelector<ReduxStateI, [string, string]>(
-    state => [
-      state.date.monthName,
-      new Intl.DateTimeFormat("fa", { year: "numeric" }).format(
-        state.date.date
-      ),
-    ]
+    state => [state.date.monthName, state.date.date.format("jYYYY")]
   );
 
   const onClickPrevious = useCallback<onCLickT>(event => {
@@ -68,7 +81,7 @@ const CalMonth: FC<CalMonthProps> = ({ width = "100%", height = "100%" }) => {
       <div className={styles.Main}>
         <Table
           headers={headers}
-          rows={calculateDaysOrder(date)}
+          rows={mappedRows}
           theadClassName={styles.theadClassName}
           thClassName={styles.thClassName}
           tdClassName={styles.tdClassName}></Table>
