@@ -17,9 +17,14 @@ import calculateDaysOrder from "./utils/calculateDaysOrder";
 interface CalMonthProps {
   width?: string;
   height?: string;
+  className?: string;
 }
 
-const CalMonth: FC<CalMonthProps> = ({ width = "100%", height = "100%" }) => {
+const CalMonth: FC<CalMonthProps> = ({
+  width = "100%",
+  height = "100%",
+  className,
+}) => {
   const [currentMonthName, currentYear] = useSelector<
     ReduxStateI,
     [string, string]
@@ -97,7 +102,7 @@ const CalMonth: FC<CalMonthProps> = ({ width = "100%", height = "100%" }) => {
 
   return (
     <div
-      className={styles.CalMonth}
+      className={`${styles.CalMonth} ${className}`}
       data-testid="CalMonth"
       style={{ width, height }}>
       <DateD

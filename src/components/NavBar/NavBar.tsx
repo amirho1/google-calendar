@@ -8,9 +8,11 @@ import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
 import styles from "./NavBar.module.scss";
 import { RiArrowDownSFill } from "react-icons/ri";
 
-interface NavBarProps {}
+interface NavBarProps {
+  closeSideBar: () => void;
+}
 
-const NavBar: FC<NavBarProps> = () => {
+const NavBar: FC<NavBarProps> = ({ closeSideBar }) => {
   const { monthName, year } = useSelector<ReduxStateI, DateI>(
     state => state.date
   );
@@ -23,8 +25,9 @@ const NavBar: FC<NavBarProps> = () => {
       <div className={`${styles.right} f-around`}>
         <HamburgerMenu
           onClick={e => {
-            e.preventDefault();
-            console.log("hello world");
+            e.stopPropagation();
+            console.log("running inside hamber");
+            closeSideBar();
           }}
           dataTip={"فهرست اصلی"}
         />

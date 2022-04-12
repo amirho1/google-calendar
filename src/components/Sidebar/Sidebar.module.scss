@@ -1,0 +1,18 @@
+.Sidebar {
+  height: 100vh;
+  overflow: hidden;
+  transition: all 0.3s linear;
+}
+
+.FaPlus {
+  font-size: 2rem;
+}
+
+.SideBarHead {
+  height: 8em;
+}
+
+.SideBarBody {
+  border-left: 8px solid var(--gray);
+  height: 100%;
+}

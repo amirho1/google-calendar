@@ -7,14 +7,17 @@ interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
   dataTip?: string;
 }
 
-const Button: FC<ButtonProps> = props => (
-  <button
-    {...props}
-    data-tip={props.dataTip}
-    className={`${styles.Button} ${props.className}`}
-    data-testid="Button">
-    {props.children}
-  </button>
-);
+const Button: FC<ButtonProps> = props => {
+  const { dataTip, ...rest } = { ...props };
+  return (
+    <button
+      {...rest}
+      data-tip={dataTip}
+      className={`${styles.Button} ${props.className}`}
+      data-testid="Button">
+      {props.children}
+    </button>
+  );
+};
 
 export default Button;
