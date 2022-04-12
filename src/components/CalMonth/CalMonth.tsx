@@ -7,8 +7,9 @@ import {
   weekDaysInPersianLetters,
   weekDaysInPersianWord,
 } from "../../utils/helpers";
+import DateD from "../DateD/DateD";
 import HoverCircle from "../HoverCircle/HoverCircle";
-import MonthChanger, { onCLickT } from "../MonthChanger/MonthChanger";
+import { onCLickT } from "../MonthChanger/MonthChanger";
 import Table, { HeadersI } from "../Table/Table";
 import styles from "./CalMonth.module.scss";
 import calculateDaysOrder from "./utils/calculateDaysOrder";
@@ -99,16 +100,12 @@ const CalMonth: FC<CalMonthProps> = ({ width = "100%", height = "100%" }) => {
       className={styles.CalMonth}
       data-testid="CalMonth"
       style={{ width, height }}>
-      <div className={`${styles.Head} f-between`}>
-        <div className={`${styles.YearMonthWrapper} f-between`}>
-          <span id={"month"}>{monthName}</span>
-          <span id={"year"}>{year}</span>
-        </div>
-        <MonthChanger
-          onClickPrevious={onClickPrevious}
-          onCLickNext={onCLickNext}
-        />
-      </div>
+      <DateD
+        monthName={monthName}
+        onCLickNext={onCLickNext}
+        onClickPrevious={onClickPrevious}
+        year={year}
+      />
 
       <div className={styles.Main}>
         <Table

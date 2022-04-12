@@ -1,0 +1,11 @@
+.NavBar {
+  padding: 0.7em;
+  border-bottom: 1px solid var(--gray);
+}
+
+.right {
+  width: fit-content;
+  & * + * {
+    margin: 0 1em;
+  }
+}

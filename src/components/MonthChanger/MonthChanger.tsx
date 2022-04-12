@@ -7,7 +7,7 @@ export type onCLickT<TagType = HTMLElement> = (
   event: React.MouseEvent<TagType, MouseEvent>
 ) => void;
 
-interface MonthChangerPropsI {
+export interface MonthChangerPropsI {
   onClickPrevious: onCLickT<HTMLDivElement>;
   onCLickNext: onCLickT<HTMLDivElement>;
   className?: string;
