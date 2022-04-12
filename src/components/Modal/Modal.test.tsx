@@ -1,0 +1,52 @@
+// templates/component/Modal.js
+
+import React from "react";
+import "@testing-library/jest-dom/extend-expect";
+import Modal from "./Modal";
+import { before, Query } from "../../utils/testHelper";
+
+describe("<Modal />", () => {
+  let query: Query;
+  let element: HTMLElement;
+  const twoHundredPX = "200px";
+  beforeEach(() => {
+    ({ element, query } = before(
+      "Modal",
+      <Modal
+        width={twoHundredPX}
+        display={false}
+        height={twoHundredPX}
+        x={200}
+        y={200}>
+        <p>Hello world</p>
+      </Modal>
+    ));
+  });
+
+  it("should mount", () => {
+    expect(element).toBeInTheDocument();
+  });
+
+  it("should mount children in it", () => {
+    expect(element.innerHTML).toMatch("Hello world");
+  });
+
+  it("should has a display of none with", () => {
+    expect(element.style.display).toBe("none");
+  });
+
+  it(`should has width and height of ${twoHundredPX}`, () => {
+    const width = element.style.width,
+      height = element.style.height;
+
+    expect(width).toBe(twoHundredPX);
+    expect(height).toBe(twoHundredPX);
+  });
+
+  it("should use the x y coordinate", () => {
+    const x = element.style.left;
+    const y = element.style.top;
+    expect(x).toBe(twoHundredPX);
+    expect(y).toBe(twoHundredPX);
+  });
+});
