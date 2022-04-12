@@ -1,4 +1,4 @@
-import React, { FC, HTMLAttributes } from "react";
+import React, { FC, forwardRef, HTMLAttributes } from "react";
 import { PrimitivesT } from "../Table/Table";
 import styles from "./Button.module.scss";
 
@@ -7,10 +7,11 @@ interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
   dataTip?: string;
 }
 
-const Button: FC<ButtonProps> = props => {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const { dataTip, ...rest } = { ...props };
   return (
     <button
+      ref={ref}
       {...rest}
       data-tip={dataTip}
       className={`${styles.Button} ${props.className}`}
@@ -18,6 +19,6 @@ const Button: FC<ButtonProps> = props => {
       {props.children}
     </button>
   );
-};
+});
 
 export default Button;

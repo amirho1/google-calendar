@@ -28,6 +28,7 @@ const Modal: FC<ModalProps> = ({
     boxShadow: "1px 1px 10px 5px var(--gray)",
     transition: "all linear .3s",
     borderRadius: "5px",
+    backgroundColor: "white",
   };
 
   return (

@@ -157,3 +157,8 @@ export const convertEnglishWeekdaysToPersian = (
 };
 
 export const jYYYY_jMM_jDD = "jYYYY/jMM/jDD";
+
+export const capitalize = (text: string) => {
+  if (text) return `${text[0].toUpperCase()}${text.slice(1)}`;
+  return text;
+};
