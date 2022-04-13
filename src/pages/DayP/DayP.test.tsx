@@ -1,23 +1,21 @@
+// templates/component/DayP.js
+
 import React from "react";
-import { Query } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import NavBar from "./NavBar";
-import { before } from "../../utils/testHelper";
+import DayP from "./DayP";
+import { before, Query } from "../../utils/testHelper";
 import { Provider } from "react-redux";
 import store from "../../redux";
-import { BrowserRouter } from "react-router-dom";
 
-describe("<NavBar />", () => {
-  let element: HTMLElement;
+describe("<DayP />", () => {
   let query: Query;
+  let element: HTMLElement;
 
   beforeEach(() => {
     ({ element, query } = before(
-      "NavBar",
+      "DayP",
       <Provider store={store}>
-        <BrowserRouter>
-          <NavBar closeSideBar={() => {}} />
-        </BrowserRouter>
+        <DayP />
       </Provider>
     ));
   });

@@ -30,7 +30,12 @@ function App() {
         className={styles.Plus}
       />
       <main className={styles.Main}>
-        <Sidebar style={{ width: sideBarDisplay ? "250px" : "0" }} />
+        <Sidebar
+          style={{
+            width: sideBarDisplay ? "250px" : "0",
+            minWidth: sideBarDisplay ? "250px" : "0",
+          }}
+        />
 
         <Board />
       </main>

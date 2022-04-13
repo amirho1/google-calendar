@@ -2,6 +2,7 @@ import { Provider } from "react-redux";
 import App from "./App";
 import store from "./redux";
 import { before } from "./utils/testHelper";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 describe("App", () => {
   let element: HTMLElement;
@@ -9,7 +10,9 @@ describe("App", () => {
   ({ element } = before(
     "App",
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </Provider>
   ));
 

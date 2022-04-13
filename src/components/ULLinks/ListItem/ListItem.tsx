@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import HoverCircle from "../../HoverCircle/HoverCircle";
 import ULLinks, { IItem } from "../ULLinks";
@@ -29,10 +29,6 @@ function ListItem({
   anchorTarget,
 }: Props) {
   const [childDisplay, setChildDisplay] = useState(false);
-  const hoverStyles = useMemo<React.CSSProperties>(
-    () => ({ width: "30px", height: "30px", color: "#e9e9e9" }),
-    []
-  );
 
   const onPlusMinusClick = (
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
@@ -48,14 +44,20 @@ function ListItem({
 
         {item.children?.length ? (
           !childDisplay ? (
-            <HoverCircle style={hoverStyles}>
-              <a onClick={onPlusMinusClick} className="f-center">
+            <HoverCircle width={"30px"} height={"30px"}>
+              <a
+                style={{ color: "#e9e9e9" }}
+                onClick={onPlusMinusClick}
+                className="f-center">
                 <FaPlus className={`${styles.plus} ${plusMinesClassName}`} />
               </a>
             </HoverCircle>
           ) : (
-            <HoverCircle style={hoverStyles} className="f-center">
-              <a onClick={onPlusMinusClick} className="f-center">
+            <HoverCircle width={"30px"} height={"30px"} className="f-center">
+              <a
+                style={{ color: "#e9e9e9" }}
+                onClick={onPlusMinusClick}
+                className="f-center">
                 <FaMinus className={`${styles.minus} ${plusMinesClassName}`} />
               </a>
             </HoverCircle>

@@ -1,0 +1,40 @@
+.Day {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.Header {
+  padding: 1em 7.5em;
+}
+
+.date {
+  color: white;
+  font-size: 2rem;
+}
+
+.Weekday {
+  color: var(--blue);
+  margin-bottom: 0.5em;
+  display: block;
+}
+
+.main {
+  position: relative;
+  overflow: auto;
+  display: flex;
+}
+
+.CalendarWrapper {
+  flex-grow: 2;
+  position: relative;
+  & > * {
+    margin-bottom: 59px;
+  }
+}
+
+.space {
+  width: 50px;
+  height: 100%;
+}

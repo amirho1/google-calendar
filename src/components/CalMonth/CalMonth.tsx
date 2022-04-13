@@ -42,8 +42,7 @@ const CalMonth: FC<CalMonthProps> = ({
       weekDaysInPersianLetters.forEach(
         (letter, index) =>
           (newRow[letter] = (
-            <HoverCircle
-              style={{ width: "30px", height: "30px", cursor: "pointer" }}>
+            <HoverCircle width="30px" height="30px" className="pointer">
               <div>{row[index]}</div>
             </HoverCircle>
           ))
@@ -91,8 +90,9 @@ const CalMonth: FC<CalMonthProps> = ({
         name: letter,
         cb: value => (
           <HoverCircle
-            style={{ width: "30px", height: "30px" }}
-            data-tip={weekDaysInPersianWord[index]}>
+            width="30px"
+            height="30px"
+            dataTip={weekDaysInPersianWord[index]}>
             <div>{value.name}</div>
           </HoverCircle>
         ),

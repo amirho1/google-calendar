@@ -10,11 +10,11 @@ interface RouteI {
 
 export default function routes() {
   const routes: RouteI[] = [
-    { name: "day", component: <DayP /> },
+    { name: "/", component: <DayP /> },
     { name: "week", component: <WeekP /> },
   ];
 
-  return routes.map(route => (
-    <Route path={route.name} element={route.component} />
+  return routes.map((route, i) => (
+    <Route key={i} path={`/${route.name}`} element={route.component} />
   ));
 }

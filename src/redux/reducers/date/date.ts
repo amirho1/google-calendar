@@ -45,7 +45,7 @@ export const defaultValue = ((): DateI => {
 
   const year = +date.format("jYYYY"),
     month = +date.format("jMM"),
-    day = +date.format("jDD") + 1;
+    day = +date.format("jDD");
 
   const weekday = date.format("dddd");
   const monthName = convertFinglishMonthToPersian(date.format("jMMMM"));

@@ -43,11 +43,11 @@ describe("helpers", () => {
   describe("convertEnglishWeekdaysToPersian", () => {
     it("should convert English weekday to persian", () => {
       expect(convertEnglishWeekdaysToPersian("saturday")).toBe("شنبه");
-      expect(convertEnglishWeekdaysToPersian("sunday")).toBe("یک شنبه");
-      expect(convertEnglishWeekdaysToPersian("monday")).toBe("دو شنبه");
+      expect(convertEnglishWeekdaysToPersian("sunday")).toBe("یکشنبه");
+      expect(convertEnglishWeekdaysToPersian("monday")).toBe("دوشنبه");
       expect(convertEnglishWeekdaysToPersian("tuesday")).toBe("سه شنبه");
-      expect(convertEnglishWeekdaysToPersian("wednesday")).toBe("چهار شنبه");
-      expect(convertEnglishWeekdaysToPersian("thursday")).toBe("پنج شنبه");
+      expect(convertEnglishWeekdaysToPersian("wednesday")).toBe("چهارشنبه");
+      expect(convertEnglishWeekdaysToPersian("thursday")).toBe("پنجشنبه");
       expect(convertEnglishWeekdaysToPersian("friday")).toBe("جمعه");
     });
   });

@@ -93,7 +93,6 @@ const NavBar: FC<NavBarProps> = ({ closeSideBar }) => {
         <HamburgerMenu
           onClick={e => {
             e.stopPropagation();
-            console.log("running inside hamber");
             closeSideBar();
           }}
           dataTip={"فهرست اصلی"}

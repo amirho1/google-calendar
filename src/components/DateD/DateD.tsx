@@ -16,18 +16,23 @@ const DateD: FC<DateDProps> = ({
   onClickPrevious,
   year,
   fontSize,
-}) => (
-  <div className={`${styles.DateD} f-between`} data-testid="DateD">
-    <div className={`${styles.YearMonthWrapper} f-between`}>
-      <span id={"month"} style={{ fontSize }}>
-        {monthName}
-      </span>
-      <span id={"year"} style={{ fontSize }}>
-        {year}
-      </span>
+}) => {
+  return (
+    <div className={`${styles.DateD} f-between`} data-testid="DateD">
+      <div className={`${styles.YearMonthWrapper} f-between`}>
+        <span id={"month"} style={{ fontSize }}>
+          {monthName}
+        </span>
+        <span id={"year"} style={{ fontSize }}>
+          {year}
+        </span>
+      </div>
+      <MonthChanger
+        onClickPrevious={onClickPrevious}
+        onCLickNext={onCLickNext}
+      />
     </div>
-    <MonthChanger onClickPrevious={onClickPrevious} onCLickNext={onCLickNext} />
-  </div>
-);
+  );
+};
 
 export default DateD;

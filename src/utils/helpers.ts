@@ -56,31 +56,31 @@ export const weekDaysEnglishToPersianLetters = {
 
 export type WeekDaysInPersianWordT = [
   "شنبه",
-  "یک شنبه",
-  "دو شنبه",
+  "یکشنبه",
+  "دوشنبه",
   "سه شنبه",
-  "چهار شنبه",
-  "پنج شنبه",
+  "چهارشنبه",
+  "پنجشنبه",
   "جمعه"
 ];
 
 export const weekDaysInPersianWord: WeekDaysInPersianWordT = [
   "شنبه",
-  "یک شنبه",
-  "دو شنبه",
+  "یکشنبه",
+  "دوشنبه",
   "سه شنبه",
-  "چهار شنبه",
-  "پنج شنبه",
+  "چهارشنبه",
+  "پنجشنبه",
   "جمعه",
 ];
 
 export const weekdaysEnglishToPersian = {
   saturday: "شنبه",
-  sunday: "یک شنبه",
-  monday: "دو شنبه",
-  wednesday: "چهار شنبه",
+  sunday: "یکشنبه",
+  monday: "دوشنبه",
+  wednesday: "چهارشنبه",
   tuesday: "سه شنبه",
-  thursday: "پنج شنبه",
+  thursday: "پنجشنبه",
   friday: "جمعه",
 };
 

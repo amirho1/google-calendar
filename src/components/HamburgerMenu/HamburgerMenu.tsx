@@ -10,8 +10,10 @@ interface HamburgerMenuProps {
 const HamburgerMenu: FC<HamburgerMenuProps> = ({ onClick, dataTip }) => {
   return (
     <HoverCircle
-      data-tip={dataTip}
-      style={{ width: "50px", height: "50px", cursor: "pointer" }}>
+      dataTip={dataTip}
+      width="50px"
+      height="50px"
+      className="pointer">
       <div onClick={onClick}>
         <div className={styles.HamburgerMenu} data-testid="HamburgerMenu"></div>
       </div>
