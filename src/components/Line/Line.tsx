@@ -38,7 +38,8 @@ const Line: FC<LineProps> = ({
         width,
         height,
         ...verticalStyles,
-      }}>
+      }}
+      data-testid="Line">
       <div
         className={styles.hour}
         style={{ display: vertical ? "none" : "block" }}>

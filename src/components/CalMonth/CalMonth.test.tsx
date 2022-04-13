@@ -28,7 +28,7 @@ const defaultValue = ((): DateI => {
 
   return {
     status: "idle",
-    currentDate: date,
+
     date,
 
     day,

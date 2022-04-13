@@ -29,6 +29,7 @@ const Modal: FC<ModalProps> = ({
     transition: "all linear .3s",
     borderRadius: "5px",
     backgroundColor: "white",
+    zIndex: 900,
   };
 
   return (

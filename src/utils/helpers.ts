@@ -1,3 +1,6 @@
+import moment from "moment-jalaali";
+import { DateI } from "../redux/reducers/date/date";
+
 export interface CatchI<T = any> {
   [prop: string]: T;
 }
@@ -162,3 +165,30 @@ export const capitalize = (text: string) => {
   if (text) return `${text[0].toUpperCase()}${text.slice(1)}`;
   return text;
 };
+
+export const convertHoursToMinutes = (date: moment.Moment) => {
+  return moment.duration(date.format("HH:mm:ss")).asMinutes();
+};
+
+export function dateHelper(): DateI {
+  const date = moment();
+
+  const year = +date.format("jYYYY"),
+    month = +date.format("jMM"),
+    day = +date.format("jDD");
+
+  const weekday = date.format("dddd");
+  const monthName = convertFinglishMonthToPersian(date.format("jMMMM"));
+
+  return {
+    status: "idle",
+    date,
+
+    day,
+    year,
+    month,
+
+    monthName,
+    weekday,
+  };
+}
