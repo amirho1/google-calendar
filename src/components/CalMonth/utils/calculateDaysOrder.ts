@@ -1,4 +1,5 @@
 /* eslint-disable no-loop-func */
+import { Console } from "console";
 import memoizeOne from "memoize-one";
 import moment, { Moment } from "moment-jalaali";
 import {
@@ -22,16 +23,25 @@ const calculateDaysOrder = function (date: Moment) {
   const monthFirstDayWeekDayNameIndex = weekDaysInPersianLetters.findIndex(
     letter => letter === monthFirstDayWeekDayName
   );
-  let previousDay = date.daysInMonth() - monthFirstDayWeekDayNameIndex;
-  let index = 0;
 
+  const { year: previousYear, month: previousMonth } =
+    month - 1 !== 0
+      ? { year, month: month - 1 }
+      : { year: year - 1, month: 11 };
+
+  let previousMonthDayCount =
+    moment.jDaysInMonth(previousYear, previousMonth) -
+    monthFirstDayWeekDayNameIndex +
+    1;
+
+  let index = 0;
   for (let i = 0; i < 6; i++) {
     const row: number[] = [];
     weekDaysInPersianLetters.forEach(letter => {
       if (monthFirstDayWeekDayNameIndex > index) {
-        row.push(previousDay);
+        row.push(previousMonthDayCount);
         ++index;
-        ++previousDay;
+        ++previousMonthDayCount;
       } else if (monthDaysCount < day) {
         row.push(nextMonthDay);
         ++index;

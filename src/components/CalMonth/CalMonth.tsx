@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import {
   convertFinglishMonthToPersian,
+  dateHelper,
   weekDaysInPersianLetters,
   weekDaysInPersianWord,
 } from "../../utils/helpers";
@@ -25,10 +26,7 @@ const CalMonth: FC<CalMonthProps> = ({
   height = "100%",
   className,
 }) => {
-  const [currentMonthName, currentYear] = useSelector<
-    ReduxStateI,
-    [string, string]
-  >(state => [state.date.monthName, state.date.date.format("jYYYY")]);
+  const { year: currentYear, monthName: currentMonthName } = dateHelper();
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
   const [days, setDays] = useState(calculateDaysOrder(date));

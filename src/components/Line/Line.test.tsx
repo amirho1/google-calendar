@@ -9,7 +9,6 @@ import { before, Query } from "../../utils/testHelper";
 describe("<Line />", () => {
   let query: Query;
   let element: HTMLElement;
-  let line: HTMLElement;
   let hour: HTMLElement;
 
   beforeEach(() => {
@@ -17,7 +16,6 @@ describe("<Line />", () => {
       "Line",
       <Line width="30px" height="1px" color="rgb(51, 51, 51)" hour={10} />
     ));
-    line = element.children[1] as HTMLElement;
     hour = element.children[0] as HTMLElement;
   });
 
@@ -26,12 +24,12 @@ describe("<Line />", () => {
   });
 
   it("should use the width and height", () => {
-    expect(line?.style?.width).toBe("30px");
-    expect(line?.style?.height).toBe("1px");
+    expect(element?.style?.width).toBe("30px");
+    expect(element?.style?.height).toBe("1px");
   });
 
   it("should use the given bg color", () => {
-    expect(line.style.backgroundColor).toBe("rgb(51, 51, 51)");
+    expect(element.style.backgroundColor).toBe("rgb(51, 51, 51)");
   });
 
   it("should show a number on the first child", () => {
@@ -39,7 +37,7 @@ describe("<Line />", () => {
   });
 
   it("shouldn't has a class Name with name of vertical also display of hour should be block", () => {
-    expect(line.className).not.toMatch("vertical");
+    expect(element.className).not.toMatch("vertical");
     expect(hour.style.display).toBe("block");
   });
 
@@ -54,10 +52,9 @@ describe("<Line />", () => {
         vertical={true}
       />
     ));
-    line = element.children[1] as HTMLElement;
     hour = element.children[0] as HTMLElement;
 
-    expect(line.className).toMatch("vertical");
+    expect(element.className).toMatch("vertical");
     expect(hour.style.display).toBe("none");
   });
 });

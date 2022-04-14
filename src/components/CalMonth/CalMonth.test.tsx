@@ -138,12 +138,12 @@ describe("<CalMonth />", () => {
 
   it("on next element click should change the ui nad numbers base the date", () => {
     const tbody = query("tbody");
-    const sixthChildrenOfFirstRow = tbody?.children[0]?.children[2];
+    const thirdChildrenOfFirstRow = tbody?.children[0]?.children[2];
 
-    expect(sixthChildrenOfFirstRow?.textContent).toBe("1");
+    expect(thirdChildrenOfFirstRow?.textContent).toBe("1");
 
     // after click it should change
     fireEvent.click(next);
-    expect(sixthChildrenOfFirstRow?.textContent).toBe("27");
+    expect(thirdChildrenOfFirstRow?.textContent).toBe("29");
   });
 });

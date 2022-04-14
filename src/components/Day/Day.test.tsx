@@ -9,6 +9,7 @@ import { screen } from "@testing-library/react";
 import moment from "moment-jalaali";
 import store from "../../redux";
 import { Provider } from "react-redux";
+import { convertEnglishWeekdaysToPersian } from "../../utils/helpers";
 
 describe("<Day />", () => {
   let query: Query;
@@ -16,9 +17,10 @@ describe("<Day />", () => {
   let header: Element;
   let info: HTMLElement;
 
-  moment.loadPersian();
   let md = moment();
-  let weekday = md.format("dddd");
+  let weekday = convertEnglishWeekdaysToPersian(
+    md.format("dddd").toLowerCase() as any
+  );
   let date = md.format("jDD");
 
   beforeEach(() => {
