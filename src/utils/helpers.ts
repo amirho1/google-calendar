@@ -192,3 +192,33 @@ export function dateHelper(): DateI {
     weekday,
   };
 }
+
+export function addOrSubtractSpecificAmount(
+  current: number,
+  newNum: number,
+  amount: number
+) {
+  const halfAmount = amount / 2;
+  const subtractOrAdd = newNum > current;
+
+  //add
+  if (subtractOrAdd) {
+    const positive = newNum - current;
+    const leftOver = positive % amount;
+
+    const divide =
+      leftOver >= halfAmount
+        ? Math.ceil(positive / amount)
+        : Math.floor(positive / amount);
+    console.log(leftOver >= halfAmount, `${leftOver} >= ${halfAmount}`);
+    return current + amount * divide;
+  } else {
+    const negative = current - newNum;
+    const leftOver = negative % amount;
+    const divide =
+      leftOver >= halfAmount
+        ? Math.ceil(negative / amount)
+        : Math.floor(negative / amount);
+    return current - amount * divide;
+  }
+}

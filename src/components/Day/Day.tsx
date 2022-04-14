@@ -8,6 +8,7 @@ import {
 } from "../../utils/helpers";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Line from "../Line/Line";
+import Modal from "../Modal/Modal";
 import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
 
@@ -82,7 +83,14 @@ const Day: FC<DayProps> = () => {
         <div className={styles.space}></div>
         <div className={styles.CalendarWrapper}>
           <TimeLine y={minutes} color="red" />
-
+          <Modal
+            children={<p></p>}
+            width={100}
+            height={300}
+            x={1}
+            y={1}
+            display={true}
+          />
           <Line
             vertical={true}
             height="184%"

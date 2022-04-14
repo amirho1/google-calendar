@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import {
+  addOrSubtractSpecificAmount,
   convertEnglishWeekdaysToPersian,
   convertMonthNumberToName,
   convertPersianNumToEnglish,
@@ -49,6 +50,20 @@ describe("helpers", () => {
       expect(convertEnglishWeekdaysToPersian("wednesday")).toBe("چهارشنبه");
       expect(convertEnglishWeekdaysToPersian("thursday")).toBe("پنجشنبه");
       expect(convertEnglishWeekdaysToPersian("friday")).toBe("جمعه");
+    });
+  });
+
+  describe("addOrSubtractSpecificAmount", () => {
+    const current = 15;
+    it("should add 15 to the current", () => {
+      expect(addOrSubtractSpecificAmount(current, 25, 15)).toBe(30);
+      expect(addOrSubtractSpecificAmount(current, 23, 15)).toBe(30);
+    });
+
+    it.skip("should subtract 15 from current", () => {
+      expect(addOrSubtractSpecificAmount(current, 7, 15)).toBe(0);
+      expect(addOrSubtractSpecificAmount(current, 10, 15)).toBe(0);
+      expect(addOrSubtractSpecificAmount(current, -200, 15)).toBe(0);
     });
   });
 });
