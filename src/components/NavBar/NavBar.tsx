@@ -81,8 +81,9 @@ const NavBar: FC<NavBarProps> = ({ closeSideBar }) => {
           x={pageStyleBtnXY.x}
           y={pageStyleBtnXY.y}
           display={pageListStyleDisplay}
-          height={200}
-          width={200}>
+          // backgroundColor="white"
+          height={"200px"}
+          width={`200px`}>
           <ULLinks
             listOfItems={mappedPageStyleList}
             ulClassName={styles.ul}

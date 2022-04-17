@@ -1,5 +1,5 @@
 import moment from "moment-jalaali";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import {
@@ -9,6 +9,7 @@ import {
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Line from "../Line/Line";
 import Modal from "../Modal/Modal";
+import Task from "../Task/Task";
 import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
 
@@ -34,8 +35,10 @@ function drawManyLine(num: number) {
 }
 
 const Day: FC<DayProps> = () => {
+  const [isMouseDown, setIsMouseDown] = useState(false);
   const [headerBottomBorderDisplay, setHeaderBottomBorderDisplay] = useState(0);
   const [minutes, setMinutes] = useState(0);
+  const [tasks, setTasks] = useState<JSX.Element[]>([]);
 
   const [weekday, date] = useSelector<ReduxStateI, [string, number]>(state => [
     convertEnglishWeekdaysToPersian(state.date.weekday.toLowerCase() as any),
@@ -51,6 +54,34 @@ const Day: FC<DayProps> = () => {
       clearInterval(id);
     };
   });
+
+  const onMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>(
+    e => {
+      e.stopPropagation();
+      setIsMouseDown(true);
+      const { y } = e.currentTarget.getBoundingClientRect();
+      const modal = (
+        <Modal
+          key={tasks.length}
+          children={<Task />}
+          boxShadow={false}
+          data-testid="Task"
+          x={0}
+          y={e.clientY - y}
+          resizeAble={true}
+          width={`${100}%`}
+          display={true}
+          height="60px"
+        />
+      );
+      setTasks(current => [...current, modal]);
+    },
+    [tasks.length]
+  );
+
+  const onMouseUp = useCallback<React.MouseEventHandler<HTMLDivElement>>(e => {
+    setIsMouseDown(true);
+  }, []);
 
   return (
     <div className={styles.Day} data-testid="Day">
@@ -81,19 +112,17 @@ const Day: FC<DayProps> = () => {
           setHeaderBottomBorderDisplay(e.currentTarget.scrollTop);
         }}>
         <div className={styles.space}></div>
-        <div className={styles.CalendarWrapper}>
+        <div
+          className={styles.CalendarWrapper}
+          data-testid="calendarWrapper"
+          // onMouseMove={onMouseMove}
+          onMouseDown={onMouseDown}
+          onMouseUp={onMouseUp}>
           <TimeLine y={minutes} color="red" />
-          <Modal
-            children={<p></p>}
-            width={100}
-            height={300}
-            x={1}
-            y={1}
-            display={true}
-          />
+          {tasks}
           <Line
             vertical={true}
-            height="184%"
+            height="100%"
             width="1"
             right="20px"
             top="-2%"

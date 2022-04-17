@@ -210,7 +210,6 @@ export function addOrSubtractSpecificAmount(
       leftOver >= halfAmount
         ? Math.ceil(positive / amount)
         : Math.floor(positive / amount);
-    console.log(leftOver >= halfAmount, `${leftOver} >= ${halfAmount}`);
     return current + amount * divide;
   } else {
     const negative = current - newNum;

@@ -1,114 +1,97 @@
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { FC, useCallback, useMemo, useRef } from "react";
 import { addOrSubtractSpecificAmount } from "../../utils/helpers";
-import { PrimitivesT } from "../Table/Table";
 
+import { PrimitivesT } from "../Table/Table";
 interface ModalProps {
   children: JSX.Element | PrimitivesT;
   display: boolean;
-  width: number;
-  height: number;
+  width: string;
+  height: string;
   x?: number;
   y?: number;
+  boxShadow?: boolean;
+  resizeAble?: true;
 }
 
 const Modal: FC<ModalProps> = ({
   children,
   display = false,
-  height = 0,
-  width = 0,
+  // initial height
+  height = "0",
+  width = "0",
   x,
   y,
+  boxShadow = true,
+  resizeAble = false,
 }) => {
-  const [isMouseOnBottomBorder, setIsMouseOnBottomBorder] = useState(false);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [Height, setHeight] = useState(height);
   const ref = useRef<HTMLDivElement>(null);
-
-  const styles: React.CSSProperties = useMemo(
+  const styles = useMemo<React.CSSProperties>(
     () => ({
       display: display ? "block" : "none",
-      height: Height,
+      height: height,
       width,
       minHeight: "15px",
       position: "absolute",
       left: x,
       top: y,
-      boxShadow: "1px 1px 10px 5px var(--gray)",
-      transition: "all linear .04s",
+      boxShadow: boxShadow ? "1px 1px 10px 5px var(--gray)" : undefined,
       borderRadius: "5px",
       backgroundColor: "white",
       zIndex: 900,
-      cursor: isMouseOnBottomBorder ? "row-resize" : "pointer",
     }),
-    [display, Height, isMouseOnBottomBorder, width, x, y]
+    [display, height, width, x, y, boxShadow]
   );
 
-  const onMouseMove: React.MouseEventHandler<HTMLDivElement> = useCallback(
-    e => {
-      const { height, y: elementY } = e.currentTarget.getBoundingClientRect();
-      if (
-        e.clientY + 5 >= height + elementY &&
-        e.clientY - 5 <= height + elementY
-      )
-        setIsMouseOnBottomBorder(true);
-      else if (!isMouseDown) setIsMouseOnBottomBorder(false);
-    },
-    [isMouseDown]
-  );
-
-  const onMouseDown: React.MouseEventHandler<HTMLDivElement> = useCallback(
-    e => {
-      setIsMouseDown(true);
-    },
+  const bottomStyle = useMemo<React.CSSProperties>(
+    () => ({
+      cursor: "row-resize",
+      width: "100%",
+      position: "absolute",
+      bottom: "0",
+      left: "0",
+      height: "5px",
+    }),
     []
   );
 
-  const onMouseUp: React.MouseEventHandler<HTMLDivElement> = useCallback(e => {
-    setIsMouseDown(false);
-  }, []);
+  const onMouseDown =
+    useCallback((): React.MouseEventHandler<HTMLDivElement> => {
+      let y = 0;
+      let h = 60;
 
-  const rowResize = useCallback(
-    (e: MouseEvent) => {
-      let elementY: number | undefined;
-      let newHeight: number | undefined;
+      const onMouseMove = (e: MouseEvent) => {
+        const YDir = e.clientY - y;
+        if (ref.current)
+          ref.current.style.height = `${addOrSubtractSpecificAmount(
+            h,
+            h + YDir,
+            15
+          )}px`;
+      };
 
-      if (ref.current) ({ y: elementY } = ref.current?.getBoundingClientRect());
-      if (elementY) newHeight = e.clientY - elementY;
+      const onMouseUp = (e: MouseEvent) => {
+        document.removeEventListener("mousemove", onMouseMove);
+      };
 
-      if (isMouseOnBottomBorder && isMouseDown && newHeight)
-        setHeight(current =>
-          addOrSubtractSpecificAmount(+current, newHeight ? +newHeight : 0, 15)
-        );
-    },
-    [isMouseDown, isMouseOnBottomBorder]
-  );
-
-  useEffect(() => {
-    window.addEventListener("mousemove", rowResize);
-    window.addEventListener("mouseup", onMouseUp as any);
-
-    return () => {
-      window.removeEventListener("mousemove", rowResize);
-      window.removeEventListener("mousemove", onMouseUp as any);
-    };
-  });
+      return e => {
+        const bounding = ref.current?.getBoundingClientRect();
+        if (bounding?.height) h = bounding?.height;
+        y = e.clientY;
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
+      };
+    }, []);
 
   return (
     <div
       ref={ref}
       style={styles}
       data-testid="Modal"
-      onMouseMove={onMouseMove}
-      onMouseDown={onMouseDown}
-      onMouseUp={onMouseUp}>
+      onMouseDown={e => e.stopPropagation()}>
       {children}
+      {resizeAble ? (
+        <div style={bottomStyle} onMouseDown={onMouseDown()}></div>
+      ) : null}
     </div>
   );
 };

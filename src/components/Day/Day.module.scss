@@ -24,11 +24,13 @@
   position: relative;
   overflow: auto;
   display: flex;
+  height: fit-content;
 }
 
 .CalendarWrapper {
   flex-grow: 2;
   position: relative;
+  height: fit-content;
   & > * {
     margin-bottom: 59px;
   }

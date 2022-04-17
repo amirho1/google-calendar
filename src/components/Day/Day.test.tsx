@@ -5,7 +5,7 @@ import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import Day from "./Day";
 import { before, Query } from "../../utils/testHelper";
-import { screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import moment from "moment-jalaali";
 import store from "../../redux";
 import { Provider } from "react-redux";
@@ -49,5 +49,12 @@ describe("<Day />", () => {
 
   it("should contain the date", () => {
     expect(info.children[1]?.textContent).toBe(date);
+  });
+
+  it("should add a 60px height modal", () => {
+    const calendarWrapper = query("[data-testid='calendarWrapper']");
+    if (calendarWrapper) fireEvent.mouseDown(calendarWrapper);
+    const modal = screen.getByTestId("Task");
+    expect(modal).toBeInTheDocument();
   });
 });
