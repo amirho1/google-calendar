@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import HoverCircle from "../../HoverCircle/HoverCircle";
-import ULLinks, { IItem } from "../ULLinks";
+import ULLinks, { CB, IItem } from "../ULLinks";
 import styles from "./ListItem.module.scss";
 
 interface Props {
@@ -11,10 +11,12 @@ interface Props {
   liClassName?: string;
   aClassName?: string;
   plusMinesClassName?: string;
-  children: JSX.Element;
+  children?: JSX.Element;
   parentWrapperClassName?: string;
   anchorTarget?: React.HTMLAttributeAnchorTarget;
   childClassName?: string;
+  index: number;
+  cb?: CB;
 }
 
 function ListItem({
@@ -27,22 +29,26 @@ function ListItem({
   children,
   parentWrapperClassName,
   anchorTarget,
+  index,
+  cb,
 }: Props) {
   const [childDisplay, setChildDisplay] = useState(false);
 
-  const onPlusMinusClick = (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    e.stopPropagation();
-    setChildDisplay(current => !current);
-  };
-
+  const onPlusMinusClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+      e.stopPropagation();
+      setChildDisplay(current => !current);
+    },
+    []
+  );
   return (
     <li className={liClassName} onClick={item.onClick}>
       <div className={parentWrapperClassName}>
-        {children}
+        {!children && cb
+          ? cb(item, aClassName, index, setChildDisplay, childDisplay)
+          : children}
 
-        {item.children?.length ? (
+        {!cb && item.children?.length ? (
           !childDisplay ? (
             <HoverCircle width={"30px"} height={"30px"}>
               <a

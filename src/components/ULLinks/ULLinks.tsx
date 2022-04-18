@@ -6,7 +6,9 @@ import styles from "./ULLinks.module.scss";
 export type CB = (
   item: IItem,
   aClassName?: string,
-  index?: number
+  index?: number,
+  setChildDisplay?: (value: React.SetStateAction<boolean>) => void,
+  childDisplay?: boolean
 ) => JSX.Element;
 
 export interface IItem {
@@ -63,13 +65,14 @@ function ULLinks({
               aClassName={aClassName}
               ulClassName={ulClassName}
               plusMinesClassName={plusMinesClassName}
-              liClassName={liClassName}>
-              {item.cb(item, aClassName)}
-            </ListItem>
+              liClassName={liClassName}
+              index={index}
+              cb={item.cb}></ListItem>
           );
 
         return (
           <ListItem
+            index={index}
             parentWrapperClassName={parentWrapperClassName}
             item={item}
             ulClassName={ulClassName}

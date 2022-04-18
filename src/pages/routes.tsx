@@ -2,7 +2,6 @@ import React from "react";
 import DayP from "./DayP/DayP";
 import WeekP from "./WeekP/WeekP";
 import { Route } from "react-router-dom";
-import Test from "../components/Test/Test";
 
 interface RouteI {
   name: string;

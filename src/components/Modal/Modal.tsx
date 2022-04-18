@@ -11,6 +11,7 @@ interface ModalProps {
   y?: number;
   boxShadow?: boolean;
   resizeAble?: true;
+  backgroundColor?: string;
 }
 
 const Modal: FC<ModalProps> = ({
@@ -23,6 +24,7 @@ const Modal: FC<ModalProps> = ({
   y,
   boxShadow = true,
   resizeAble = false,
+  backgroundColor = "white",
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const styles = useMemo<React.CSSProperties>(
@@ -36,10 +38,11 @@ const Modal: FC<ModalProps> = ({
       top: y,
       boxShadow: boxShadow ? "1px 1px 10px 5px var(--gray)" : undefined,
       borderRadius: "5px",
-      backgroundColor: "white",
+      backgroundColor: backgroundColor,
       zIndex: 900,
+      transition: "linear .1s height",
     }),
-    [display, height, width, x, y, boxShadow]
+    [display, height, width, x, y, boxShadow, backgroundColor]
   );
 
   const bottomStyle = useMemo<React.CSSProperties>(
