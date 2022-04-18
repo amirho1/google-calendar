@@ -1,4 +1,4 @@
-import React, { FC, forwardRef, HTMLAttributes } from "react";
+import React, { forwardRef, HTMLAttributes } from "react";
 import { PrimitivesT } from "../Table/Table";
 import styles from "./Button.module.scss";
 

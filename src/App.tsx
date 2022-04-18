@@ -14,7 +14,6 @@ const ReactTooltipAsAny = ReactTooltip as any;
 function App() {
   useTitle("تقویم فارسی گوگل");
   const [sideBarDisplay, setSideBarDisplay] = useState(true);
-
   const closeSideBar = useCallback(() => {
     setSideBarDisplay(previous => !previous);
   }, []);
@@ -32,8 +31,8 @@ function App() {
       <main className={styles.Main}>
         <Sidebar
           style={{
-            width: sideBarDisplay ? "250px" : "0",
-            minWidth: sideBarDisplay ? "250px" : "0",
+            width: sideBarDisplay ? "20px" : "0",
+            minWidth: sideBarDisplay ? "260px" : "0",
           }}
         />
 
