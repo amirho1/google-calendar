@@ -3,16 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@craco/craco": "^6.4.3",
     "@types/jest": "^27.0.1",
     "@types/moment-jalaali": "^0.7.5",
     "@types/node": "^16.7.13",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17",
+    "axios": "^0.26.1",
     "immutable": "^4.0.0",
+    "json-server": "^0.17.0",
     "memoize-one": "^6.0.0",
     "moment-jalaali": "^0.9.6",
     "node-sass": "^7.0.1",
+    "process": "^0.11.10",
     "react": "^17",
+    "react-cookie": "^4.1.1",
     "react-dom": "^17",
     "react-icons": "^4.3.1",
     "react-redux": "^7.2.8",
@@ -26,11 +31,12 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "startInOpenSuse": "HOST=localhost react-scripts start",
+    "start": "craco start",
+    "startInOpenSuse": "HOST=localhost craco start",
+    "test": "craco test",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "json-server --watch -p 3001 db.json"
   },
   "eslintConfig": {
     "extends": [

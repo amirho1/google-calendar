@@ -1,0 +1,36 @@
+{
+  "calendars": [
+    {
+      "id": 1,
+      "name": "کار",
+      "color": "blue"
+    },
+    {
+      "id": 2,
+      "name": "amirhossein",
+      "color": "red"
+    }
+  ],
+  "calendarTasks": {
+    "کار": {
+      "1401/09/23": [
+        {
+          "hourFrom": "15:00",
+          "hourTill": "15:15",
+          "title": "نوشتن سایت",
+          "description": "توضیحات"
+        }
+      ]
+    },
+    "amirhossein": {
+      "1401/09/23": [
+        {
+          "hourFrom": "15:00",
+          "hourTill": "15:15",
+          "title": "نوشتن سایت",
+          "description": "توضیحات"
+        }
+      ]
+    }
+  }
+}
