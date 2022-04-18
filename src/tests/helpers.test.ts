@@ -5,6 +5,7 @@ import {
   convertMonthNumberToName,
   convertPersianNumToEnglish,
   persianMonthsName,
+  roundSpecific,
 } from "../utils/helpers";
 
 describe("helpers", () => {
@@ -64,6 +65,18 @@ describe("helpers", () => {
       expect(addOrSubtractSpecificAmount(current, 7, 15)).toBe(0);
       expect(addOrSubtractSpecificAmount(current, 10, 15)).toBe(0);
       expect(addOrSubtractSpecificAmount(current, -200, 15)).toBe(0);
+    });
+  });
+
+  describe("roundSpecific", () => {
+    it("should round to floor based on second arg", () => {
+      expect(roundSpecific(61, 15)).toBe(60);
+      expect(roundSpecific(77, 15)).toBe(75);
+    });
+
+    it("should round to ceil //", () => {
+      expect(roundSpecific(68, 15)).toBe(75);
+      expect(roundSpecific(68, 15)).toBe(75);
     });
   });
 });

@@ -5,6 +5,7 @@ import { ReduxStateI } from "../../redux";
 import {
   convertEnglishWeekdaysToPersian,
   convertHoursToMinutes,
+  roundSpecific,
 } from "../../utils/helpers";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Line from "../Line/Line";
@@ -66,8 +67,9 @@ const Day: FC<DayProps> = () => {
           children={<Task />}
           boxShadow={false}
           data-testid="Task"
+          backgroundColor="var(--blue)"
           x={0}
-          y={e.clientY - y}
+          y={roundSpecific(e.clientY - y, 15)}
           resizeAble={true}
           width={`${100}%`}
           display={true}

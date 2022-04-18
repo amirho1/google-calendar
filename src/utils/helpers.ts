@@ -221,3 +221,15 @@ export function addOrSubtractSpecificAmount(
     return current - amount * divide;
   }
 }
+
+export function roundSpecific(number: number, base: number) {
+  const halfBase = base / 2;
+  const leftOver = number % base;
+  if (halfBase > leftOver) {
+    const divided = Math.floor(number / base);
+    return base * divided;
+  } else {
+    const divided = Math.ceil(number / base);
+    return base * divided;
+  }
+}
