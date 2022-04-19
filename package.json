@@ -4,16 +4,20 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.4.3",
+    "@types/cors": "^2.8.12",
     "@types/jest": "^27.0.1",
     "@types/moment-jalaali": "^0.7.5",
+    "@types/morgan": "^1.9.3",
     "@types/node": "^16.7.13",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17",
     "axios": "^0.26.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
     "immutable": "^4.0.0",
-    "json-server": "^0.17.0",
     "memoize-one": "^6.0.0",
     "moment-jalaali": "^0.9.6",
+    "morgan": "^1.10.0",
     "node-sass": "^7.0.1",
     "process": "^0.11.10",
     "react": "^17",
@@ -36,7 +40,7 @@
     "test": "craco test",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "server": "json-server --watch -p 3001 db.json"
+    "server": "ts-node ./src/server/server.ts"
   },
   "eslintConfig": {
     "extends": [
@@ -59,6 +63,8 @@
   "devDependencies": {
     "@testing-library/jest-dom": "5.14.1",
     "@testing-library/react": "12",
-    "@testing-library/user-event": "13.2.1"
+    "@testing-library/user-event": "13.2.1",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.7.0"
   }
 }
