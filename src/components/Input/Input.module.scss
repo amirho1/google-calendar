@@ -1,0 +1,58 @@
+.InputWrapper {
+  position: relative;
+  min-height: 44px;
+  background-color: var(--gray);
+  padding: 0.5em;
+  border-radius: 3px;
+}
+
+.labelWrapper {
+  height: 20px;
+  position: relative;
+}
+
+.label {
+  transition: all linear 0.2s;
+  font-size: 1.5rem;
+  position: absolute;
+  margin-top: 0.1em;
+}
+
+.input {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  bottom: 0;
+  resize: none;
+
+  &:focus {
+    outline: none;
+    div label {
+      color: var(--blue);
+      font-size: 1rem;
+    }
+    & ~ .bottomBorder {
+      width: 100%;
+    }
+  }
+}
+.bottomBorder {
+  width: 0;
+  height: 3px;
+  background-color: var(--blue);
+  position: absolute;
+  right: 0;
+  left: 0;
+  margin: auto;
+  bottom: 0;
+  transition: width linear 0.3s;
+}
+
+.textarea {
+  height: 13rem;
+  word-spacing: 0.1px;
+}
+
+.onFocus {
+  font-size: 1rem;
+}
