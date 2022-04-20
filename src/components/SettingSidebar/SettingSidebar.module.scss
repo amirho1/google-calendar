@@ -1,0 +1,48 @@
+.SettingSidebar {
+  width: 260px;
+  height: 100%;
+  padding-top: 2em;
+}
+
+.listItem {
+  padding: 1em;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+
+.hover {
+  &:hover {
+    background-color: var(--gray);
+  }
+}
+.target {
+  background-color: #e8f0fe;
+  color: var(--blue);
+}
+
+.childLink {
+  padding: 0 1em;
+}
+
+.box {
+  margin-right: 2em;
+  display: block;
+  padding: 1em 0;
+  padding-right: 1.5em;
+  border-right: 2px solid var(--gray);
+}
+
+.nestedTarget {
+  color: var(--blue);
+  position: relative;
+  font-weight: 500;
+  &::after {
+    content: "";
+    width: 3px;
+    height: 60%;
+    position: absolute;
+    right: -2px;
+    background-color: var(--blue);
+    top: 11px;
+  }
+}

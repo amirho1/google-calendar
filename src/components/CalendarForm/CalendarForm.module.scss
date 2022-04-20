@@ -1,0 +1,13 @@
+.CalendarForm {
+  height: 100vh;
+  width: 100%;
+}
+
+.form {
+  width: 300px;
+  height: fit-content;
+  height: 500px;
+  & > * + * {
+    margin-top: 2em;
+  }
+}
