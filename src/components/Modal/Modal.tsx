@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useMemo, useRef } from "react";
 import { addOrSubtractSpecificAmount } from "../../utils/helpers";
-
 import { PrimitivesT } from "../Table/Table";
+
 interface ModalProps {
   children: JSX.Element | PrimitivesT;
   display: boolean;
@@ -12,6 +12,7 @@ interface ModalProps {
   boxShadow?: boolean;
   resizeAble?: true;
   backgroundColor?: string;
+  zIndex?: number;
 }
 
 const Modal: FC<ModalProps> = ({
@@ -25,6 +26,7 @@ const Modal: FC<ModalProps> = ({
   boxShadow = true,
   resizeAble = false,
   backgroundColor = "white",
+  zIndex = 900,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const styles = useMemo<React.CSSProperties>(
@@ -39,10 +41,10 @@ const Modal: FC<ModalProps> = ({
       boxShadow: boxShadow ? "1px 1px 10px 5px var(--gray)" : undefined,
       borderRadius: "5px",
       backgroundColor: backgroundColor,
-      zIndex: 900,
+      zIndex: zIndex,
       transition: "linear .1s height",
     }),
-    [display, height, width, x, y, boxShadow, backgroundColor]
+    [display, height, width, x, y, boxShadow, backgroundColor, zIndex]
   );
 
   const bottomStyle = useMemo<React.CSSProperties>(
