@@ -1,13 +1,15 @@
-import React from "react";
+import React, { SetStateAction } from "react";
 import { capitalize } from "../../utils/helpers";
 import ListItem from "./ListItem/ListItem";
 import styles from "./ULLinks.module.scss";
+
+export type SetState = (value: SetStateAction<boolean>) => void | undefined;
 
 export type CB = (
   item: IItem,
   aClassName?: string,
   index?: number,
-  setChildDisplay?: (value: React.SetStateAction<boolean>) => void,
+  setChildDisplay?: SetState,
   childDisplay?: boolean
 ) => JSX.Element;
 
@@ -46,7 +48,7 @@ function ULLinks({
   if (!listOfItems || !listOfItems.length) {
     const error = new Error("Property listOfItems is empty");
 
-    console.warn(`${ULLinks.name} ${error}`);
+    // console.warn(`${ULLinks.name} ${error}`);
 
     return <ul className={ulClassName} data-testid={testID}></ul>;
   }
