@@ -33,7 +33,7 @@ app.post("/calendars", ({ body }, res) => {
   body.id = jsonData.calendars.length + 1;
 
   jsonData.calendars.push(body);
-  (jsonData.tasks as any)[body.name] = {};
+  (jsonData.events as any)[body.name] = {};
   write(JSON.stringify(jsonData), err => console.error(err));
   res.send(body);
 });
@@ -46,42 +46,42 @@ app.put("/calendars/:id", ({ params: { id }, body }, res) => {
   res.send(update);
 });
 
-app.get("/tasks/:calName/:date", ({ params: { calName, date } }, res) => {
-  const calObj = (jsonData?.tasks as any)[calName];
+app.get("/events/:calName/:date", ({ params: { calName, date } }, res) => {
+  const calObj = (jsonData?.events as any)[calName];
   if (!calObj) return res.status(404).send("doesn't exist");
   if (!calObj[date]) return res.status(404).send("doesn't exist");
   res.send(calObj[date]);
 });
 
 app.post(
-  "/tasks/:calName/:date",
+  "/events/:calName/:date",
   ({ params: { calName, date }, body }, res) => {
-    if (!(jsonData?.tasks as any)[calName]) {
-      (jsonData?.tasks as any)[calName] = {};
-      (jsonData?.tasks as any)[calName][date] = [];
+    if (!(jsonData?.events as any)[calName]) {
+      (jsonData?.events as any)[calName] = {};
+      (jsonData?.events as any)[calName][date] = [];
     }
-    body.id = (jsonData?.tasks as any)[calName][date].length + 1;
-    (jsonData?.tasks as any)[calName][date].push(body);
+    body.id = (jsonData?.events as any)[calName][date].length + 1;
+    (jsonData?.events as any)[calName][date].push(body);
     write(JSON.stringify(jsonData), console.error);
-    res.send((jsonData?.tasks as any)[calName][date]);
+    res.send((jsonData?.events as any)[calName][date]);
   }
 );
 
-app.delete("/tasks/:calName/:date", ({ params: { calName, date } }, res) => {
-  const calObj = (jsonData?.tasks as any)[calName];
+app.delete("/events/:calName/:date", ({ params: { calName, date } }, res) => {
+  const calObj = (jsonData?.events as any)[calName];
   if (!calObj) return res.status(404).send("doesn't exist");
   if (!calObj[date]) return res.status(404).send("doesn't exist");
-  delete (jsonData?.tasks as any)[calName][date];
+  delete (jsonData?.events as any)[calName][date];
   res.end();
 });
 
 app.put(
-  "/tasks/:calName/:date/:id",
+  "/events/:calName/:date/:id",
   ({ params: { calName, date, id }, body }, res) => {
-    const calObj = (jsonData?.tasks as any)[calName];
+    const calObj = (jsonData?.events as any)[calName];
     if (!calObj) return res.status(404).send("doesn't exist");
     if (!calObj[date]) return res.status(404).send("doesn't exist");
-    const target = (jsonData?.tasks as any)[calName][date].find(
+    const target = (jsonData?.events as any)[calName][date].find(
       (date: any) => date.id === +id
     );
     if (!target) return res.status(404).send("doesn't exist");
