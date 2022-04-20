@@ -1,7 +1,9 @@
-import { AxiosResponse } from "axios";
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, Effect, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { Api } from "../../../hooks/useFetch";
-import { SAVE_CALENDARS } from "../../reducers/calendars";
+import {
+  saveAddedCalendarAction,
+  SAVE_CALENDARS,
+} from "../../reducers/calendars";
 
 export interface TaskI {
   dateFrom: string;
@@ -11,7 +13,8 @@ export interface TaskI {
 }
 
 export interface CalendarsI {
-  id: number;
+  id?: number;
+  description?: string;
   name: string;
   color: string;
 }
@@ -21,13 +24,41 @@ async function fetchCalenders() {
   return data.data;
 }
 
-export const GET_CALENDARS = "GET_CALENDARS";
+async function createCalendar(body: CalendarsI) {
+  try {
+    const data = await Api({ method: "POST", url: "calendars", data: body });
 
-function* getCalendars() {
-  const calendars: AxiosResponse<CalendarsI, any> = yield call(fetchCalenders);
+    return data.data;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export function* addCalendar(effect: Effect<string, CalendarsI>) {
+  const newCalendar: CalendarsI = yield call(createCalendar, effect.payload);
+
+  yield put(saveAddedCalendarAction(newCalendar));
+}
+
+addCalendar.ac = (newCalendar: CalendarsI) => ({
+  type: addCalendar.type,
+  payload: newCalendar,
+});
+addCalendar.type = "ADD_CALENDAR";
+
+export function* getCalendars() {
+  const calendars: CalendarsI[] = yield call(fetchCalenders);
+
   yield put({ type: SAVE_CALENDARS, payload: calendars });
 }
 
+getCalendars.type = "GET_CALENDARS";
+getCalendars.ac = () => ({ type: getCalendars.type });
+
 export default function* watchGettingCalenders() {
-  yield takeLatest(GET_CALENDARS, getCalendars);
+  yield takeLatest(getCalendars.type, getCalendars);
+}
+
+export function* watchAddingCalendar() {
+  yield takeEvery(addCalendar.type, addCalendar);
 }

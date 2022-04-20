@@ -6,6 +6,11 @@ export const SAVE_CALENDARS = "SAVE_CALENDARS";
 
 type StatusI = "idle" | "loading" | "success" | "error";
 
+export const saveAddedCalendarAction = function (newCalendar: CalendarsI) {
+  return { type: saveAddedCalendarAction.type, payload: newCalendar };
+};
+saveAddedCalendarAction.type = "SAVE_ADDED_CALENDER";
+
 export interface CalendarsStateI {
   status: StatusI;
   calendars: CalendarsI[];
