@@ -58,6 +58,8 @@ const Day: FC<DayProps> = () => {
 
   const onMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
+      // prevent from right click
+      if (e.button === 2) return;
       e.stopPropagation();
       setIsMouseDown(true);
       const { y } = e.currentTarget.getBoundingClientRect();
