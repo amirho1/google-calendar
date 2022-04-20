@@ -1,13 +1,15 @@
-import React, { FC, useCallback, useEffect, useMemo } from "react";
+import React, { FC, useCallback, useContext, useEffect, useMemo } from "react";
 import { FaPlus } from "react-icons/fa";
 import { RiArrowDownSLine, RiArrowUpSLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
-import { CalendarsI, GET_CALENDARS } from "../../redux/sagas/calendars";
+import { CalendarsI, getCalendars } from "../../redux/sagas/calendars";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import ULLinks, { CB, IItem } from "../ULLinks/ULLinks";
 import styles from "./Calendars.module.scss";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import { RoutesContext } from "../../App";
 
 interface CalendarsProps {}
 
@@ -16,9 +18,12 @@ const Calendars: FC<CalendarsProps> = () => {
     state => state.calendars.calendars
   );
   const dispatch = useDispatch();
+
   useEffect(() => {
-    dispatch({ type: GET_CALENDARS });
+    // get calendars name and colors
+    dispatch(getCalendars.ac());
   }, [dispatch]);
+  const { routes } = useContext(RoutesContext);
 
   const cb = useCallback<CB>(
     (value: IItem, _, index, setChildDisplay, childDisplay) => (
@@ -33,7 +38,9 @@ const Calendars: FC<CalendarsProps> = () => {
               width="30px"
               height="30px"
               dataTip="اضافه کردن تقویم جدید">
-              <FaPlus />
+              <Link to="/settings/create-new-calendar">
+                <FaPlus />
+              </Link>
             </HoverCircle>
           ) : null}
           {childDisplay ? <RiArrowDownSLine /> : <RiArrowUpSLine />}{" "}
@@ -54,7 +61,6 @@ const Calendars: FC<CalendarsProps> = () => {
         <BsThreeDotsVertical
           className={styles.setting}
           data-tip={"Click to view"}
-          data-for={"view-tip"}
         />
       </div>
     ),
