@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useRef } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef } from "react";
 import { addOrSubtractSpecificAmount } from "../../utils/helpers";
 import { PrimitivesT } from "../Table/Table";
 
@@ -13,6 +13,8 @@ interface ModalProps {
   resizeAble?: true;
   backgroundColor?: string;
   zIndex?: number;
+  position?: "absolute" | "fixed";
+  getRef?: (ref: React.RefObject<HTMLDivElement>) => any;
 }
 
 const Modal: FC<ModalProps> = ({
@@ -27,15 +29,22 @@ const Modal: FC<ModalProps> = ({
   resizeAble = false,
   backgroundColor = "white",
   zIndex = 900,
+  getRef,
+  position = "absolute",
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (getRef) getRef(ref);
+  }, []);
+
   const styles = useMemo<React.CSSProperties>(
     () => ({
       display: display ? "block" : "none",
       height: height,
       width,
       minHeight: "15px",
-      position: "absolute",
+      position,
       left: x,
       top: y,
       boxShadow: boxShadow ? "1px 1px 10px 5px var(--gray)" : undefined,
@@ -44,7 +53,7 @@ const Modal: FC<ModalProps> = ({
       zIndex: zIndex,
       transition: "linear .1s height",
     }),
-    [display, height, width, x, y, boxShadow, backgroundColor, zIndex]
+    [display, height, width, position, x, y, boxShadow, backgroundColor, zIndex]
   );
 
   const bottomStyle = useMemo<React.CSSProperties>(

@@ -7,6 +7,7 @@ import {
   convertHoursToMinutes,
   roundSpecific,
 } from "../../utils/helpers";
+import EventForm from "../EventForm/EventForm";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Line from "../Line/Line";
 import Modal from "../Modal/Modal";
@@ -15,6 +16,11 @@ import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
 
 interface DayProps {}
+
+const centerOFScreen = () => ({
+  x: window.innerWidth / 2 - 225,
+  y: window.innerHeight / 2 - 225,
+});
 
 function drawManyLine(num: number) {
   const lines: JSX.Element[] = [];
@@ -41,6 +47,18 @@ const Day: FC<DayProps> = () => {
   const [minutes, setMinutes] = useState(0);
   const [tasks, setTasks] = useState<JSX.Element[]>([]);
 
+  const [eventForm, setEventForm] = useState({
+    ...centerOFScreen(),
+    display: false,
+  });
+
+  const [refOFEventFormModal, setRefOFEventFormModal] =
+    useState<React.RefObject<HTMLDivElement>>();
+
+  const getRef = useCallback((ref: React.RefObject<HTMLDivElement>) => {
+    setRefOFEventFormModal(ref);
+  }, []);
+
   const [weekday, date] = useSelector<ReduxStateI, [string, number]>(state => [
     convertEnglishWeekdaysToPersian(state.date.weekday.toLowerCase() as any),
     state.date.day,
@@ -59,7 +77,7 @@ const Day: FC<DayProps> = () => {
   const onMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
       // prevent from right click
-      if (e.button === 2) return;
+      if (e.button === 2 || eventForm.display) return;
       e.stopPropagation();
       setIsMouseDown(true);
       const { y } = e.currentTarget.getBoundingClientRect();
@@ -80,15 +98,65 @@ const Day: FC<DayProps> = () => {
       );
       setTasks(current => [...current, modal]);
     },
-    [tasks.length]
+    [eventForm.display, tasks.length]
   );
 
   const onMouseUp = useCallback<React.MouseEventHandler<HTMLDivElement>>(e => {
+    setEventForm(current => {
+      return { ...current, display: !current.display };
+    });
     setIsMouseDown(true);
   }, []);
 
+  const onEventFormHeaderMouseDown = useCallback<
+    React.MouseEventHandler<HTMLDivElement>
+  >(
+    e => {
+      // coordinate on mousedown
+      let x = e.clientX;
+      let y = e.clientY;
+      const { x: previousX, y: previousY } =
+        refOFEventFormModal && refOFEventFormModal.current
+          ? refOFEventFormModal?.current.getBoundingClientRect()
+          : { x: 0, y: 0 };
+
+      const onMouseMove = (event: MouseEvent) => {
+        if (refOFEventFormModal && refOFEventFormModal?.current?.style) {
+          const dx = event.clientX - x;
+          const dy = event.clientY - y;
+
+          console.log(`previousX : ${previousX} + ${dx} = ${previousX + dx}`);
+          refOFEventFormModal.current.style.top = `${previousY + dy}px`;
+          refOFEventFormModal.current.style.left = `${previousX + dx}px`;
+        }
+      };
+
+      const onMouseUp = () => {
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+        console.log("clean UP");
+      };
+
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    },
+    [refOFEventFormModal]
+  );
+
   return (
     <div className={styles.Day} data-testid="Day">
+      <Modal
+        display={eventForm.display}
+        getRef={getRef}
+        zIndex={1000}
+        height="520px"
+        width="450px"
+        position="fixed"
+        x={eventForm.x}
+        y={eventForm.y}>
+        <EventForm onHeaderMouseDown={onEventFormHeaderMouseDown} />
+      </Modal>
+
       <div
         className={styles.Header}
         style={{
@@ -109,7 +177,6 @@ const Day: FC<DayProps> = () => {
           </HoverCircle>
         </div>
       </div>
-
       <main
         className={styles.main}
         onScroll={e => {
