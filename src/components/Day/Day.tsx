@@ -1,5 +1,6 @@
 import moment, { Moment } from "moment-jalaali";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { AiOutlineConsoleSql } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import { EventI, SAVE_ADDED_EVENT } from "../../redux/reducers/events/events";
@@ -57,9 +58,9 @@ const Day: FC<DayProps> = () => {
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
   const timeStamp = date.valueOf();
-  const events = useSelector<ReduxStateI, EventI[]>(state => {
-    return state.events.events[timeStamp] || [];
-  });
+  const events = useSelector<ReduxStateI, EventI[]>(
+    state => state.events.events[timeStamp] || []
+  );
 
   const day = useMemo(() => date.format("jDD"), [date]);
 
@@ -71,7 +72,7 @@ const Day: FC<DayProps> = () => {
 
   const [eventForm, setEventForm] = useState({
     ...centerOFScreen(),
-    date,
+    date: date.clone(),
     display: false,
     eventStartTime: 0,
     eventEndTime: 0,
@@ -104,15 +105,14 @@ const Day: FC<DayProps> = () => {
       const h = +time.split(":")[0];
       const m = +time.split(":")[1];
 
+      setEventForm(current => ({
+        ...current,
+        eventStartTime: roundSpecific(e.clientY - y, 15),
+      }));
+
       dispatch({ type: SAVE_ADDED_EVENT });
 
       dateClone.set({ h, m });
-
-      setEventForm(current => ({
-        ...current,
-        eventStartTime,
-        eventEndTime: 60,
-      }));
     },
     [eventForm.display, date, dispatch]
   );
@@ -222,6 +222,20 @@ const Day: FC<DayProps> = () => {
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}>
           <TimeLine y={minutes} color="red" />
+
+          <Modal
+            key={events.length}
+            children={<Task />}
+            boxShadow={false}
+            data-testid="Task"
+            backgroundColor="var(--blue)"
+            x={0}
+            y={eventForm.eventStartTime}
+            resizeAble={true}
+            width={`${100}%`}
+            display={eventForm.display}
+            height="60px"
+          />
 
           {events.map(event => (
             <Modal

@@ -43,8 +43,12 @@ export default function eventsReducer(
     case SAVE_EVENTS: {
       const timeStamp = (action as any).payload.timeStamp;
       const events = (action as any).payload.response;
-
-      return { ...state, events: { ...state.events, [timeStamp]: events } };
+      return events
+        ? {
+            ...state,
+            events: { ...state.events, [timeStamp]: events },
+          }
+        : state;
     }
     default:
       return state;

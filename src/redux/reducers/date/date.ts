@@ -1,9 +1,6 @@
-import { Action } from "redux";
 import { InitialValueI } from "../..";
 import moment, { isMoment, Moment } from "moment-jalaali";
-import { dateHelper } from "../../../utils/helpers";
 import { increaseDay, decreaseDay, setDate } from "./actions";
-import { Map } from "immutable";
 import { ActionI } from "../events/events";
 
 export type PersianMonthNameT =
@@ -35,7 +32,10 @@ export interface DateI extends InitialValueI {
   date: Moment;
 }
 
-export const defaultValue: DateI = { date: moment(), status: "idle" };
+export const defaultValue: DateI = {
+  date: moment().startOf("day"),
+  status: "idle",
+};
 
 export default function dateReducer(
   state: DateI = defaultValue,
@@ -54,7 +54,6 @@ export default function dateReducer(
     }
 
     case setDate.type: {
-      console.log("setDate");
       if (isMoment(action.payload)) return { ...state, date: action.payload };
       return state;
     }
