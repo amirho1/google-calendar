@@ -1,6 +1,5 @@
 import moment, { Moment } from "moment-jalaali";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { AiOutlineConsoleSql } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import { EventI, SAVE_ADDED_EVENT } from "../../redux/reducers/events/events";
@@ -26,7 +25,7 @@ const centerOFScreen = () => ({
   y: window.innerHeight / 2 - 225,
 });
 
-function drawManyLine(num: number) {
+function drawCalendarLines(num: number) {
   const lines: JSX.Element[] = [];
 
   for (let i = 0; i < num; i++) {
@@ -48,15 +47,17 @@ function drawManyLine(num: number) {
 const Day: FC<DayProps> = () => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [headerBottomBorderDisplay, setHeaderBottomBorderDisplay] = useState(0);
-  const [minutes, setMinutes] = useState(0);
+  const [timeLineMinutes, setTimeLineMinutes] = useState(0);
   const dispatch = useDispatch();
-  const [refOFEventFormModal, setRefOFEventFormModal] =
+  const [eventFormModalRef, setEventFormModalRef] =
     useState<React.RefObject<HTMLDivElement>>();
-  const getRef = useCallback((ref: React.RefObject<HTMLDivElement>) => {
-    setRefOFEventFormModal(ref);
-  }, []);
+  const getRef = useCallback(
+    (ref: React.RefObject<HTMLDivElement>) => setEventFormModalRef(ref),
+    []
+  );
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
+
   const timeStamp = date.valueOf();
   const events = useSelector<ReduxStateI, EventI[]>(
     state => state.events.events[timeStamp] || []
@@ -80,17 +81,16 @@ const Day: FC<DayProps> = () => {
 
   useEffect(() => {
     const id = setInterval(() => {
-      setMinutes(convertHoursToMinutes(moment()));
+      setTimeLineMinutes(convertHoursToMinutes(moment()));
     }, 1000);
 
-    return () => {
-      clearInterval(id);
-    };
+    return () => clearInterval(id);
   });
 
-  const onStartTimeChange = useCallback((startTime: number) => {
-    setEventForm(current => ({ ...current, startTime }));
-  }, []);
+  const onStartTimeChange = useCallback(
+    (startTime: number) => setEventForm(current => ({ ...current, startTime })),
+    []
+  );
 
   const onMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
@@ -134,17 +134,17 @@ const Day: FC<DayProps> = () => {
       let x = e.clientX;
       let y = e.clientY;
       const { x: previousX, y: previousY } =
-        refOFEventFormModal && refOFEventFormModal.current
-          ? refOFEventFormModal?.current.getBoundingClientRect()
+        eventFormModalRef && eventFormModalRef.current
+          ? eventFormModalRef?.current.getBoundingClientRect()
           : { x: 0, y: 0 };
 
       const onMouseMove = (event: MouseEvent) => {
-        if (refOFEventFormModal && refOFEventFormModal?.current?.style) {
+        if (eventFormModalRef && eventFormModalRef?.current?.style) {
           const dx = event.clientX - x;
           const dy = event.clientY - y;
 
-          refOFEventFormModal.current.style.top = `${previousY + dy}px`;
-          refOFEventFormModal.current.style.left = `${previousX + dx}px`;
+          eventFormModalRef.current.style.top = `${previousY + dy}px`;
+          eventFormModalRef.current.style.left = `${previousX + dx}px`;
         }
       };
 
@@ -156,17 +156,19 @@ const Day: FC<DayProps> = () => {
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
     },
-    [refOFEventFormModal]
+    [eventFormModalRef]
   );
 
-  const closeModalEventForm = useCallback(() => {
-    setEventForm(current => ({ ...current, display: false }));
-  }, []);
+  const closeModalEventForm = useCallback(
+    () => setEventForm(current => ({ ...current, display: false })),
+    []
+  );
 
   // fetch events
   useEffect(() => {
     dispatch(getEvents.ac({ timeStamp: `${timeStamp}` }));
   }, [dispatch, timeStamp]);
+
   return (
     <div className={styles.Day} data-testid="Day">
       <Modal
@@ -221,7 +223,7 @@ const Day: FC<DayProps> = () => {
           // onMouseMove={onMouseMove}
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}>
-          <TimeLine y={minutes} color="red" />
+          <TimeLine y={timeLineMinutes} color="red" />
 
           <Modal
             key={events.length}
@@ -260,7 +262,7 @@ const Day: FC<DayProps> = () => {
             right="20px"
             top="-2%"
           />
-          {drawManyLine(24)}
+          {drawCalendarLines(24)}
         </div>
       </main>
     </div>
