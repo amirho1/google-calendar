@@ -2,8 +2,8 @@ import moment, { Moment } from "moment-jalaali";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
-import { SAVE_ADDED_EVENT } from "../../redux/reducers/events/events";
-import { addEvent } from "../../redux/sagas/events";
+import { EventI, SAVE_ADDED_EVENT } from "../../redux/reducers/events/events";
+import { getEvents } from "../../redux/sagas/events";
 import {
   convertEnglishWeekdaysToPersian,
   convertHoursToMinutes,
@@ -48,18 +48,21 @@ const Day: FC<DayProps> = () => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [headerBottomBorderDisplay, setHeaderBottomBorderDisplay] = useState(0);
   const [minutes, setMinutes] = useState(0);
-  const [events, setEvents] = useState<JSX.Element[]>([]);
   const dispatch = useDispatch();
   const [refOFEventFormModal, setRefOFEventFormModal] =
     useState<React.RefObject<HTMLDivElement>>();
-
   const getRef = useCallback((ref: React.RefObject<HTMLDivElement>) => {
     setRefOFEventFormModal(ref);
   }, []);
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
+  const timeStamp = date.valueOf();
+  const events = useSelector<ReduxStateI, EventI[]>(state => {
+    return state.events.events[timeStamp] || [];
+  });
 
   const day = useMemo(() => date.format("jDD"), [date]);
+
   const weekday = useMemo(
     () =>
       convertEnglishWeekdaysToPersian(date.format("dddd").toLowerCase() as any),
@@ -110,25 +113,8 @@ const Day: FC<DayProps> = () => {
         eventStartTime,
         eventEndTime: 60,
       }));
-
-      const modal = (
-        <Modal
-          key={events.length}
-          children={<Task />}
-          boxShadow={false}
-          data-testid="Task"
-          backgroundColor="var(--blue)"
-          x={0}
-          y={eventStartTime}
-          resizeAble={true}
-          width={`${100}%`}
-          display={true}
-          height="60px"
-        />
-      );
-      setEvents(current => [...current, modal]);
     },
-    [eventForm.display, date, dispatch, events.length]
+    [eventForm.display, date, dispatch]
   );
 
   const onMouseUp = useCallback<React.MouseEventHandler<HTMLDivElement>>(e => {
@@ -177,6 +163,10 @@ const Day: FC<DayProps> = () => {
     setEventForm(current => ({ ...current, display: false }));
   }, []);
 
+  // fetch events
+  useEffect(() => {
+    dispatch(getEvents.ac({ timeStamp: `${timeStamp}` }));
+  }, [dispatch, timeStamp]);
   return (
     <div className={styles.Day} data-testid="Day">
       <Modal
@@ -232,7 +222,23 @@ const Day: FC<DayProps> = () => {
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}>
           <TimeLine y={minutes} color="red" />
-          {events}
+
+          {events.map(event => (
+            <Modal
+              key={events.length}
+              children={<Task />}
+              boxShadow={false}
+              data-testid="Task"
+              backgroundColor="var(--blue)"
+              x={0}
+              y={event.startTime}
+              resizeAble={true}
+              width={`${100}%`}
+              display={true}
+              height="60px"
+            />
+          ))}
+
           <Line
             vertical={true}
             height="100%"

@@ -49,7 +49,7 @@ app.put("/calendars/:id", ({ params: { id }, body }, res) => {
 app.get("/events/:calName/:date", ({ params: { calName, date } }, res) => {
   const calObj = (jsonData?.events as any)[calName];
   if (!calObj) return res.status(404).send("doesn't exist");
-  if (!calObj[date]) return res.status(404).send("doesn't exist");
+  // if (!calObj[date]) return res.status(404).send("doesn't exist");
   res.send(calObj[date]);
 });
 

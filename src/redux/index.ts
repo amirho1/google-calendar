@@ -3,6 +3,7 @@ import dateReducer, { DateI } from "./reducers/date/date";
 import calendarsReducer, { CalendarsStateI } from "./reducers/calendars/index";
 import createSagaMiddleware from "redux-saga";
 import rootSaga from "./sagas";
+import eventsReducer, { EventsStateI } from "./reducers/events/events";
 export interface InitialValueI {
   status: "loading" | "success" | "error" | "idle";
 }
@@ -10,6 +11,7 @@ export interface InitialValueI {
 export interface ReduxStateI {
   date: DateI;
   calendars: CalendarsStateI;
+  events: EventsStateI;
 }
 
 const sagaMiddleware = createSagaMiddleware();
@@ -18,6 +20,7 @@ const store = createStore(
   combineReducers({
     date: dateReducer,
     calendars: calendarsReducer,
+    events: eventsReducer,
   }),
   applyMiddleware(sagaMiddleware)
 );

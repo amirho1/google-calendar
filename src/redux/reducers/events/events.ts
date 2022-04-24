@@ -1,5 +1,4 @@
 import { Action } from "redux";
-import { Map } from "immutable";
 import { StatusT } from "../calendars";
 
 export interface EventI {
@@ -10,14 +9,18 @@ export interface EventI {
   description: string;
 }
 
-interface EventsStateI {
+export interface Events {
+  [date: string]: EventI[];
+}
+
+export interface EventsStateI {
   status: StatusT;
-  events: EventI[];
+  events: Events;
 }
 
 const defaultValue: EventsStateI = {
   status: "idle",
-  events: [],
+  events: {},
 };
 
 export const SAVE_ADDED_EVENT = "SAVE_ADDED_EVENT";
@@ -34,18 +37,14 @@ export interface ActionI<PayloadT = any> extends Action {
 
 export default function eventsReducer(
   state: EventsStateI = defaultValue,
-  action: ActionI<EventI>
+  action: ActionI<any>
 ) {
   switch (action.type) {
-    case SAVE_ADDED_EVENT: {
-      let stateClone = Map(state);
-      stateClone = stateClone.set("status", "success");
-      stateClone = stateClone.updateIn(["events"], (value: EventI[]) => [
-        ...value,
-        action.payload,
-      ]);
+    case SAVE_EVENTS: {
+      const timeStamp = (action as any).payload.timeStamp;
+      const events = (action as any).payload.response;
 
-      return stateClone.toJS();
+      return { ...state, events: { ...state.events, [timeStamp]: events } };
     }
     default:
       return state;

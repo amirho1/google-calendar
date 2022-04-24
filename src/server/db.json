@@ -17,8 +17,17 @@
       "1670963400000": [
         {
           "id": 1,
-          "from": 0,
-          "till": 60,
+          "startTime": 0,
+          "endTime": 60,
+          "title": "my birthday",
+          "description": "throw a party"
+        }
+      ],
+      "1650742200000": [
+        {
+          "id": 1,
+          "startTime": 15,
+          "endTime": 60,
           "title": "my birthday",
           "description": "throw a party"
         }
