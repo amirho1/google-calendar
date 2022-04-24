@@ -105,14 +105,14 @@ const Day: FC<DayProps> = () => {
       const h = +time.split(":")[0];
       const m = +time.split(":")[1];
 
+      dateClone.set({ h, m });
       setEventForm(current => ({
         ...current,
         eventStartTime: roundSpecific(e.clientY - y, 15),
+        date: dateClone,
       }));
 
       dispatch({ type: SAVE_ADDED_EVENT });
-
-      dateClone.set({ h, m });
     },
     [eventForm.display, date, dispatch]
   );

@@ -31,9 +31,7 @@ const EventForm: FC<EventFormProps> = ({
   eventEndTime,
 }) => {
   const [titleValue, setTitleValue] = useState("");
-  const [editedDate, setEditedDate] = useState<Moment>(
-    date.set({ m: eventStartTime })
-  );
+  const [editedDate, setEditedDate] = useState<Moment>(date);
 
   const eventStartT = useMemo(
     () =>
@@ -43,7 +41,6 @@ const EventForm: FC<EventFormProps> = ({
         .format("hh:mm A"),
     [editedDate, eventStartTime]
   );
-
   const eventEndT = useMemo(
     () =>
       date
@@ -91,6 +88,7 @@ const EventForm: FC<EventFormProps> = ({
             inpWrapperClassName={styles.titleInputWrapper}
           />
         </Row>
+
         <Row
           icon={<MdOutlineWatchLater />}
           hover={false}

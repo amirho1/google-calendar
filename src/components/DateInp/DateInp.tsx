@@ -100,7 +100,7 @@ const DateInp: FC<DateInpProps> = ({
     [isEditMode]
   );
 
-  const startTime = useMemo(() => date.format("HH:mm A"), [date]);
+  const startTime = date.format("HH:mm A");
 
   return (
     <div
