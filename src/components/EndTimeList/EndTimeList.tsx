@@ -20,17 +20,17 @@ const EndTimeList: FC<EndTimeListProps> = ({ startTime }) => {
     const output: IItem[] = [];
     let minuteCopy = startTime;
     let quarter = 15;
+
     while (minuteCopy <= 1440) {
       output.push({
         tag: convertAMPMtoPersia(convertMinutesToHours(minuteCopy)),
         cb,
       });
-
       minuteCopy += quarter;
     }
 
     return output;
-  }, [cb, startTime]);
+  }, [cb]);
 
   return <ULLinks listOfItems={listItems} ulClassName={styles.EndTimeList} />;
 };

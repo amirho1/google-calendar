@@ -122,4 +122,4 @@ const EventForm: FC<EventFormProps> = ({
   );
 };
 
-export default EventForm;
+export default React.memo(EventForm);
