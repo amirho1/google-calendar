@@ -1,22 +1,25 @@
-// templates/component/CalendarForm.js
+// templates/component/DateInp.js
 
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
-import CalendarForm from "./CalendarForm";
+import DateInp from "./DateInp";
 import { before, Query } from "../../utils/testHelper";
-import { Provider } from "react-redux";
-import store from "../../redux";
+import moment from "moment-jalaali";
 
-describe("<CalendarForm />", () => {
+describe("<DateInp />", () => {
   let query: Query;
   let element: HTMLElement;
 
   beforeEach(() => {
     ({ element, query } = before(
-      "CalendarForm",
-      <Provider store={store}>
-        <CalendarForm />
-      </Provider>
+      "DateInp",
+      <DateInp
+        onStartTimeChange={() => {}}
+        eventEndTime={"0"}
+        eventStartTime={""}
+        date={moment()}
+        onDateChange={() => {}}
+      />
     ));
   });
 

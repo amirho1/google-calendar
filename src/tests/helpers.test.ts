@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
+import moment from "moment-jalaali";
 import {
   addOrSubtractSpecificAmount,
   convertEnglishWeekdaysToPersian,
   convertMonthNumberToName,
   convertPersianNumToEnglish,
+  indexOfFirstDayOfMonthInWeek,
   persianMonthsName,
   roundSpecific,
 } from "../utils/helpers";
@@ -77,6 +79,24 @@ describe("helpers", () => {
     it("should round to ceil //", () => {
       expect(roundSpecific(68, 15)).toBe(75);
       expect(roundSpecific(68, 15)).toBe(75);
+    });
+  });
+
+  describe("indexOfFirstDayOfMonthInWeek", () => {
+    it("should return 5 for 1401/2/1", () => {
+      expect(
+        indexOfFirstDayOfMonthInWeek(moment("1401/2/1", "jYYYY/jMM/jDD"))
+      ).toBe(5);
+
+      console.log(
+        indexOfFirstDayOfMonthInWeek(moment("1401/2/1", "jYYYY/jMM/jDD"))
+      );
+    });
+
+    it("should return 1 for 1401/3/1", () => {
+      expect(
+        indexOfFirstDayOfMonthInWeek(moment("1401/3/1", "jYYYY/jMM/jDD"))
+      ).toBe(1);
     });
   });
 });

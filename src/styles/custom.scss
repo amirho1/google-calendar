@@ -17,6 +17,18 @@
   align-items: center;
 }
 
+.f-right {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+.f-left {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
 .absolute-center {
   position: absolute;
   left: 0;
@@ -41,6 +53,12 @@
   }
 }
 
+.owl-mright {
+  & > * + * {
+    margin-right: 1em;
+  }
+}
+
 .dark {
   background-color: var(--dark-background);
   color: white;
@@ -59,6 +77,10 @@
   display: block;
 }
 
+.d-none {
+  display: none;
+}
+
 .d-table {
   height: 100%;
   width: 100%;
@@ -75,4 +97,52 @@
 
 .pointer {
   cursor: pointer;
+}
+
+.colBlue {
+  color: var(--blue) !important;
+}
+
+.colWhite {
+  color: white !important;
+}
+
+.bgBlue {
+  background-color: var(--blue);
+}
+
+.p-relative {
+  position: relative;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.bg-gray {
+  background-color: var(--gray);
+}
+
+.hoverBGGray {
+  &:hover {
+    background-color: var(--gray);
+  }
+}
+
+.all-pointer {
+  & * {
+    cursor: pointer;
+  }
+}
+
+.border-none {
+  border: none !important;
+}
+
+.overflow-visible {
+  overflow: visible;
+}
+
+.d-none {
+  display: none;
 }

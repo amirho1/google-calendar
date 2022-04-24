@@ -1,10 +1,19 @@
-export function dateIncreaseMonth() {
-  return { type: dateIncreaseMonth.type };
-}
-dateIncreaseMonth.type = "date/increaseMonth";
+import { Moment } from "moment-jalaali";
 
-export function dateDecreaseMonth() {
-  return { type: dateDecreaseMonth.type };
+export function increaseDay() {
+  return { type: increaseDay.type };
 }
 
-dateDecreaseMonth.type = "date/decreaseMonth";
+increaseDay.type = "INCREASE_DAY";
+
+export function decreaseDay() {
+  return { type: decreaseDay.type };
+}
+
+export function setDate(payload: Moment) {
+  return { type: setDate.type, payload };
+}
+
+setDate.type = "SET_DATE";
+
+decreaseDay.type = "DECREASE_DAY";

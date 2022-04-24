@@ -1,3 +1,4 @@
+import { Moment } from "moment-jalaali";
 import React, {
   FC,
   useCallback,
@@ -7,12 +8,13 @@ import React, {
   useState,
 } from "react";
 import { RiArrowDownSFill } from "react-icons/ri";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { RoutesContext } from "../../App";
 import { ReduxStateI } from "../../redux";
-import { DateI } from "../../redux/reducers/date/date";
+import { decreaseDay, increaseDay } from "../../redux/reducers/date/actions";
+import { convertFinglishMonthToPersian } from "../../utils/helpers";
 import Button from "../Button/Button";
 import DateD from "../DateD/DateD";
 import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
@@ -55,12 +57,30 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
     []
   );
 
-  const { monthName, year } = useSelector<ReduxStateI, DateI>(
-    state => state.date
-  );
+  const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
 
-  const onClickNext = () => {};
-  const onClickPrevious = () => {};
+  const monthName = useMemo(
+    () => convertFinglishMonthToPersian(date.format("jMMMM")),
+    [date]
+  );
+  const dispatch = useDispatch();
+
+  const year = useMemo(() => date.format("jYYYY"), [date]);
+
+  const onClickNext = useCallback(
+    e => {
+      e.stopPropagation();
+      dispatch(increaseDay());
+    },
+    [dispatch]
+  );
+  const onClickPrevious = useCallback(
+    e => {
+      e.stopPropagation();
+      dispatch(decreaseDay());
+    },
+    [dispatch]
+  );
 
   const onPageStyleBtnClick = useCallback<
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
@@ -74,7 +94,7 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
   }, []);
 
   return (
-    <div className={`${styles.right} f-around`}>
+    <div className={`${styles.right} f-around`} data-testid="NavMain">
       <HamburgerMenu
         onClick={e => {
           e.stopPropagation();
@@ -86,9 +106,9 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
 
       <DateD
         fontSize="1.3rem"
-        year={year}
-        onClickPrevious={onClickPrevious}
+        year={parseInt(year, 10)}
         monthName={monthName}
+        onClickPrevious={onClickPrevious}
         onCLickNext={onClickNext}
       />
 

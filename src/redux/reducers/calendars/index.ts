@@ -4,7 +4,7 @@ import { CalendarsI } from "../../sagas/calendars";
 
 export const SAVE_CALENDARS = "SAVE_CALENDARS";
 
-type StatusI = "idle" | "loading" | "success" | "error";
+export type StatusT = "idle" | "loading" | "success" | "error";
 
 export const saveAddedCalendarAction = function (newCalendar: CalendarsI) {
   return { type: saveAddedCalendarAction.type, payload: newCalendar };
@@ -12,7 +12,7 @@ export const saveAddedCalendarAction = function (newCalendar: CalendarsI) {
 saveAddedCalendarAction.type = "SAVE_ADDED_CALENDER";
 
 export interface CalendarsStateI {
-  status: StatusI;
+  status: StatusT;
   calendars: CalendarsI[];
 }
 

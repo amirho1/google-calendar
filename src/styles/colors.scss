@@ -1,6 +1,7 @@
 :root {
   --dark: #353638;
-  --gray: #e0e0e081;
+  --gray: #f1efef;
+  --light-gray: #f1f1f1;
   --light-green: #09d53d;
   --lighter-green: #0af545;
   --green: #009d25;
@@ -16,13 +17,16 @@
   --primary: #cce5ff;
   --primary-text: #185393;
   --secondary: #e2e3e5;
-  --secondary-text: #3d4246;
+  --secondary-text: #3d42469c;
   --light-background: #f1f4f8;
   --dark-background: #202124;
   --indigo: #6610f2;
   --purple: #7c69ef;
   --text: #1b2a4e;
   --blue: #1a73e8;
+  --light-blue: #3584eb;
+  --box-shadow: #3331;
+  --text-gray: #757a7f;
 }
 
 .text-warning {
@@ -63,4 +67,12 @@
 
 .bg-secondary {
   background-color: var(--secondary);
+}
+
+.text-gray {
+  color: var(--text-gray);
+}
+
+.bg-white {
+  background-color: white;
 }

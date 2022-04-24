@@ -30,13 +30,6 @@ const defaultValue = ((): DateI => {
     status: "idle",
 
     date,
-
-    day,
-    year,
-    month,
-
-    monthName,
-    weekday,
   };
 })();
 
@@ -59,7 +52,7 @@ describe("<CalMonth />", () => {
     ({ element, query } = before(
       testId,
       <Provider store={store}>
-        <CalMonth />
+        <CalMonth onDateChange={() => {}} />
       </Provider>
     ));
     next = screen.getByTestId("next");

@@ -4,6 +4,9 @@ import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import NavMain from "./NavMain";
 import { before, Query } from "../../utils/testHelper";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "../../redux";
 
 describe("<NavMain />", () => {
   let query: Query;
@@ -12,7 +15,11 @@ describe("<NavMain />", () => {
   beforeEach(() => {
     ({ element, query } = before(
       "NavMain",
-      <NavMain closeSideBar={() => {}} />
+      <Provider store={store}>
+        <BrowserRouter>
+          <NavMain closeSideBar={() => {}} />
+        </BrowserRouter>
+      </Provider>
     ));
   });
 

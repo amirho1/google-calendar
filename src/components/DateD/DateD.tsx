@@ -30,6 +30,8 @@ const DateD: FC<DateDProps> = ({
       <MonthChanger
         onClickPrevious={onClickPrevious}
         onCLickNext={onCLickNext}
+        dataTipNext="روز بعد"
+        datTipPrevious="روز قبل"
       />
     </div>
   );

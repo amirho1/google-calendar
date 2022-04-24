@@ -1,0 +1,19 @@
+.DescriptionEditor {
+}
+
+.toolbarClassName {
+  border: none;
+  background-color: var(--gray);
+  border-bottom: 1px solid white;
+}
+
+.wrapperClassName {
+  background-color: var(--gray);
+}
+
+.editorClassName {
+  background-color: var(--gray);
+  overflow: auto;
+  height: 50px;
+  padding: 0 0.5em;
+}

@@ -32,4 +32,14 @@ describe("<Input />", () => {
     expect(input).toBeInTheDocument();
     expect(input?.id).toBe("name");
   });
+
+  it("should n`t has a label when small is true", () => {
+    before(
+      "Input",
+      <Input tag="name" value="something" onChange={() => {}} small={true} />
+    );
+    const label = query("label");
+
+    expect(label).not.toBeInTheDocument();
+  });
 });

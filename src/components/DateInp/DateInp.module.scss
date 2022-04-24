@@ -1,0 +1,52 @@
+.DateInp {
+  padding: 0.3em 1em;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.inputs {
+  border-radius: 5px;
+  & > input {
+    text-align: center;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.widthBig {
+  width: 130px;
+}
+
+.widthSmall {
+  width: 80px;
+}
+
+.repeat {
+  display: block;
+}
+
+.btn {
+  background-color: white;
+}
+
+.edits {
+  height: 0;
+  transition: height linear 0.2s;
+}
+
+.openEdits {
+  height: 100%;
+  overflow: visible !important;
+}
+
+.inputsWrapper {
+}
+
+.calendar {
+  padding: 0.5em;
+  padding-bottom: 3em;
+}

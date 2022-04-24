@@ -1,4 +1,4 @@
-import moment from "moment-jalaali";
+import moment, { Moment } from "moment-jalaali";
 import { DateI } from "../redux/reducers/date/date";
 
 export interface CatchI<T = any> {
@@ -170,7 +170,7 @@ export const convertHoursToMinutes = (date: moment.Moment) => {
   return moment.duration(date.format("HH:mm:ss")).asMinutes();
 };
 
-export function dateHelper(): DateI {
+export function dateHelper() {
   const date = moment();
 
   const year = +date.format("jYYYY"),
@@ -232,4 +232,26 @@ export function roundSpecific(number: number, base: number) {
     const divided = Math.ceil(number / base);
     return base * divided;
   }
+}
+
+export function indexOfFirstDayOfMonthInWeek(date: Moment) {
+  const monthFirstDayWeekDayName = (weekDaysEnglishToPersianLetters as any)[
+    date.format("dddd").toLowerCase()
+  ];
+
+  const monthFirstDayWeekDayNameIndex = weekDaysInPersianLetters.findIndex(
+    letter => letter === monthFirstDayWeekDayName
+  );
+
+  return monthFirstDayWeekDayNameIndex;
+}
+
+export function convertAMPMtoPersia(hour: string) {
+  return hour.split(" ")[1] === "AM"
+    ? hour.replace("AM", "قب")
+    : hour.replace("PM", "بع");
+}
+
+export function convertMinutesToHours(minutes: number) {
+  return moment().startOf("day").add(minutes, "minutes").format("hh:mm A");
 }

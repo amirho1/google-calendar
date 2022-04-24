@@ -12,7 +12,7 @@ const NavBar: FC<NavBarProps> = ({ closeSideBar }) => {
   const { pathname } = useLocation();
   return (
     <div className={styles.NavBar} data-testid="NavBar">
-      {pathname === "/settings" ? (
+      {pathname.match("/settings") ? (
         <NavSettings />
       ) : (
         <NavMain closeSideBar={closeSideBar} />

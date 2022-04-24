@@ -17,16 +17,12 @@
       "1670963400000": [
         {
           "id": 1,
-          "from": "11:15",
-          "till": "11:30",
+          "from": 0,
+          "till": 60,
           "title": "my birthday",
           "description": "throw a party"
         }
       ]
-    },
-    "amirhossein": {},
-    "amir": {},
-    "some": {},
-    "یچی بینشه": {}
+    }
   }
 }

@@ -1,16 +1,16 @@
-// templates/component/Main.js
+// templates/component/Description.js
 
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
-import Main from "./Main";
+import Description from "./Description";
 import { before, Query } from "../../utils/testHelper";
 
-describe("<Main />", () => {
+describe("<Description />", () => {
   let query: Query;
   let element: HTMLElement;
 
   beforeEach(() => {
-    ({ element, query } = before("Main", <Main sideBarDisplay={true} />));
+    ({ element, query } = before("Description", <Description />));
   });
 
   it("should mount", () => {

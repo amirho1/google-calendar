@@ -1,9 +1,10 @@
 import { Action } from "redux";
 import { InitialValueI } from "../..";
-import { Moment } from "moment-jalaali";
+import moment, { isMoment, Moment } from "moment-jalaali";
 import { dateHelper } from "../../../utils/helpers";
-import { dateIncreaseMonth } from "./actions";
+import { increaseDay, decreaseDay, setDate } from "./actions";
 import { Map } from "immutable";
+import { ActionI } from "../events/events";
 
 export type PersianMonthNameT =
   | "فروردین"
@@ -32,24 +33,30 @@ export type EnglishMonthNames = "";
 
 export interface DateI extends InitialValueI {
   date: Moment;
-  day: number;
-  month: number;
-  monthName: string;
-  year: number;
-  weekday: string;
 }
 
-export const defaultValue = dateHelper();
+export const defaultValue: DateI = { date: moment(), status: "idle" };
 
 export default function dateReducer(
   state: DateI = defaultValue,
-  action: Action
+  action: ActionI<Moment>
 ) {
   switch (action.type) {
-    case dateIncreaseMonth.type: {
-      let imuCopy = Map(state);
-      imuCopy = imuCopy.set("month", state.month + 1);
-      return imuCopy.toJS();
+    case increaseDay.type: {
+      const cloneDate = state.date.clone();
+      cloneDate.add(1, "days").calendar();
+      return { ...state, date: cloneDate };
+    }
+    case decreaseDay.type: {
+      const cloneDate = state.date.clone();
+      cloneDate.subtract(1, "days").calendar();
+      return { ...state, date: cloneDate };
+    }
+
+    case setDate.type: {
+      console.log("setDate");
+      if (isMoment(action.payload)) return { ...state, date: action.payload };
+      return state;
     }
     default:
       return state;

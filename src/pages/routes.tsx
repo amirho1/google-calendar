@@ -1,20 +1,28 @@
 import React from "react";
-import DayP from "./DayP/DayP";
-import WeekP from "./WeekP/WeekP";
 import { Route } from "react-router-dom";
 
-interface RouteI {
-  name: string;
+export interface RouteI {
+  name?: string;
+  index?: boolean;
   component: JSX.Element;
+  nest?: RouteI[];
 }
 
-export default function routes() {
-  const routes: RouteI[] = [
-    { name: "/", component: <DayP /> },
-    { name: "week", component: <WeekP /> },
-  ];
-
-  return routes.map((route, i) => (
-    <Route key={i} path={`/${route.name}`} element={route.component} />
+export default function routes(routesList: RouteI[]) {
+  return routesList.map((route, i) => (
+    <Route
+      key={i}
+      path={!route.index ? `${route.name}` : undefined}
+      index={route.index}
+      element={route.component}>
+      {route.nest ? routes(route.nest) : null}
+    </Route>
   ));
 }
+
+export const rc = (
+  component: JSX.Element,
+  name?: string,
+  index?: boolean,
+  nest?: RouteI[]
+): RouteI => ({ name, index, component, nest });

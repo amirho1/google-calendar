@@ -6,6 +6,7 @@ import Calendars from "./Calendars";
 import { before, Query } from "../../utils/testHelper";
 import { Provider } from "react-redux";
 import store from "../../redux";
+import { BrowserRouter } from "react-router-dom";
 
 describe("<Calendars />", () => {
   let query: Query;
@@ -14,9 +15,11 @@ describe("<Calendars />", () => {
   beforeEach(() => {
     ({ element, query } = before(
       "Calendars",
-      <Provider store={store}>
-        <Calendars />
-      </Provider>
+      <BrowserRouter>
+        <Provider store={store}>
+          <Calendars />
+        </Provider>
+      </BrowserRouter>
     ));
   });
 

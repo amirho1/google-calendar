@@ -47,7 +47,7 @@ const Modal: FC<ModalProps> = ({
       position,
       left: x,
       top: y,
-      boxShadow: boxShadow ? "1px 1px 10px 5px var(--gray)" : undefined,
+      boxShadow: boxShadow ? "1px 1px 10px 5px var(--box-shadow)" : undefined,
       borderRadius: "5px",
       backgroundColor: backgroundColor,
       zIndex: zIndex,

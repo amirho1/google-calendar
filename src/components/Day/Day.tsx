@@ -1,10 +1,13 @@
-import moment from "moment-jalaali";
-import React, { FC, useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import moment, { Moment } from "moment-jalaali";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
+import { SAVE_ADDED_EVENT } from "../../redux/reducers/events/events";
+import { addEvent } from "../../redux/sagas/events";
 import {
   convertEnglishWeekdaysToPersian,
   convertHoursToMinutes,
+  convertMinutesToHours,
   roundSpecific,
 } from "../../utils/helpers";
 import EventForm from "../EventForm/EventForm";
@@ -45,13 +48,8 @@ const Day: FC<DayProps> = () => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [headerBottomBorderDisplay, setHeaderBottomBorderDisplay] = useState(0);
   const [minutes, setMinutes] = useState(0);
-  const [tasks, setTasks] = useState<JSX.Element[]>([]);
-
-  const [eventForm, setEventForm] = useState({
-    ...centerOFScreen(),
-    display: false,
-  });
-
+  const [events, setEvents] = useState<JSX.Element[]>([]);
+  const dispatch = useDispatch();
   const [refOFEventFormModal, setRefOFEventFormModal] =
     useState<React.RefObject<HTMLDivElement>>();
 
@@ -59,10 +57,22 @@ const Day: FC<DayProps> = () => {
     setRefOFEventFormModal(ref);
   }, []);
 
-  const [weekday, date] = useSelector<ReduxStateI, [string, number]>(state => [
-    convertEnglishWeekdaysToPersian(state.date.weekday.toLowerCase() as any),
-    state.date.day,
-  ]);
+  const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
+
+  const day = useMemo(() => date.format("jDD"), [date]);
+  const weekday = useMemo(
+    () =>
+      convertEnglishWeekdaysToPersian(date.format("dddd").toLowerCase() as any),
+    [date]
+  );
+
+  const [eventForm, setEventForm] = useState({
+    ...centerOFScreen(),
+    date,
+    display: false,
+    eventStartTime: 0,
+    eventEndTime: 0,
+  });
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -74,6 +84,10 @@ const Day: FC<DayProps> = () => {
     };
   });
 
+  const onStartTimeChange = useCallback((startTime: number) => {
+    setEventForm(current => ({ ...current, startTime }));
+  }, []);
+
   const onMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
       // prevent from right click
@@ -81,27 +95,45 @@ const Day: FC<DayProps> = () => {
       e.stopPropagation();
       setIsMouseDown(true);
       const { y } = e.currentTarget.getBoundingClientRect();
+      const eventStartTime = roundSpecific(e.clientY - y, 15);
+      const dateClone = date.clone();
+      const time = convertMinutesToHours(eventStartTime).split(" ")[0];
+      const h = +time.split(":")[0];
+      const m = +time.split(":")[1];
+
+      dispatch({ type: SAVE_ADDED_EVENT });
+
+      dateClone.set({ h, m });
+
+      setEventForm(current => ({
+        ...current,
+        eventStartTime,
+        eventEndTime: 60,
+      }));
+
       const modal = (
         <Modal
-          key={tasks.length}
+          key={events.length}
           children={<Task />}
           boxShadow={false}
           data-testid="Task"
           backgroundColor="var(--blue)"
           x={0}
-          y={roundSpecific(e.clientY - y, 15)}
+          y={eventStartTime}
           resizeAble={true}
           width={`${100}%`}
           display={true}
           height="60px"
         />
       );
-      setTasks(current => [...current, modal]);
+      setEvents(current => [...current, modal]);
     },
-    [eventForm.display, tasks.length]
+    [eventForm.display, date, dispatch, events.length]
   );
 
   const onMouseUp = useCallback<React.MouseEventHandler<HTMLDivElement>>(e => {
+    if (e.button === 2) return;
+
     setEventForm(current => {
       return { ...current, display: !current.display };
     });
@@ -125,7 +157,6 @@ const Day: FC<DayProps> = () => {
           const dx = event.clientX - x;
           const dy = event.clientY - y;
 
-          console.log(`previousX : ${previousX} + ${dx} = ${previousX + dx}`);
           refOFEventFormModal.current.style.top = `${previousY + dy}px`;
           refOFEventFormModal.current.style.left = `${previousX + dx}px`;
         }
@@ -134,7 +165,6 @@ const Day: FC<DayProps> = () => {
       const onMouseUp = () => {
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
-        console.log("clean UP");
       };
 
       document.addEventListener("mousemove", onMouseMove);
@@ -143,18 +173,29 @@ const Day: FC<DayProps> = () => {
     [refOFEventFormModal]
   );
 
+  const closeModalEventForm = useCallback(() => {
+    setEventForm(current => ({ ...current, display: false }));
+  }, []);
+
   return (
     <div className={styles.Day} data-testid="Day">
       <Modal
         display={eventForm.display}
         getRef={getRef}
         zIndex={1000}
-        height="520px"
+        height="fit-content"
         width="450px"
         position="fixed"
         x={eventForm.x}
         y={eventForm.y}>
-        <EventForm onHeaderMouseDown={onEventFormHeaderMouseDown} />
+        <EventForm
+          eventEndTime={eventForm.eventEndTime}
+          onHeaderMouseDown={onEventFormHeaderMouseDown}
+          date={eventForm.date}
+          eventStartTime={eventForm.eventStartTime}
+          setModalDisplay={closeModalEventForm}
+          onStartTimeChange={onStartTimeChange}
+        />
       </Modal>
 
       <div
@@ -173,10 +214,11 @@ const Day: FC<DayProps> = () => {
             width="50px"
             height="50px"
             className="pointer">
-            <div className={styles.date}>{date}</div>
+            <div className={styles.date}>{day}</div>
           </HoverCircle>
         </div>
       </div>
+
       <main
         className={styles.main}
         onScroll={e => {
@@ -190,7 +232,7 @@ const Day: FC<DayProps> = () => {
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}>
           <TimeLine y={minutes} color="red" />
-          {tasks}
+          {events}
           <Line
             vertical={true}
             height="100%"

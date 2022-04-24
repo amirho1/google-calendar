@@ -9,10 +9,11 @@
 }
 
 .SideBarHead {
-  height: 8em;
+  height: 10%;
 }
 
 .SideBarBody {
   border-left: 8px solid var(--gray);
-  height: 100%;
+  height: 90%;
+  overflow: auto;
 }

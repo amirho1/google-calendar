@@ -1,0 +1,25 @@
+.Row {
+  display: flex;
+  height: fit-content;
+  padding: 0.5em 0;
+}
+
+.iconWrapper {
+  text-align: center;
+  width: 13%;
+  padding-top: 0.4em;
+  & > * {
+    font-size: 2rem;
+  }
+}
+
+.hoverGray {
+  &:hover {
+    background-color: var(--gray);
+  }
+}
+
+.body {
+  width: 87%;
+  border-radius: 5px;
+}

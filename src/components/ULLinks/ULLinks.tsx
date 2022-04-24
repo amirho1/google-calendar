@@ -1,5 +1,6 @@
 import React, { SetStateAction } from "react";
 import { capitalize } from "../../utils/helpers";
+import { PrimitivesT } from "../Table/Table";
 import ListItem from "./ListItem/ListItem";
 import styles from "./ULLinks.module.scss";
 
@@ -16,7 +17,7 @@ export type CB = (
 export interface IItem {
   url?: string;
   icon?: JSX.Element | string;
-  tag: string;
+  tag: PrimitivesT;
   cb?: CB;
   onClick?: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
   children?: IItem[];
@@ -89,7 +90,9 @@ function ULLinks({
               target={anchorTarget}
               rel={anchorTarget === "_blank" ? "noreferrer" : undefined}
               href={item.url}>
-              <span className={styles.Tag}>{capitalize(item.tag)}</span>
+              <span className={styles.Tag}>
+                {typeof item.tag === "string" ? capitalize(item.tag) : item.tag}
+              </span>
               {item.icon}
             </a>
           </ListItem>
