@@ -26,6 +26,7 @@ interface EventFormProps {
   description: EditorState;
   onTitleChange: (newTitle: string) => void;
   onDescriptionChange: (editorState: EditorState) => void;
+  handleAddingEvent: () => void;
 }
 
 const EventForm: FC<EventFormProps> = ({
@@ -39,6 +40,7 @@ const EventForm: FC<EventFormProps> = ({
   description,
   onDescriptionChange,
   onTitleChange,
+  handleAddingEvent,
 }) => {
   const eventStartT = useMemo(
     () => convertMinutesToHours(eventStartTime),
@@ -109,7 +111,11 @@ const EventForm: FC<EventFormProps> = ({
 
         <div className={`${styles.btnWrapper} owl-mright`}>
           <Button className={`${styles.btnMore} `}>گزینه های بیشتر</Button>
-          <Button className={`${styles.btnSave} colWhite`}>ذخیره</Button>
+          <Button
+            className={`${styles.btnSave} colWhite`}
+            onClick={handleAddingEvent}>
+            ذخیره
+          </Button>
         </div>
       </div>
     </div>

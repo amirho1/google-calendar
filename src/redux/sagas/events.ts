@@ -7,24 +7,37 @@ import {
   SAVE_EVENTS,
 } from "../reducers/events/events";
 
-async function createEvent(body: EventI) {
+interface CreateEventProperties {
+  body: EventI;
+  calName: string;
+  timeStamp: number;
+}
+
+async function createEvent({
+  body,
+  timeStamp,
+  calName,
+}: CreateEventProperties) {
   const res = await Api({
     method: "POST",
-    url: "/events/tasks/1670963400000",
+    url: `/events/${calName}/${timeStamp}`,
     data: body,
   });
   return res.data;
 }
 
-export function* addEvent(effect: Effect<string, EventI>) {
+export function* addEvent(effect: Effect<string, CreateEventProperties>) {
   const response: EventI = yield call(createEvent, effect.payload);
-  yield put({ type: SAVE_ADDED_EVENT, payload: response });
+  yield put({
+    type: SAVE_ADDED_EVENT,
+    payload: { event: response, timeStamp: effect.payload.timeStamp },
+  });
 }
 
 addEvent.type = "ADD_EVENT";
 
-addEvent.ac = (body: EventI) => {
-  return { type: addEvent.type, payload: body };
+addEvent.ac = (props: CreateEventProperties) => {
+  return { type: addEvent.type, payload: props };
 };
 
 interface FetchEventsProps {

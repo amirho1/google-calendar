@@ -37,7 +37,7 @@ export interface ActionI<PayloadT = any> extends Action {
 
 export default function eventsReducer(
   state: EventsStateI = defaultValue,
-  action: ActionI<any>
+  action: ActionI
 ) {
   switch (action.type) {
     case SAVE_EVENTS: {
@@ -49,6 +49,15 @@ export default function eventsReducer(
             events: { ...state.events, [timeStamp]: events },
           }
         : state;
+    }
+    case SAVE_ADDED_EVENT: {
+      return {
+        ...state,
+        events: {
+          ...state.events,
+          [action.payload.timeStamp]: action.payload.event,
+        },
+      };
     }
     default:
       return state;

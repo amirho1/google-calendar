@@ -1,10 +1,11 @@
+import { convertToHTML } from "draft-convert";
 import { EditorState } from "draft-js";
 import moment, { Moment } from "moment-jalaali";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import { EventI } from "../../redux/reducers/events/events";
-import { getEvents } from "../../redux/sagas/events";
+import { addEvent, getEvents } from "../../redux/sagas/events";
 import {
   convertEnglishWeekdaysToPersian,
   convertHoursToMinutes,
@@ -130,7 +131,6 @@ const Day: FC<DayProps> = () => {
     },
     [eventForm.display, date]
   );
-
   const onMouseUp = useCallback<React.MouseEventHandler<HTMLDivElement>>(e => {
     if (e.button === 2) return;
 
@@ -194,6 +194,32 @@ const Day: FC<DayProps> = () => {
     setEventForm(current => ({ ...current, title: newDescription }));
   }, []);
 
+  const handleAddingEvent = useCallback(() => {
+    const event: EventI = {
+      description: convertToHTML(eventForm.description.getCurrentContent()),
+      endTime: eventForm.eventEndTime,
+      startTime: eventForm.eventStartTime,
+      title: eventForm.title,
+    };
+
+    dispatch(addEvent.ac({ body: event, calName: "tasks", timeStamp }));
+    setEventForm(current => ({
+      ...current,
+      display: false,
+      eventEndTime: 0,
+      description: EditorState.createEmpty(),
+      title: "",
+      eventStartTime: 0,
+    }));
+  }, [
+    dispatch,
+    eventForm.description,
+    eventForm.eventEndTime,
+    eventForm.eventStartTime,
+    eventForm.title,
+    timeStamp,
+  ]);
+
   return (
     <div className={styles.Day} data-testid="Day">
       <Modal
@@ -206,6 +232,7 @@ const Day: FC<DayProps> = () => {
         x={eventForm.x}
         y={eventForm.y}>
         <EventForm
+          handleAddingEvent={handleAddingEvent}
           eventEndTime={eventForm.eventEndTime}
           onEndTimeChang={onEndTimeChang}
           eventStartTime={eventForm.eventStartTime}
@@ -254,8 +281,12 @@ const Day: FC<DayProps> = () => {
           <TimeLine y={timeLineMinutes} color="red" />
 
           <Modal
-            key={events.length}
-            children={<Task />}
+            children={
+              <Task
+                startTime={eventForm.eventStartTime}
+                endTime={eventForm.eventEndTime}
+              />
+            }
             boxShadow={false}
             data-testid="Task"
             backgroundColor="var(--blue)"
@@ -267,15 +298,17 @@ const Day: FC<DayProps> = () => {
             height={`${eventForm.eventEndTime}px`}
           />
 
-          {events.map(event => (
+          {events.map(({ description, endTime, startTime, title }, index) => (
             <Modal
-              key={events.length}
-              children={<Task />}
+              key={index}
+              children={
+                <Task title={title} endTime={endTime} startTime={startTime} />
+              }
               boxShadow={false}
               data-testid="Task"
               backgroundColor="var(--blue)"
               x={0}
-              y={event.startTime}
+              y={startTime}
               resizeAble={true}
               width={`${100}%`}
               display={true}

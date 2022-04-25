@@ -15,6 +15,7 @@ describe("<EventForm />", () => {
     ({ element, query } = before(
       "EventForm",
       <EventForm
+        handleAddingEvent={() => {}}
         onDescriptionChange={() => {}}
         onTitleChange={() => {}}
         description={EditorState.createWithContent(convertFromHTML(""))}

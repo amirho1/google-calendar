@@ -56,11 +56,15 @@ app.get("/events/:calName/:date", ({ params: { calName, date } }, res) => {
 app.post(
   "/events/:calName/:date",
   ({ params: { calName, date }, body }, res) => {
-    if (!(jsonData?.events as any)[calName]) {
+    if (
+      !(jsonData?.events as any)[calName] ||
+      !(jsonData?.events as any)[calName][date]
+    ) {
       (jsonData?.events as any)[calName] = {};
       (jsonData?.events as any)[calName][date] = [];
     }
-    body.id = (jsonData?.events as any)[calName][date].length + 1;
+
+    body.id = (jsonData?.events as any)[calName][date]?.length + 1;
     (jsonData?.events as any)[calName][date].push(body);
     write(JSON.stringify(jsonData), console.error);
     res.send((jsonData?.events as any)[calName][date]);

@@ -2,7 +2,7 @@ import { Provider } from "react-redux";
 import App from "./App";
 import store from "./redux";
 import { before } from "./utils/testHelper";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 
 describe("App", () => {
   let element: HTMLElement;

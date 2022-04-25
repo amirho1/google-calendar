@@ -11,7 +11,10 @@ describe("<Task />", () => {
   let element: HTMLElement;
 
   beforeEach(() => {
-    ({ element, query } = before("Task", <Task title="title" />));
+    ({ element, query } = before(
+      "Task",
+      <Task endTime={0} startTime={0} title="title" />
+    ));
   });
 
   it("should mount", () => {
