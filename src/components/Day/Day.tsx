@@ -15,7 +15,7 @@ import {
 import EventForm from "../EventForm/EventForm";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Line from "../Line/Line";
-import Modal from "../Modal/Modal";
+import Modal, { onEventMouseDown } from "../Modal/Modal";
 import Task from "../Task/Task";
 import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
@@ -163,7 +163,6 @@ const Day: FC<DayProps> = () => {
       };
 
       const onMouseUp = (e: MouseEvent) => {
-        console.log("Here");
         e.stopPropagation();
 
         document.removeEventListener("mousemove", onMouseMove);
@@ -219,6 +218,49 @@ const Day: FC<DayProps> = () => {
     eventForm.title,
     timeStamp,
   ]);
+
+  const onEventMouseDown = useCallback(
+    (id: number): onEventMouseDown =>
+      (e, ref) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (ref.current) {
+          let mouseDownY = e.clientY;
+          ref.current.style.cursor = "move";
+          ref.current.style.zIndex = "2000";
+          const currentY = parseInt(ref.current.style.top, 10);
+
+          const onMouseMove = (
+            e: React.MouseEvent<HTMLDivElement, MouseEvent>
+          ) => {
+            const dy = e.clientY - mouseDownY;
+            const plus = currentY + dy;
+            const endLimit = 1380;
+            const y = plus < 0 ? 0 : plus >= endLimit ? endLimit : plus;
+            if (ref.current) ref.current.style.top = `${y}px`;
+          };
+
+          const onMouseUp = (
+            e: React.MouseEvent<HTMLDivElement, MouseEvent>
+          ) => {
+            e.stopPropagation();
+            if (ref.current) {
+              ref.current.style.cursor = "initial";
+              ref.current.style.zIndex = "900";
+
+              document.removeEventListener("mousemove", onMouseMove as any);
+              ref.current.removeEventListener("mouseup", onMouseUp as any);
+              document.removeEventListener("mouseup", onMouseUp as any);
+            }
+          };
+
+          ref.current.addEventListener("mouseup", onMouseUp as any);
+          document.addEventListener("mouseup", onMouseUp as any);
+          document.addEventListener("mousemove", onMouseMove as any);
+        }
+      },
+    []
+  );
 
   return (
     <div className={styles.Day} data-testid="Day">
@@ -298,23 +340,27 @@ const Day: FC<DayProps> = () => {
             height={`${eventForm.eventEndTime}px`}
           />
 
-          {events.map(({ description, endTime, startTime, title }, index) => (
-            <Modal
-              key={index}
-              children={
-                <Task title={title} endTime={endTime} startTime={startTime} />
-              }
-              boxShadow={false}
-              data-testid="Task"
-              backgroundColor="var(--blue)"
-              x={0}
-              y={startTime}
-              resizeAble={true}
-              width={`${100}%`}
-              display={true}
-              height="60px"
-            />
-          ))}
+          {events.map(
+            ({ description, endTime, startTime, title, id }, index) => (
+              <Modal
+                key={index}
+                children={
+                  <Task title={title} endTime={endTime} startTime={startTime} />
+                }
+                boxShadow={false}
+                data-testid="Task"
+                backgroundColor="var(--blue)"
+                x={0}
+                y={startTime}
+                resizeAble={true}
+                width={`${100}%`}
+                display={true}
+                height="60px"
+                onMouseUp={e => e.stopPropagation()}
+                onMouseDown={onEventMouseDown(id || 0)}
+              />
+            )
+          )}
 
           <Line
             vertical={true}

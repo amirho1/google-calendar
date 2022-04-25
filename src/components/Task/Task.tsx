@@ -16,7 +16,9 @@ const Task: FC<TaskProps> = ({ title = "بدون عنوان", startTime, endTime
     <div className={styles.title}>{title || "بدون عنوان"}</div>
     <div className={`${styles.time} owl-mright`}>
       <span>{convertAMPMtoPersia(convertMinutesToHours(startTime))}</span>
-      <span>{convertAMPMtoPersia(convertMinutesToHours(endTime))}</span>
+      <span>
+        {convertAMPMtoPersia(convertMinutesToHours(startTime + endTime))}
+      </span>
     </div>
     <div className={styles.location}></div>
   </div>

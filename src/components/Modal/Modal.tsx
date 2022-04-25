@@ -15,7 +15,14 @@ interface ModalProps {
   zIndex?: number;
   position?: "absolute" | "fixed";
   getRef?: (ref: React.RefObject<HTMLDivElement>) => any;
+  onMouseDown?: onEventMouseDown;
+  onMouseUp?: React.MouseEventHandler<HTMLDivElement>;
 }
+
+export type onEventMouseDown = (
+  e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ref: React.RefObject<HTMLDivElement>
+) => void;
 
 const Modal: FC<ModalProps> = ({
   children,
@@ -31,12 +38,14 @@ const Modal: FC<ModalProps> = ({
   zIndex = 900,
   getRef,
   position = "absolute",
+  onMouseDown,
+  onMouseUp,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (getRef) getRef(ref);
-  }, []);
+  }, [getRef]);
 
   const styles = useMemo<React.CSSProperties>(
     () => ({
@@ -68,7 +77,7 @@ const Modal: FC<ModalProps> = ({
     []
   );
 
-  const onMouseDown =
+  const onBottomBorderMouseDown =
     useCallback((): React.MouseEventHandler<HTMLDivElement> => {
       let y = 0;
       let h = 60;
@@ -96,15 +105,23 @@ const Modal: FC<ModalProps> = ({
       };
     }, []);
 
+  const onBodyMouseDon = useCallback<React.MouseEventHandler<HTMLDivElement>>(
+    e => {
+      if (onMouseDown) onMouseDown(e, ref);
+    },
+    [onMouseDown]
+  );
+
   return (
     <div
       ref={ref}
       style={styles}
       data-testid="Modal"
-      onMouseDown={e => e.stopPropagation()}>
+      onMouseDown={onBodyMouseDon}
+      onMouseUp={onMouseUp}>
       {children}
       {resizeAble ? (
-        <div style={bottomStyle} onMouseDown={onMouseDown()}></div>
+        <div style={bottomStyle} onMouseDown={onBottomBorderMouseDown()}></div>
       ) : null}
     </div>
   );

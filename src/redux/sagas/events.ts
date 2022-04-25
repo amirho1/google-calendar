@@ -13,6 +13,13 @@ interface CreateEventProperties {
   timeStamp: number;
 }
 
+export interface UpdateEventPayload {
+  id: number;
+  body: EventI;
+}
+
+export function* updateEvent(effect: Effect<string, UpdateEventPayload>) {}
+
 async function createEvent({
   body,
   timeStamp,
