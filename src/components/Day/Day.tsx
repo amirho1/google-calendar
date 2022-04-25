@@ -320,7 +320,10 @@ const Day: FC<DayProps> = () => {
           // onMouseMove={onMouseMove}
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}>
-          <TimeLine y={timeLineMinutes} color="red" />
+          {moment().startOf("day").valueOf() ===
+          date.startOf("day").valueOf() ? (
+            <TimeLine y={timeLineMinutes} color="red" />
+          ) : null}
 
           <Modal
             children={
