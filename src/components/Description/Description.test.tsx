@@ -10,7 +10,7 @@ describe("<Description />", () => {
   let element: HTMLElement;
 
   beforeEach(() => {
-    ({ element, query } = before("Description", <Description />));
+    // ({ element, query } = before("Description", <Description editorState={} />));
   });
 
   it("should mount", () => {

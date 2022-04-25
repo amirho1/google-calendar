@@ -13,6 +13,7 @@ import { GrTextAlignFull } from "react-icons/gr";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Description from "../Description/Description";
 import { convertMinutesToHours } from "../../utils/helpers";
+import { EditorState } from "draft-js";
 
 interface EventFormProps {
   onHeaderMouseDown: React.MouseEventHandler<HTMLDivElement>;
@@ -21,6 +22,10 @@ interface EventFormProps {
   eventEndTime: number;
   onStartTimeChange: (startTime: number) => void;
   onEndTimeChang: (endTime: number) => void;
+  title: string;
+  description: EditorState;
+  onTitleChange: (newTitle: string) => void;
+  onDescriptionChange: (editorState: EditorState) => void;
 }
 
 const EventForm: FC<EventFormProps> = ({
@@ -30,9 +35,11 @@ const EventForm: FC<EventFormProps> = ({
   eventStartTime,
   eventEndTime,
   onEndTimeChang,
+  title,
+  description,
+  onDescriptionChange,
+  onTitleChange,
 }) => {
-  const [titleValue, setTitleValue] = useState("");
-
   const eventStartT = useMemo(
     () => convertMinutesToHours(eventStartTime),
     [eventStartTime]
@@ -46,12 +53,6 @@ const EventForm: FC<EventFormProps> = ({
         .format("hh:mm A"),
     [eventEndTime, eventStartTime]
   );
-
-  const onTitleChange = useCallback<
-    React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
-  >(e => {
-    setTitleValue(e.currentTarget.value);
-  }, []);
 
   return (
     <div className={styles.EventForm} data-testid="EventForm">
@@ -74,9 +75,9 @@ const EventForm: FC<EventFormProps> = ({
         <Row>
           <Input
             tag="عنوان"
-            onChange={onTitleChange}
+            onChange={e => onTitleChange(e.currentTarget.value)}
             fixedBorder={true}
-            value={titleValue}
+            value={title}
             backgroundColor="white"
             inpWrapperClassName={styles.titleInputWrapper}
           />
@@ -100,7 +101,10 @@ const EventForm: FC<EventFormProps> = ({
         </Row>
 
         <Row icon={<GrTextAlignFull />}>
-          <Description />
+          <Description
+            editorState={description}
+            onEditorStateChange={onDescriptionChange}
+          />
         </Row>
 
         <div className={`${styles.btnWrapper} owl-mright`}>

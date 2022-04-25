@@ -4,7 +4,8 @@ import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import EventForm from "./EventForm";
 import { before, Query } from "../../utils/testHelper";
-import moment from "moment-jalaali";
+import { EditorState } from "draft-js";
+import { convertFromHTML } from "draft-convert";
 
 describe("<EventForm />", () => {
   let query: Query;
@@ -14,6 +15,10 @@ describe("<EventForm />", () => {
     ({ element, query } = before(
       "EventForm",
       <EventForm
+        onDescriptionChange={() => {}}
+        onTitleChange={() => {}}
+        description={EditorState.createWithContent(convertFromHTML(""))}
+        title=""
         onEndTimeChang={() => {}}
         eventEndTime={0}
         eventStartTime={0}

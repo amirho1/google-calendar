@@ -1,3 +1,4 @@
+import { EditorState } from "draft-js";
 import moment, { Moment } from "moment-jalaali";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -76,6 +77,8 @@ const Day: FC<DayProps> = () => {
 
   const [eventForm, setEventForm] = useState({
     ...centerOFScreen(),
+    title: "",
+    description: EditorState.createEmpty(),
     date: date.clone(),
     display: false,
     eventStartTime: 0,
@@ -183,6 +186,14 @@ const Day: FC<DayProps> = () => {
     dispatch(getEvents.ac({ timeStamp: `${timeStamp}` }));
   }, [dispatch, timeStamp]);
 
+  const onDescriptionChange = useCallback((editorState: EditorState) => {
+    setEventForm(current => ({ ...current, description: editorState }));
+  }, []);
+
+  const onTitleChange = useCallback((newDescription: string) => {
+    setEventForm(current => ({ ...current, title: newDescription }));
+  }, []);
+
   return (
     <div className={styles.Day} data-testid="Day">
       <Modal
@@ -201,6 +212,10 @@ const Day: FC<DayProps> = () => {
           setModalDisplay={closeModalEventForm}
           onStartTimeChange={onStartTimeChange}
           onHeaderMouseDown={onEventFormHeaderMouseDown}
+          title={eventForm.title}
+          description={eventForm.description}
+          onDescriptionChange={onDescriptionChange}
+          onTitleChange={onTitleChange}
         />
       </Modal>
 
