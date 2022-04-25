@@ -19,9 +19,9 @@ const StartTimeList: FC<StartTimeListProps> = ({ onStartTimeChange, date }) => {
     item => (
       <div
         className={`hoverBGGray ${styles.hour}`}
-        onClick={() => {
-          if (typeof item.tag === "number") onStartTimeChange(item.tag);
-        }}>
+        onClick={() =>
+          typeof item.tag === "number" ? onStartTimeChange(item.tag) : null
+        }>
         {typeof item.tag === "number"
           ? convertAMPMtoPersia(convertMinutesToHours(item.tag))
           : item.tag}

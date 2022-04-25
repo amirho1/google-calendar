@@ -7,52 +7,45 @@ import Input from "../Input/Input";
 import Row from "./Row/Row";
 import { MdOutlineWatchLater } from "react-icons/md";
 import DateInp from "../DateInp/DateInp";
-import { Moment } from "moment-jalaali";
+import moment from "moment-jalaali";
 import Button from "../Button/Button";
 import { GrTextAlignFull } from "react-icons/gr";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Description from "../Description/Description";
+import { convertMinutesToHours } from "../../utils/helpers";
 
 interface EventFormProps {
   onHeaderMouseDown: React.MouseEventHandler<HTMLDivElement>;
-  date: Moment;
   setModalDisplay: () => void;
   eventStartTime: number;
   eventEndTime: number;
   onStartTimeChange: (startTime: number) => void;
+  onEndTimeChang: (endTime: number) => void;
 }
 
 const EventForm: FC<EventFormProps> = ({
   onHeaderMouseDown,
-  date,
   setModalDisplay,
   onStartTimeChange,
   eventStartTime,
   eventEndTime,
+  onEndTimeChang,
 }) => {
   const [titleValue, setTitleValue] = useState("");
-  const [editedDate, setEditedDate] = useState<Moment>(date);
 
   const eventStartT = useMemo(
-    () =>
-      editedDate
-        .startOf("day")
-        .add(eventStartTime, "minutes")
-        .format("hh:mm A"),
-    [editedDate, eventStartTime]
+    () => convertMinutesToHours(eventStartTime),
+    [eventStartTime]
   );
+
   const eventEndT = useMemo(
     () =>
-      date
+      moment()
         .startOf("day")
         .add(eventStartTime + eventEndTime, "minutes")
         .format("hh:mm A"),
-    [date, eventEndTime, eventStartTime]
+    [eventEndTime, eventStartTime]
   );
-
-  const onDateChange = useCallback((newDate: Moment) => {
-    setEditedDate(newDate);
-  }, []);
 
   const onTitleChange = useCallback<
     React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
@@ -96,9 +89,8 @@ const EventForm: FC<EventFormProps> = ({
           <DateInp
             eventEndTime={eventEndT}
             eventStartTime={eventStartT}
-            date={editedDate}
-            onDateChange={onDateChange}
             onStartTimeChange={onStartTimeChange}
+            onEndTimeChang={onEndTimeChang}
           />
         </Row>
         <Row>

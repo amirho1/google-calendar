@@ -1,5 +1,4 @@
 import moment, { Moment } from "moment-jalaali";
-import { DateI } from "../redux/reducers/date/date";
 
 export interface CatchI<T = any> {
   [prop: string]: T;

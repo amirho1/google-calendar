@@ -2,7 +2,7 @@ import moment, { Moment } from "moment-jalaali";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
-import { EventI, SAVE_ADDED_EVENT } from "../../redux/reducers/events/events";
+import { EventI } from "../../redux/reducers/events/events";
 import { getEvents } from "../../redux/sagas/events";
 import {
   convertEnglishWeekdaysToPersian,
@@ -19,6 +19,8 @@ import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
 
 interface DayProps {}
+
+export type OnDateChangeT = (newDate: Moment) => void;
 
 const centerOFScreen = () => ({
   x: window.innerWidth / 2 - 225,
@@ -58,7 +60,8 @@ const Day: FC<DayProps> = () => {
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
 
-  const timeStamp = date.valueOf();
+  const timeStamp = useMemo(() => date.valueOf(), [date]);
+
   const events = useSelector<ReduxStateI, EventI[]>(
     state => state.events.events[timeStamp] || []
   );
@@ -80,17 +83,27 @@ const Day: FC<DayProps> = () => {
   });
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setTimeLineMinutes(convertHoursToMinutes(moment()));
-    }, 1000);
+    const id = setInterval(
+      () => setTimeLineMinutes(convertHoursToMinutes(moment())),
+      1000
+    );
 
     return () => clearInterval(id);
   });
 
   const onStartTimeChange = useCallback(
-    (startTime: number) => setEventForm(current => ({ ...current, startTime })),
+    (startTime: number) =>
+      setEventForm(current => {
+        return { ...current, eventStartTime: startTime };
+      }),
     []
   );
+
+  const onEndTimeChang = useCallback((endTime: number) => {
+    setEventForm(current => {
+      return { ...current, eventEndTime: endTime - current.eventStartTime };
+    });
+  }, []);
 
   const onMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
@@ -109,12 +122,10 @@ const Day: FC<DayProps> = () => {
       setEventForm(current => ({
         ...current,
         eventStartTime: roundSpecific(e.clientY - y, 15),
-        date: dateClone,
+        eventEndTime: 60,
       }));
-
-      dispatch({ type: SAVE_ADDED_EVENT });
     },
-    [eventForm.display, date, dispatch]
+    [eventForm.display, date]
   );
 
   const onMouseUp = useCallback<React.MouseEventHandler<HTMLDivElement>>(e => {
@@ -148,7 +159,10 @@ const Day: FC<DayProps> = () => {
         }
       };
 
-      const onMouseUp = () => {
+      const onMouseUp = (e: MouseEvent) => {
+        console.log("Here");
+        e.stopPropagation();
+
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
       };
@@ -182,11 +196,11 @@ const Day: FC<DayProps> = () => {
         y={eventForm.y}>
         <EventForm
           eventEndTime={eventForm.eventEndTime}
-          onHeaderMouseDown={onEventFormHeaderMouseDown}
-          date={eventForm.date}
+          onEndTimeChang={onEndTimeChang}
           eventStartTime={eventForm.eventStartTime}
           setModalDisplay={closeModalEventForm}
           onStartTimeChange={onStartTimeChange}
+          onHeaderMouseDown={onEventFormHeaderMouseDown}
         />
       </Modal>
 
@@ -210,7 +224,6 @@ const Day: FC<DayProps> = () => {
           </HoverCircle>
         </div>
       </div>
-
       <main
         className={styles.main}
         onScroll={e => {
@@ -236,7 +249,7 @@ const Day: FC<DayProps> = () => {
             resizeAble={true}
             width={`${100}%`}
             display={eventForm.display}
-            height="60px"
+            height={`${eventForm.eventEndTime}px`}
           />
 
           {events.map(event => (

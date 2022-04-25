@@ -4,7 +4,6 @@ import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import DateInp from "./DateInp";
 import { before, Query } from "../../utils/testHelper";
-import moment from "moment-jalaali";
 
 describe("<DateInp />", () => {
   let query: Query;
@@ -14,11 +13,10 @@ describe("<DateInp />", () => {
     ({ element, query } = before(
       "DateInp",
       <DateInp
+        onEndTimeChang={() => {}}
         onStartTimeChange={() => {}}
         eventEndTime={"0"}
         eventStartTime={""}
-        date={moment()}
-        onDateChange={() => {}}
       />
     ));
   });

@@ -1,4 +1,4 @@
-import { Moment } from "moment-jalaali";
+import moment, { Moment } from "moment-jalaali";
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import {
   convertAMPMtoPersia,
@@ -13,29 +13,31 @@ import Input from "../Input/Input";
 import Modal from "../Modal/Modal";
 import styles from "./DateInp.module.scss";
 import EndTimeList from "../EndTimeList/EndTimeList";
-import e from "express";
+import { useDispatch, useSelector } from "react-redux";
+import { ReduxStateI } from "../../redux";
+import { setDate } from "../../redux/reducers/date/actions";
 
 interface DateInpProps {
-  date: Moment;
-  onDateChange: (newDate: Moment) => void;
   eventStartTime: string;
   className?: string;
   eventEndTime: string;
   onStartTimeChange: (startTime: number) => void;
+  onEndTimeChang: (endTime: number) => void;
 }
 
 const DateInp: FC<DateInpProps> = ({
-  date,
-  onDateChange,
   className,
   eventStartTime,
   eventEndTime,
   onStartTimeChange,
+  onEndTimeChang,
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [calendarDisplay, setCalendarDisplay] = useState(false);
   const [startTimeListDisplay, setStartTimeListDisplay] = useState(false);
   const [endTimeListDisplay, setEndTimeListDisplay] = useState(false);
+  const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
+
   const weekday = useMemo(
     () =>
       convertEnglishWeekdaysToPersian(date.format("dddd").toLowerCase() as any),
@@ -43,6 +45,7 @@ const DateInp: FC<DateInpProps> = ({
   );
 
   const day = useMemo(() => date.jDate(), [date]);
+
   const monthName = useMemo(
     () => convertFinglishMonthToPersian(date.format("jMMMM")),
     [date]
@@ -56,6 +59,7 @@ const DateInp: FC<DateInpProps> = ({
   const closeModals = useCallback(() => {
     setCalendarDisplay(false);
     setStartTimeListDisplay(false);
+    setEndTimeListDisplay(false);
   }, []);
 
   useEffect(() => {
@@ -83,24 +87,25 @@ const DateInp: FC<DateInpProps> = ({
     [isEditMode]
   );
 
+  const dispatch = useDispatch();
+
   // onDateChangeClose calendar
   const onDCange = useCallback(
     (newDate: Moment) => {
-      onDateChange(newDate);
       setCalendarDisplay(false);
+      dispatch(setDate(newDate));
     },
-    [onDateChange]
+    [dispatch]
   );
 
   const changeEndTimeListDisplay = useCallback(
     e => {
       if (isEditMode) e.stopPropagation();
+      console.log("here");
       setEndTimeListDisplay(current => !current);
     },
     [isEditMode]
   );
-
-  const startTime = date.format("HH:mm A");
 
   return (
     <div
@@ -134,7 +139,10 @@ const DateInp: FC<DateInpProps> = ({
           height="220px"
           x={70}
           y={40}>
-          <EndTimeList startTime={convertHoursToMinutes(date)} />
+          <EndTimeList
+            startTime={convertHoursToMinutes(moment(eventStartTime, "HH:mm A"))}
+            onEndTimeChang={onEndTimeChang}
+          />
         </Modal>
         <Input
           value={`${weekday}, ${day} ${monthName}`}
@@ -146,7 +154,7 @@ const DateInp: FC<DateInpProps> = ({
           backgroundColor="transparent"
         />
         <Input
-          value={convertAMPMtoPersia(startTime)}
+          value={convertAMPMtoPersia(eventStartTime)}
           onChange={() => {}}
           tag="eventStartTime"
           small={true}

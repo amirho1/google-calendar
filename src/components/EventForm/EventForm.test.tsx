@@ -14,10 +14,10 @@ describe("<EventForm />", () => {
     ({ element, query } = before(
       "EventForm",
       <EventForm
+        onEndTimeChang={() => {}}
         eventEndTime={0}
         eventStartTime={0}
         onHeaderMouseDown={() => {}}
-        date={moment()}
         onStartTimeChange={() => {}}
         setModalDisplay={() => {}}
       />
