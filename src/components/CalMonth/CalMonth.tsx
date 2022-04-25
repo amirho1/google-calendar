@@ -50,6 +50,10 @@ const CalMonth: FC<CalMonthProps> = ({
     moment(`${year}/${month}/1`, "jYYYY/jMM/jDD")
   );
 
+  const nextMonthDaysStartIndex = useMemo(
+    () => monthDaysCount + firstDayOfMonthInWeek,
+    [firstDayOfMonthInWeek, monthDaysCount]
+  );
   const onDateClick = useCallback(
     (year: number, month: number, day: number) => {
       onDateChange(moment(`${year}/${month}/${day}`, "jYYYY/jMM/jDD"));
@@ -57,19 +61,33 @@ const CalMonth: FC<CalMonthProps> = ({
     [onDateChange]
   );
 
+  const previousMonthLastDay = useMemo(
+    () => firstDayOfMonthInWeek - 1,
+    [firstDayOfMonthInWeek]
+  );
+
+  const whichMonth = useCallback(
+    index =>
+      index >= nextMonthDaysStartIndex
+        ? month + 1
+        : index <= previousMonthLastDay
+        ? month - 1
+        : month,
+    [month, nextMonthDaysStartIndex, previousMonthLastDay]
+  );
+
   const mappedRows = useMemo(() => {
-    let totalIndex = 0;
-    return days.map(row => {
+    return days.map((row, RowIndex) => {
       const newRow: { [props: string]: JSX.Element } = {};
-      weekDaysInPersianLetters.forEach((letter, index) => {
+      weekDaysInPersianLetters.forEach((letter, columnIndex) => {
+        const currentIndex = RowIndex * 7 + columnIndex;
         const isCurrentDay =
           year === currentYear &&
           month === currentMonth &&
-          row[index] === currentDay &&
-          totalIndex >= firstDayOfMonthInWeek &&
-          totalIndex <= monthDaysCount + firstDayOfMonthInWeek;
+          row[columnIndex] === currentDay &&
+          currentIndex >= firstDayOfMonthInWeek &&
+          currentIndex <= monthDaysCount + firstDayOfMonthInWeek;
 
-        totalIndex++;
         return (newRow[letter] = (
           <HoverCircle
             width="30px"
@@ -80,8 +98,10 @@ const CalMonth: FC<CalMonthProps> = ({
             background={isCurrentDay}>
             <div
               style={{ color: isCurrentDay ? "white" : undefined }}
-              onClick={() => onDateClick(year, month, row[index])}>
-              {row[index]}
+              onClick={() => {
+                onDateClick(year, whichMonth(currentIndex), row[columnIndex]);
+              }}>
+              {row[columnIndex]}
             </div>
           </HoverCircle>
         ));
@@ -97,6 +117,7 @@ const CalMonth: FC<CalMonthProps> = ({
     month,
     monthDaysCount,
     onDateClick,
+    whichMonth,
     year,
   ]);
 
