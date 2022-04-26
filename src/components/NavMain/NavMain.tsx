@@ -122,7 +122,7 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
               x={-90}
               y={40}
               display={pageListStyleDisplay}
-              zIndex={1000}
+              zIndex={100}
               height={"200px"}
               width={`200px`}>
               <ULLinks

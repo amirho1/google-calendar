@@ -56,11 +56,9 @@ app.get("/events/:calName/:date", ({ params: { calName, date } }, res) => {
 app.post(
   "/events/:calName/:date",
   ({ params: { calName, date }, body }, res) => {
-    if (
-      !(jsonData?.events as any)[calName] ||
-      !(jsonData?.events as any)[calName][date]
-    ) {
+    if (!(jsonData?.events as any)[calName]) {
       (jsonData?.events as any)[calName] = {};
+    } else if (!(jsonData?.events as any)[calName][date]) {
       (jsonData?.events as any)[calName][date] = [];
     }
 

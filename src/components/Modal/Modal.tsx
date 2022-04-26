@@ -17,6 +17,11 @@ interface ModalProps {
   getRef?: (ref: React.RefObject<HTMLDivElement>) => any;
   onMouseDown?: onEventMouseDown;
   onMouseUp?: React.MouseEventHandler<HTMLDivElement>;
+  onBottomBorderMouseDownOuter?: () => void;
+  onBottomBorderMouseUpOuter?: () => void;
+  onRightClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  className?: string;
+  borderRadios?: string;
 }
 
 export type onEventMouseDown = (
@@ -35,11 +40,16 @@ const Modal: FC<ModalProps> = ({
   boxShadow = true,
   resizeAble = false,
   backgroundColor = "white",
-  zIndex = 900,
+  zIndex = 90,
   getRef,
   position = "absolute",
   onMouseDown,
   onMouseUp,
+  onBottomBorderMouseDownOuter,
+  onBottomBorderMouseUpOuter,
+  onRightClick,
+  className,
+  borderRadios = "2px",
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -57,12 +67,22 @@ const Modal: FC<ModalProps> = ({
       left: x,
       top: y,
       boxShadow: boxShadow ? "1px 1px 10px 5px var(--box-shadow)" : undefined,
-      borderRadius: "5px",
+      borderRadius: borderRadios,
       backgroundColor: backgroundColor,
       zIndex: zIndex,
-      transition: "linear .1s height",
     }),
-    [display, height, width, position, x, y, boxShadow, backgroundColor, zIndex]
+    [
+      display,
+      height,
+      width,
+      position,
+      x,
+      y,
+      boxShadow,
+      borderRadios,
+      backgroundColor,
+      zIndex,
+    ]
   );
 
   const bottomStyle = useMemo<React.CSSProperties>(
@@ -81,9 +101,8 @@ const Modal: FC<ModalProps> = ({
     useCallback((): React.MouseEventHandler<HTMLDivElement> => {
       let y = 0;
       let h = 60;
-
       const onMouseMove = (e: MouseEvent) => {
-        const YDir = e.clientY - y;
+        const YDir = e.clientY - y + 5;
         if (ref.current)
           ref.current.style.height = `${addOrSubtractSpecificAmount(
             h,
@@ -93,17 +112,22 @@ const Modal: FC<ModalProps> = ({
       };
 
       const onMouseUp = (e: MouseEvent) => {
+        e.stopPropagation();
         document.removeEventListener("mousemove", onMouseMove);
+        if (onBottomBorderMouseUpOuter) onBottomBorderMouseUpOuter();
       };
 
       return e => {
+        e.stopPropagation();
+        console.log();
+        if (onBottomBorderMouseDownOuter) onBottomBorderMouseDownOuter();
         const bounding = ref.current?.getBoundingClientRect();
         if (bounding?.height) h = bounding?.height;
         y = e.clientY;
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
       };
-    }, []);
+    }, [onBottomBorderMouseDownOuter, onBottomBorderMouseUpOuter]);
 
   const onBodyMouseDon = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
@@ -118,10 +142,21 @@ const Modal: FC<ModalProps> = ({
       style={styles}
       data-testid="Modal"
       onMouseDown={onBodyMouseDon}
-      onMouseUp={onMouseUp}>
+      onMouseUp={onMouseUp}
+      className={className}
+      onContextMenu={e => {
+        e.preventDefault();
+        onRightClick && onRightClick(e);
+      }}
+      onClick={e => {
+        e.stopPropagation();
+      }}>
       {children}
       {resizeAble ? (
-        <div style={bottomStyle} onMouseDown={onBottomBorderMouseDown()}></div>
+        <div
+          style={bottomStyle}
+          onMouseDown={onBottomBorderMouseDown()}
+          onClick={e => e.stopPropagation()}></div>
       ) : null}
     </div>
   );
