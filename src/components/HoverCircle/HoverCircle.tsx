@@ -1,8 +1,9 @@
 import React, { FC, useCallback, useEffect, useRef } from "react";
+import { PrimitivesT } from "../Table/Table";
 import styles from "./HoverCircle.module.scss";
 
 interface HoverCircleProps {
-  children: JSX.Element;
+  children: JSX.Element | PrimitivesT;
   width?: string;
   height?: string;
   hover?: boolean;

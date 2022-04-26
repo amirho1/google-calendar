@@ -14,6 +14,7 @@ import {
   roundSpecific,
 } from "../../utils/helpers";
 import ContextMenu from "../ContextMenu/ContextMenu";
+import Details from "../Details/Details";
 import EventForm from "../EventForm/EventForm";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Line from "../Line/Line";
@@ -50,11 +51,30 @@ function drawCalendarLines(num: number) {
   return lines;
 }
 
+interface EventDetailsI {
+  title: string;
+  description: string;
+  startTime: number;
+  endTime: number;
+  calendarName: string;
+  alarm: number;
+}
+
 const Day: FC<DayProps> = () => {
   const mainRef = useRef<HTMLDivElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [headerBottomBorderDisplay, setHeaderBottomBorderDisplay] = useState(0);
   const [timeLineMinutes, setTimeLineMinutes] = useState(0);
+  const [details, setDetails] = useState({
+    display: false,
+    title: "",
+    description: "",
+    startTime: 0,
+    endTime: 0,
+    calendarName: "",
+    alarm: 0,
+  });
+
   const dispatch = useDispatch();
   const [eventFormModalRef, setEventFormModalRef] =
     useState<React.RefObject<HTMLDivElement>>();
@@ -190,10 +210,9 @@ const Day: FC<DayProps> = () => {
     [eventFormModalRef]
   );
 
-  const closeModalEventForm = useCallback(
-    () => setEventForm(current => ({ ...current, display: false })),
-    []
-  );
+  const closeModalEventForm = useCallback(() => {
+    setEventForm(current => ({ ...current, display: false }));
+  }, []);
 
   // fetch events
   useEffect(() => {
@@ -242,12 +261,12 @@ const Day: FC<DayProps> = () => {
 
         if (ref.current && e.button === 0) {
           let mouseDownY = e.clientY;
-          ref.current.style.cursor = "move";
           ref.current.style.zIndex = "200";
           const currentY = parseInt(ref.current.style.top, 10);
           const onMouseMove = (
             e: React.MouseEvent<HTMLDivElement, MouseEvent>
           ) => {
+            ref.current && (ref.current.style.cursor = "move");
             const dy = e.clientY - mouseDownY;
             const plus = currentY + dy;
             const endLimit = 1380;
@@ -297,8 +316,28 @@ const Day: FC<DayProps> = () => {
   );
 
   const onEventClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    (
+      e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+      {
+        alarm,
+        calendarName,
+        description,
+        endTime,
+        startTime,
+        title,
+      }: EventDetailsI
+    ) => {
       setContextMenuDisplay(false);
+      setDetails(current => ({
+        ...current,
+        display: true,
+        description,
+        alarm,
+        calendarName,
+        endTime,
+        startTime,
+        title,
+      }));
     },
     []
   );
@@ -306,6 +345,7 @@ const Day: FC<DayProps> = () => {
   const onDocumentClickCloseModals = useCallback(() => {
     setContextMenuDisplay(false);
     setEventForm(current => ({ ...current, display: false }));
+    setDetails(current => ({ ...current, display: false }));
   }, []);
 
   useEffect(() => {
@@ -329,6 +369,26 @@ const Day: FC<DayProps> = () => {
 
   return (
     <div className={styles.Day} data-testid="Day">
+      {/* event Details */}
+      <Modal
+        display={details.display}
+        x={centerOFScreen().x}
+        y={centerOFScreen().y}
+        position="fixed"
+        zIndex={200}
+        width="448px"
+        height="fit-content">
+        <Details
+          alarm={details.alarm}
+          title={details.title}
+          calendarName={details.calendarName}
+          date={date}
+          description={details.description}
+          endTime={details.endTime}
+          startTime={details.startTime}
+        />
+      </Modal>
+
       {/* contextMenu */}
       <Modal
         display={contextMenuDisplay}
@@ -425,10 +485,12 @@ const Day: FC<DayProps> = () => {
             height={`${eventForm.eventEndTime}px`}
           />
 
+          {/* Event */}
           {events.map(
-            ({ description, endTime, startTime, title, id }, index) => (
+            ({ title, endTime, description, startTime, id }, index) => (
               <Modal
                 key={index}
+                borderRadios="8px"
                 children={
                   <Task title={title} endTime={endTime} startTime={startTime} />
                 }
@@ -443,6 +505,16 @@ const Day: FC<DayProps> = () => {
                 height="60px"
                 onBottomBorderMouseDownOuter={
                   onEventBottomMouseDownSetIsMouseDownTrue
+                }
+                onClick={e =>
+                  onEventClick(e, {
+                    alarm: 0,
+                    description,
+                    calendarName: "Tasks",
+                    endTime,
+                    startTime,
+                    title,
+                  })
                 }
                 onBottomBorderMouseUpOuter={onBottomBorderMouseUp}
                 onMouseDown={onEventMouseDown(id || 0)}

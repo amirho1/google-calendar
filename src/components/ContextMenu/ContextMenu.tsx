@@ -29,9 +29,10 @@ const ContextMenu: FC<ContextMenuProps> = () => {
       </Button>
 
       <div className={`${styles.colorWrapper} f-between`}>
-        {colors.map(color => (
+        {colors.map((color, index) => (
           <div
             className={styles.color}
+            key={index}
             style={{ backgroundColor: color.color }}
             data-tip={color.name}></div>
         ))}

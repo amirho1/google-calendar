@@ -22,6 +22,7 @@ interface ModalProps {
   onRightClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   className?: string;
   borderRadios?: string;
+  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 export type onEventMouseDown = (
@@ -50,6 +51,7 @@ const Modal: FC<ModalProps> = ({
   onRightClick,
   className,
   borderRadios = "2px",
+  onClick,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -150,6 +152,7 @@ const Modal: FC<ModalProps> = ({
       }}
       onClick={e => {
         e.stopPropagation();
+        onClick && onClick(e);
       }}>
       {children}
       {resizeAble ? (
