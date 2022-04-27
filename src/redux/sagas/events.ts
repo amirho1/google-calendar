@@ -49,21 +49,27 @@ addEvent.ac = (props: CreateEventProperties) => {
 
 interface FetchEventsProps {
   timeStamp: string;
+  task: string;
 }
 
-async function fetchEvents({ timeStamp }: FetchEventsProps) {
+async function fetchEvents({ timeStamp, task }: FetchEventsProps) {
   if (!timeStamp)
     return console.error(`${fetchEvents.name} should get a timeStamp`);
 
-  const res = await Api({ method: "GET", url: `/events/tasks/${timeStamp}` });
+  const res = await Api({ method: "GET", url: `/events/${task}/${timeStamp}` });
   return res.data;
 }
 
 export function* getEvents(effect: Effect<string, FetchEventsProps>) {
   const response: EventI[] = yield call(fetchEvents, effect.payload);
+
   yield put({
     type: SAVE_EVENTS,
-    payload: { response, timeStamp: effect.payload.timeStamp },
+    payload: {
+      response,
+      timeStamp: effect.payload.timeStamp,
+      task: effect.payload.task,
+    },
   });
 }
 

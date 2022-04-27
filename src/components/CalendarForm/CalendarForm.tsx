@@ -28,7 +28,9 @@ const CalendarForm: FC<CalendarFormProps> = () => {
   const onSubmit = useCallback<React.FormEventHandler<HTMLFormElement>>(
     e => {
       e.preventDefault();
-      dispatch(addCalendar.ac({ color: "#e8541a", name, description }));
+      dispatch(
+        addCalendar.ac({ color: "#e8541a", name, description, selected: true })
+      );
     },
     [description, dispatch, name]
   );

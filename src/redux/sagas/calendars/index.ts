@@ -17,6 +17,7 @@ export interface CalendarsI {
   description?: string;
   name: string;
   color: string;
+  selected: boolean;
 }
 
 async function fetchCalenders() {

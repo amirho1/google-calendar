@@ -105,12 +105,14 @@ const Modal: FC<ModalProps> = ({
       let h = 60;
       const onMouseMove = (e: MouseEvent) => {
         const YDir = e.clientY - y + 5;
-        if (ref.current)
+        if (ref.current) {
+          ref.current.style.position = "none";
           ref.current.style.height = `${addOrSubtractSpecificAmount(
             h,
             h + YDir,
             15
           )}px`;
+        }
       };
 
       const onMouseUp = (e: MouseEvent) => {

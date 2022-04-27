@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import { EventI } from "../../redux/reducers/events/events";
+import { CalendarsI } from "../../redux/sagas/calendars";
 import { addEvent, getEvents } from "../../redux/sagas/events";
 import {
   convertEnglishWeekdaysToPersian,
@@ -94,9 +95,11 @@ const Day: FC<DayProps> = () => {
 
   const timeStamp = useMemo(() => date.valueOf(), [date]);
 
-  const events = useSelector<ReduxStateI, EventI[]>(
-    state => state.events.events[timeStamp] || []
-  );
+  const events = useSelector<ReduxStateI, EventI[]>(state => {
+    return state.events.events["tasks"]
+      ? state.events.events["tasks"][timeStamp]
+      : [];
+  });
 
   const day = useMemo(() => date.format("jDD"), [date]);
 
@@ -114,6 +117,7 @@ const Day: FC<DayProps> = () => {
     display: false,
     eventStartTime: 0,
     eventEndTime: 0,
+    color: "blue",
   });
 
   useEffect(() => {
@@ -214,10 +218,19 @@ const Day: FC<DayProps> = () => {
     setEventForm(current => ({ ...current, display: false }));
   }, []);
 
+  const calendars = useSelector<ReduxStateI, CalendarsI[]>(
+    state => state.calendars.calendars
+  );
+
   // fetch events
   useEffect(() => {
-    dispatch(getEvents.ac({ timeStamp: `${timeStamp}` }));
-  }, [dispatch, timeStamp]);
+    calendars.forEach(calendar => {
+      if (calendar.selected)
+        dispatch(
+          getEvents.ac({ timeStamp: `${timeStamp}`, task: calendar.name })
+        );
+    });
+  }, [dispatch, timeStamp, calendars]);
 
   const onDescriptionChange = useCallback((editorState: EditorState) => {
     setEventForm(current => ({ ...current, description: editorState }));
@@ -233,6 +246,7 @@ const Day: FC<DayProps> = () => {
       endTime: eventForm.eventEndTime,
       startTime: eventForm.eventStartTime,
       title: eventForm.title,
+      color: eventForm.color,
     };
 
     dispatch(addEvent.ac({ body: event, calName: "tasks", timeStamp }));
@@ -246,6 +260,7 @@ const Day: FC<DayProps> = () => {
     }));
   }, [
     dispatch,
+    eventForm.color,
     eventForm.description,
     eventForm.eventEndTime,
     eventForm.eventStartTime,
@@ -367,6 +382,11 @@ const Day: FC<DayProps> = () => {
     };
   }, [onDocumentClickCloseModals]);
 
+  const closeDetails = useCallback(
+    () => setDetails(current => ({ ...current, display: false })),
+    []
+  );
+
   return (
     <div className={styles.Day} data-testid="Day">
       {/* event Details */}
@@ -386,6 +406,7 @@ const Day: FC<DayProps> = () => {
           description={details.description}
           endTime={details.endTime}
           startTime={details.startTime}
+          closeDetails={closeDetails}
         />
       </Modal>
 
@@ -487,7 +508,7 @@ const Day: FC<DayProps> = () => {
 
           {/* Event */}
           {events.map(
-            ({ title, endTime, description, startTime, id }, index) => (
+            ({ title, endTime, description, startTime, id, color }, index) => (
               <Modal
                 key={index}
                 borderRadios="8px"
@@ -496,7 +517,7 @@ const Day: FC<DayProps> = () => {
                 }
                 boxShadow={false}
                 data-testid="Task"
-                backgroundColor="var(--blue)"
+                backgroundColor={color}
                 x={0}
                 y={startTime}
                 resizeAble={true}

@@ -14,6 +14,7 @@ describe("<Details />", () => {
     ({ element, query } = before(
       "Details",
       <Details
+        closeDetails={() => {}}
         alarm={0}
         title={""}
         calendarName={""}

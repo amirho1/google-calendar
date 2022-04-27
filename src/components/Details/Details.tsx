@@ -27,6 +27,7 @@ export interface DetailsProps {
   calendarName: string;
   description: string;
   alarm: number;
+  closeDetails: () => void;
 }
 
 const Details: FC<DetailsProps> = ({
@@ -37,11 +38,12 @@ const Details: FC<DetailsProps> = ({
   endTime,
   alarm,
   startTime,
+  closeDetails,
 }) => {
   const cb = useCallback<CB>(
     item => (
       <HoverCircle className="pointer" dataTip={item.tag as any}>
-        <div>{item.icon as any}</div>
+        {item.icon as any}
       </HoverCircle>
     ),
     []
@@ -67,11 +69,16 @@ const Details: FC<DetailsProps> = ({
 
       {
         tag: "بستن",
-        icon: <FaTimes />,
+        icon: (
+          <div onClick={closeDetails}>
+            <FaTimes />
+          </div>
+        ),
+
         cb: cb,
       },
     ],
-    [cb]
+    [cb, closeDetails]
   );
 
   const weekDay = useMemo(
@@ -103,7 +110,7 @@ const Details: FC<DetailsProps> = ({
       <div className={styles.body}>
         <Row icon={<BsSquareFill className={styles.icon} />}>
           <>
-            <h2>{title}</h2>
+            <h2>{title || " (بدون عنوان)"}</h2>
             <span>{weekDay}</span> <span>{date.jDate()}</span>{" "}
             <span>{monthName}</span> , <span>{starT}</span> -{" "}
             <span>{endT}</span>
