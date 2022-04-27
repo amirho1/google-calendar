@@ -65,7 +65,7 @@ app.post(
     body.id = (jsonData?.events as any)[calName][date]?.length + 1;
     (jsonData?.events as any)[calName][date].push(body);
     write(JSON.stringify(jsonData), console.error);
-    res.send((jsonData?.events as any)[calName][date]);
+    res.send(body);
   }
 );
 

@@ -34,10 +34,15 @@ async function createEvent({
 }
 
 export function* addEvent(effect: Effect<string, CreateEventProperties>) {
-  const response: EventI = yield call(createEvent, effect.payload);
+  const event: EventI = yield call(createEvent, effect.payload);
+  console.log();
   yield put({
     type: SAVE_ADDED_EVENT,
-    payload: { event: response, timeStamp: effect.payload.timeStamp },
+    payload: {
+      event,
+      timeStamp: effect.payload.timeStamp,
+      calName: effect.payload.calName,
+    },
   });
 }
 
@@ -49,14 +54,17 @@ addEvent.ac = (props: CreateEventProperties) => {
 
 interface FetchEventsProps {
   timeStamp: string;
-  task: string;
+  calName: string;
 }
 
-async function fetchEvents({ timeStamp, task }: FetchEventsProps) {
+async function fetchEvents({ timeStamp, calName }: FetchEventsProps) {
   if (!timeStamp)
     return console.error(`${fetchEvents.name} should get a timeStamp`);
 
-  const res = await Api({ method: "GET", url: `/events/${task}/${timeStamp}` });
+  const res = await Api({
+    method: "GET",
+    url: `/events/${calName}/${timeStamp}`,
+  });
   return res.data;
 }
 
@@ -68,7 +76,7 @@ export function* getEvents(effect: Effect<string, FetchEventsProps>) {
     payload: {
       response,
       timeStamp: effect.payload.timeStamp,
-      task: effect.payload.task,
+      calName: effect.payload.calName,
     },
   });
 }

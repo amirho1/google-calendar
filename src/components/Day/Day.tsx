@@ -227,7 +227,7 @@ const Day: FC<DayProps> = () => {
     calendars.forEach(calendar => {
       if (calendar.selected)
         dispatch(
-          getEvents.ac({ timeStamp: `${timeStamp}`, task: calendar.name })
+          getEvents.ac({ timeStamp: `${timeStamp}`, calName: calendar.name })
         );
     });
   }, [dispatch, timeStamp, calendars]);
@@ -248,7 +248,6 @@ const Day: FC<DayProps> = () => {
       title: eventForm.title,
       color: eventForm.color,
     };
-
     dispatch(addEvent.ac({ body: event, calName: "tasks", timeStamp }));
     setEventForm(current => ({
       ...current,

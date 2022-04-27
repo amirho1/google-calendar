@@ -49,21 +49,34 @@ const Calendars: FC<CalendarsProps> = () => {
     []
   );
 
-  const changeCalendarSelection = useCallback(() => {
-    calendars.forEach(calendar => {
-      // dispatch(getEvents.ac({ timeStamp, task }));
-    });
-  }, [dispatch]);
+  const onCalendarSelectAndDeselect = useCallback(
+    (id: number) => {
+      // dispatch(updateCalendar.ac)
+    },
+    [dispatch]
+  );
 
   const childCb = useCallback(
-    (calendar: CalendarsI): CB =>
+    (calendar: CalendarsI, index: number): CB =>
       item =>
         (
           <div className={`${styles.row} f-between`}>
-            <input type="checkbox" name="" id="" checked={calendar.selected} />
-            <div data-tip={item.tag} className={styles.myCalenders}>
+            <input
+              type="checkbox"
+              name={`${index}-calendar`}
+              id={`${index}-calendar`}
+              checked={calendar.selected}
+              onChange={() =>
+                calendar.id && onCalendarSelectAndDeselect(calendar.id)
+              }
+            />
+
+            <label
+              htmlFor=""
+              data-tip={item.tag}
+              className={styles.myCalenders}>
               {item.tag}
-            </div>
+            </label>
 
             <BsThreeDotsVertical
               className={styles.setting}
@@ -76,9 +89,9 @@ const Calendars: FC<CalendarsProps> = () => {
 
   const mappedCalenders = useMemo<IItem[]>(
     () =>
-      calendars.map(calendar => ({
+      calendars.map((calendar, index) => ({
         tag: calendar.name,
-        cb: childCb(calendar),
+        cb: childCb(calendar, index),
       })),
     [calendars, childCb]
   );
