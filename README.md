@@ -1,3 +1,7 @@
+#Screen shot it's a Work In progress not 100% complete may some buttons don't work currently because of untested commits
+
+![project screen shot](/google-calendar.png)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
