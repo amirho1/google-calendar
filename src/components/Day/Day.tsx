@@ -23,6 +23,7 @@ import Modal, { onEventMouseDown } from "../Modal/Modal";
 import Task from "../Task/Task";
 import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
+import { useImmerReducer } from "use-immer";
 
 interface DayProps {}
 
@@ -84,12 +85,34 @@ const Day: FC<DayProps> = () => {
     []
   );
 
-  const [contextMenuCoordinate, setContextMenuCoordinate] = useState({
-    x: 0,
-    y: 0,
-  });
-
-  const [contextMenuDisplay, setContextMenuDisplay] = useState(false);
+  const [contextMenuStates, dispatchContextMenuStates] = useImmerReducer(
+    (draft, action) => {
+      switch (action.type) {
+        case "contextMenuCoordinate":
+          draft.x = action.payload.x;
+          draft.y = action.payload.y;
+          break;
+        case "contextMenuDisplay":
+          draft.display = action.payload.display;
+          break;
+        case "contextMenuId":
+          draft.id = action.payload.id;
+          break;
+        case "contextMenuCalName":
+          draft.calName = action.payload.calName;
+          break;
+        default:
+          break;
+      }
+    },
+    {
+      x: 0,
+      y: 0,
+      display: false,
+      id: 0,
+      calName: "",
+    }
+  );
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
 
@@ -97,10 +120,9 @@ const Day: FC<DayProps> = () => {
 
   const events = useSelector<ReduxStateI, EventI[]>(state => {
     return state.events.events["tasks"]
-      ? state.events.events["tasks"][timeStamp]
+      ? state?.events?.events["tasks"][timeStamp] || []
       : [];
   });
-
   const day = useMemo(() => date.format("jDD"), [date]);
 
   const weekday = useMemo(
@@ -321,12 +343,18 @@ const Day: FC<DayProps> = () => {
   }, []);
 
   const onEventRightClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>, id: number) => {
       e.stopPropagation();
-      setContextMenuCoordinate({ x: e.clientX, y: e.clientY });
-      setContextMenuDisplay(true);
+      dispatchContextMenuStates({
+        type: "contextMenuCoordinate",
+        payload: { x: e.clientX, y: e.clientY },
+      });
+      dispatchContextMenuStates({
+        type: "contextMenuDisplay",
+        payload: { display: true },
+      });
     },
-    []
+    [dispatchContextMenuStates]
   );
 
   const onEventClick = useCallback(
@@ -341,7 +369,11 @@ const Day: FC<DayProps> = () => {
         title,
       }: EventDetailsI
     ) => {
-      setContextMenuDisplay(false);
+      dispatchContextMenuStates({
+        type: "contextMenuDisplay",
+        payload: { display: false },
+      });
+
       setDetails(current => ({
         ...current,
         display: true,
@@ -353,14 +385,17 @@ const Day: FC<DayProps> = () => {
         title,
       }));
     },
-    []
+    [dispatchContextMenuStates]
   );
 
   const onDocumentClickCloseModals = useCallback(() => {
-    setContextMenuDisplay(false);
+    dispatchContextMenuStates({
+      type: "contextMenuDisplay",
+      payload: { display: false },
+    });
     setEventForm(current => ({ ...current, display: false }));
     setDetails(current => ({ ...current, display: false }));
-  }, []);
+  }, [dispatchContextMenuStates]);
 
   useEffect(() => {
     mainRef?.current?.addEventListener("click", onDocumentClickCloseModals);
@@ -411,14 +446,18 @@ const Day: FC<DayProps> = () => {
 
       {/* contextMenu */}
       <Modal
-        display={contextMenuDisplay}
+        display={contextMenuStates.display}
         height="115px"
         width="192px"
-        x={contextMenuCoordinate.x}
-        y={contextMenuCoordinate.y}
+        x={contextMenuStates.x}
+        y={contextMenuStates.y}
         position="fixed"
         zIndex={140}>
-        <ContextMenu />
+        <ContextMenu
+          timeStamp={timeStamp}
+          id={contextMenuStates.id}
+          calName={contextMenuStates.calName}
+        />
       </Modal>
 
       {/* Event form */}
@@ -538,7 +577,7 @@ const Day: FC<DayProps> = () => {
                 }
                 onBottomBorderMouseUpOuter={onBottomBorderMouseUp}
                 onMouseDown={onEventMouseDown(id || 0)}
-                onRightClick={onEventRightClick}
+                onRightClick={e => onEventRightClick(e, id || 0)}
               />
             )
           )}
