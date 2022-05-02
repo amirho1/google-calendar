@@ -19,7 +19,7 @@ import Details from "../Details/Details";
 import EventForm from "../EventForm/EventForm";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Line from "../Line/Line";
-import Modal, { onEventMouseDown } from "../Modal/Modal";
+import Modal, { onEventMouseDownT } from "../Modal/Modal";
 import Task from "../Task/Task";
 import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
@@ -67,6 +67,7 @@ const Day: FC<DayProps> = () => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [headerBottomBorderDisplay, setHeaderBottomBorderDisplay] = useState(0);
   const [timeLineMinutes, setTimeLineMinutes] = useState(0);
+  const [isMoved, setIsMoved] = useState(false);
   const [details, setDetails] = useState({
     display: false,
     title: "",
@@ -76,6 +77,10 @@ const Day: FC<DayProps> = () => {
     calendarName: "",
     alarm: 0,
   });
+
+  const calendars = useSelector<ReduxStateI, CalendarsI[]>(
+    state => state.calendars.calendars
+  );
 
   const dispatch = useDispatch();
   const [eventFormModalRef, setEventFormModalRef] =
@@ -119,10 +124,11 @@ const Day: FC<DayProps> = () => {
   const timeStamp = useMemo(() => date.valueOf(), [date]);
 
   const events = useSelector<ReduxStateI, EventI[]>(state => {
-    return state.events.events["tasks"]
+    return state?.events && state?.events?.events["tasks"]
       ? state?.events?.events["tasks"][timeStamp] || []
       : [];
   });
+
   const day = useMemo(() => date.format("jDD"), [date]);
 
   const weekday = useMemo(
@@ -140,6 +146,7 @@ const Day: FC<DayProps> = () => {
     eventStartTime: 0,
     eventEndTime: 0,
     color: "blue",
+    calName: "",
   });
 
   useEffect(() => {
@@ -169,7 +176,6 @@ const Day: FC<DayProps> = () => {
     e => {
       // prevent from right click
       if (e.button === 2 || eventForm.display) return;
-      e.stopPropagation();
       setIsMouseDown(true);
       const { y } = e.currentTarget.getBoundingClientRect();
       const eventStartTime = roundSpecific(e.clientY - y, 15);
@@ -188,16 +194,20 @@ const Day: FC<DayProps> = () => {
     [eventForm.display, date]
   );
 
-  const onCLick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
+  const onClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
       if (e.button === 2 && isMouseDown) return;
 
       setEventForm(current => {
-        return { ...current, display: !current.display };
+        return {
+          ...current,
+          display: !current?.display,
+          calName: calendars[0]?.name,
+        };
       });
       setIsMouseDown(true);
     },
-    [isMouseDown]
+    [calendars, isMouseDown]
   );
 
   const onEventFormHeaderMouseDown = useCallback<
@@ -205,17 +215,17 @@ const Day: FC<DayProps> = () => {
   >(
     e => {
       // coordinate on mousedown
-      let x = e.clientX;
-      let y = e.clientY;
+      let x = e?.clientX;
+      let y = e?.clientY;
       const { x: previousX, y: previousY } =
-        eventFormModalRef && eventFormModalRef.current
-          ? eventFormModalRef?.current.getBoundingClientRect()
+        eventFormModalRef && eventFormModalRef?.current
+          ? eventFormModalRef?.current?.getBoundingClientRect()
           : { x: 0, y: 0 };
 
       const onMouseMove = (event: MouseEvent) => {
         if (eventFormModalRef && eventFormModalRef?.current?.style) {
-          const dx = event.clientX - x;
-          const dy = event.clientY - y;
+          const dx = event?.clientX - x;
+          const dy = event?.clientY - y;
 
           eventFormModalRef.current.style.top = `${previousY + dy}px`;
           eventFormModalRef.current.style.left = `${previousX + dx}px`;
@@ -240,14 +250,10 @@ const Day: FC<DayProps> = () => {
     setEventForm(current => ({ ...current, display: false }));
   }, []);
 
-  const calendars = useSelector<ReduxStateI, CalendarsI[]>(
-    state => state.calendars.calendars
-  );
-
   // fetch events
   useEffect(() => {
     calendars.forEach(calendar => {
-      if (calendar.selected)
+      if (calendar?.selected)
         dispatch(
           getEvents.ac({ timeStamp: `${timeStamp}`, calName: calendar.name })
         );
@@ -269,6 +275,7 @@ const Day: FC<DayProps> = () => {
       startTime: eventForm.eventStartTime,
       title: eventForm.title,
       color: eventForm.color,
+      calName: eventForm.calName,
     };
     dispatch(addEvent.ac({ body: event, calName: "tasks", timeStamp }));
     setEventForm(current => ({
@@ -281,6 +288,7 @@ const Day: FC<DayProps> = () => {
     }));
   }, [
     dispatch,
+    eventForm.calName,
     eventForm.color,
     eventForm.description,
     eventForm.eventEndTime,
@@ -290,24 +298,28 @@ const Day: FC<DayProps> = () => {
   ]);
 
   const onEventMouseDown = useCallback(
-    (id: number): onEventMouseDown =>
+    (id: number): onEventMouseDownT =>
       (e, ref) => {
         e.preventDefault();
         e.stopPropagation();
+        setIsMoved(false);
 
         if (ref.current && e.button === 0) {
           let mouseDownY = e.clientY;
           ref.current.style.zIndex = "200";
           const currentY = parseInt(ref.current.style.top, 10);
+
           const onMouseMove = (
             e: React.MouseEvent<HTMLDivElement, MouseEvent>
           ) => {
+            setIsMoved(true);
             ref.current && (ref.current.style.cursor = "move");
             const dy = e.clientY - mouseDownY;
             const plus = currentY + dy;
             const endLimit = 1380;
             const y = plus < 0 ? 0 : plus >= endLimit ? endLimit : plus;
-            if (ref.current) ref.current.style.top = `${y}px`;
+            if (ref.current)
+              ref.current.style.top = `${roundSpecific(y, 15)}px`;
           };
 
           const onMouseUp = (
@@ -317,7 +329,6 @@ const Day: FC<DayProps> = () => {
             if (ref.current) {
               ref.current.style.cursor = "initial";
               ref.current.style.zIndex = "90";
-
               document.removeEventListener("mousemove", onMouseMove as any);
               ref.current.removeEventListener("mouseup", onMouseUp as any);
               document.removeEventListener("mouseup", onMouseUp as any);
@@ -333,18 +344,17 @@ const Day: FC<DayProps> = () => {
   );
 
   const onEventBottomMouseDownSetIsMouseDownTrue = useCallback(() => {
-    console.log("true");
     setIsMouseDown(true);
   }, []);
 
   const onBottomBorderMouseUp = useCallback(() => {
-    console.log("false");
     setIsMouseDown(false);
   }, []);
 
   const onEventRightClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>, id: number) => {
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>, id: number, calName) => {
       e.stopPropagation();
+
       dispatchContextMenuStates({
         type: "contextMenuCoordinate",
         payload: { x: e.clientX, y: e.clientY },
@@ -353,9 +363,24 @@ const Day: FC<DayProps> = () => {
         type: "contextMenuDisplay",
         payload: { display: true },
       });
+      dispatchContextMenuStates({
+        type: "contextMenuId",
+        payload: { id: id },
+      });
+      dispatchContextMenuStates({
+        type: "contextMenuCalName",
+        payload: { calName: calName },
+      });
     },
     [dispatchContextMenuStates]
   );
+
+  const closeContextMenu = useCallback(() => {
+    dispatchContextMenuStates({
+      type: "contextMenuDisplay",
+      payload: { display: false },
+    });
+  }, [dispatchContextMenuStates]);
 
   const onEventClick = useCallback(
     (
@@ -373,19 +398,19 @@ const Day: FC<DayProps> = () => {
         type: "contextMenuDisplay",
         payload: { display: false },
       });
-
-      setDetails(current => ({
-        ...current,
-        display: true,
-        description,
-        alarm,
-        calendarName,
-        endTime,
-        startTime,
-        title,
-      }));
+      if (!isMoved)
+        setDetails(current => ({
+          ...current,
+          display: true,
+          description,
+          alarm,
+          calendarName,
+          endTime,
+          startTime,
+          title,
+        }));
     },
-    [dispatchContextMenuStates]
+    [dispatchContextMenuStates, isMoved]
   );
 
   const onDocumentClickCloseModals = useCallback(() => {
@@ -398,6 +423,8 @@ const Day: FC<DayProps> = () => {
   }, [dispatchContextMenuStates]);
 
   useEffect(() => {
+    document.addEventListener("mousedown", onDocumentClickCloseModals);
+
     mainRef?.current?.addEventListener("click", onDocumentClickCloseModals);
     mainRef?.current?.addEventListener(
       "contextmenu",
@@ -409,6 +436,7 @@ const Day: FC<DayProps> = () => {
         "click",
         onDocumentClickCloseModals
       );
+      document?.removeEventListener("mousedown", onDocumentClickCloseModals);
       mainRef?.current?.removeEventListener(
         "contextmenu",
         onDocumentClickCloseModals
@@ -454,6 +482,7 @@ const Day: FC<DayProps> = () => {
         position="fixed"
         zIndex={140}>
         <ContextMenu
+          closeContextMenu={closeContextMenu}
           timeStamp={timeStamp}
           id={contextMenuStates.id}
           calName={contextMenuStates.calName}
@@ -471,6 +500,7 @@ const Day: FC<DayProps> = () => {
         x={eventForm.x}
         y={eventForm.y}>
         <EventForm
+          calName={eventForm.calName}
           handleAddingEvent={handleAddingEvent}
           eventEndTime={eventForm.eventEndTime}
           onEndTimeChang={onEndTimeChang}
@@ -519,7 +549,7 @@ const Day: FC<DayProps> = () => {
           data-testid="calendarWrapper"
           // onMouseMove={onMouseMove}
           onMouseDown={onMouseDown}
-          onClick={onCLick}>
+          onClick={onClick}>
           {moment().startOf("day").valueOf() ===
           date.startOf("day").valueOf() ? (
             <TimeLine y={timeLineMinutes} color="red" />
@@ -546,7 +576,10 @@ const Day: FC<DayProps> = () => {
 
           {/* Event */}
           {events.map(
-            ({ title, endTime, description, startTime, id, color }, index) => (
+            (
+              { title, endTime, description, startTime, id, color, calName },
+              index
+            ) => (
               <Modal
                 key={index}
                 borderRadios="8px"
@@ -577,7 +610,7 @@ const Day: FC<DayProps> = () => {
                 }
                 onBottomBorderMouseUpOuter={onBottomBorderMouseUp}
                 onMouseDown={onEventMouseDown(id || 0)}
-                onRightClick={e => onEventRightClick(e, id || 0)}
+                onRightClick={e => onEventRightClick(e, id || 0, calName)}
               />
             )
           )}

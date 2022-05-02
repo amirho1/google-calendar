@@ -1,8 +1,7 @@
-/* eslint-disable no-fallthrough */
 import { Action } from "redux";
 import { StatusT } from "../calendars";
 import produce from "immer";
-import { AiOutlineConsoleSql } from "react-icons/ai";
+
 export interface EventI {
   id?: 1;
   startTime: number;
@@ -10,6 +9,7 @@ export interface EventI {
   title: string;
   description: string;
   color: string;
+  calName: string;
 }
 
 export interface Events {
@@ -28,8 +28,8 @@ const defaultValue: EventsStateI = {
 
 export const SAVE_ADDED_EVENT = "SAVE_ADDED_EVENT";
 export const SAVE_EVENTS = "SAVE_EVENTS";
-export const SAVE_DELETE_EVENT = "DELETE_EVENT";
-export const SAVE_UPDATE_EVENT = "UPDATE_EVENT";
+export const SAVE_DELETED_EVENT = "SAVE_DELETED_EVENT";
+export const SAVE_UPDATED_EVENT = "SAVE_UPDATE_EVENT";
 
 export const eventsActionCreator = (type: string, payload: any) => ({
   type,
@@ -52,24 +52,32 @@ const eventsReducer = produce(
         if (!draftState.events[calName]) {
           draftState.events[calName] = {};
           draftState.events[calName][timeStamp] = events;
-          return;
+          break;
         }
         draftState.events[calName][timeStamp] = events;
+        break;
       }
 
       case SAVE_ADDED_EVENT: {
         if (!draftState.events[calName]) {
           draftState.events[calName] = {};
           draftState.events[calName][timeStamp] = [action.payload.event];
-          return;
+          break;
+        } else if (!draftState.events[calName][timeStamp]) {
+          draftState.events[calName][timeStamp] = [action.payload.event];
+          break;
         }
         draftState.events[calName][timeStamp].push(action.payload.event);
+        break;
       }
 
-      case SAVE_DELETE_EVENT: {
+      case SAVE_DELETED_EVENT: {
+        draftState.events[calName][timeStamp] = draftState.events[calName][
+          timeStamp
+        ].filter(event => event.id !== action.payload.id);
+        break;
       }
-      case SAVE_UPDATE_EVENT: {
-      }
+
       default:
         return draftState;
     }

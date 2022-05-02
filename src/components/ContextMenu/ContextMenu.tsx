@@ -1,11 +1,31 @@
-import React, { FC, useMemo } from "react";
+import React, {
+  FC,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import { FaTrash } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { deleteEvent } from "../../redux/sagas/events";
 import Button from "../Button/Button";
 import styles from "./ContextMenu.module.scss";
 
-interface ContextMenuProps {}
+interface ContextMenuProps {
+  id: number;
+  calName: string;
+  timeStamp: number;
+  closeContextMenu: () => void;
+}
 
-const ContextMenu: FC<ContextMenuProps> = () => {
+const ContextMenu: FC<ContextMenuProps> = ({
+  id,
+  calName,
+  timeStamp,
+  closeContextMenu,
+}) => {
+  const dispatch = useDispatch();
+
   const colors = useMemo<{ name: string; color: string }[]>(
     () => [
       { name: "قرمز", color: "red" },
@@ -19,9 +39,31 @@ const ContextMenu: FC<ContextMenuProps> = () => {
     []
   );
 
+  const onDeleteClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
+    e => {
+      e.stopPropagation();
+      dispatch(deleteEvent.ac({ id, calName, timeStamp }));
+      closeContextMenu();
+    },
+    [calName, closeContextMenu, dispatch, id, timeStamp]
+  );
+
+  useEffect(() => {
+    document.addEventListener("click", closeContextMenu);
+
+    return () => {
+      document.removeEventListener("click", closeContextMenu);
+    };
+  }, [closeContextMenu]);
+
   return (
-    <div className={`${styles.ContextMenu} d-flex`} data-testid="ContextMenu">
-      <Button className={`${styles.delete} owl-mright hoverBGGray`}>
+    <div
+      className={`${styles.ContextMenu} d-flex`}
+      data-testid="ContextMenu"
+      onMouseDown={e => e.stopPropagation()}>
+      <Button
+        className={`${styles.delete} owl-mright hoverBGGray`}
+        onClick={e => onDeleteClick(e)}>
         <>
           <FaTrash />
           <span>حذف</span>

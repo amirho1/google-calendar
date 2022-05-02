@@ -26,6 +26,7 @@ describe("<EventForm />", () => {
         onHeaderMouseDown={() => {}}
         onStartTimeChange={() => {}}
         setModalDisplay={() => {}}
+        calName=""
       />
     ));
   });

@@ -102,8 +102,16 @@ const Details: FC<DetailsProps> = ({
     [endTime]
   );
 
+  const stopPropagation: React.MouseEventHandler<HTMLDivElement> = e => {
+    e.stopPropagation();
+  };
+
   return (
-    <div className={styles.Details} data-testid="Details">
+    <div
+      className={styles.Details}
+      data-testid="Details"
+      onClick={stopPropagation}
+      onMouseDown={stopPropagation}>
       <div className={`${styles.header}`}>
         <ULLinks listOfItems={tools} ulClassName="f-between" />
       </div>

@@ -1,5 +1,5 @@
-import React, { FC, useCallback, useMemo, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import React, { FC, useMemo } from "react";
+import { FaCalendar, FaTimes } from "react-icons/fa";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import styles from "./EventForm.module.scss";
 import { CgMathEqual } from "react-icons/cg";
@@ -14,6 +14,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Description from "../Description/Description";
 import { convertMinutesToHours } from "../../utils/helpers";
 import { EditorState } from "draft-js";
+import Cal from "./Cal/Cal";
 
 interface EventFormProps {
   onHeaderMouseDown: React.MouseEventHandler<HTMLDivElement>;
@@ -27,6 +28,7 @@ interface EventFormProps {
   onTitleChange: (newTitle: string) => void;
   onDescriptionChange: (editorState: EditorState) => void;
   handleAddingEvent: () => void;
+  calName: string;
 }
 
 const EventForm: FC<EventFormProps> = ({
@@ -41,6 +43,7 @@ const EventForm: FC<EventFormProps> = ({
   onDescriptionChange,
   onTitleChange,
   handleAddingEvent,
+  calName,
 }) => {
   const eventStartT = useMemo(
     () => convertMinutesToHours(eventStartTime),
@@ -57,7 +60,10 @@ const EventForm: FC<EventFormProps> = ({
   );
 
   return (
-    <div className={styles.EventForm} data-testid="EventForm">
+    <div
+      className={styles.EventForm}
+      data-testid="EventForm"
+      onMouseDown={e => e.stopPropagation()}>
       <div
         className={`${styles.header} f-between `}
         onMouseDown={onHeaderMouseDown}>
@@ -107,6 +113,10 @@ const EventForm: FC<EventFormProps> = ({
             editorState={description}
             onEditorStateChange={onDescriptionChange}
           />
+        </Row>
+
+        <Row icon={<FaCalendar />}>
+          <Cal calName={calName} />
         </Row>
 
         <div className={`${styles.btnWrapper} owl-mright`}>

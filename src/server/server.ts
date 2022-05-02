@@ -4,6 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import jsonData from "./db.json";
 import { updateGivenObject, write } from "./jsonCrud";
+import { EventI } from "../redux/reducers/events/events";
 
 const app = express();
 
@@ -69,13 +70,18 @@ app.post(
   }
 );
 
-app.delete("/events/:calName/:date", ({ params: { calName, date } }, res) => {
-  const calObj = (jsonData?.events as any)[calName];
-  if (!calObj) return res.status(404).send("doesn't exist");
-  if (!calObj[date]) return res.status(404).send("doesn't exist");
-  delete (jsonData?.events as any)[calName][date];
-  res.end();
-});
+app.delete(
+  "/events/:calName/:date/:id",
+  ({ params: { calName, date, id } }, res) => {
+    const calObj = (jsonData?.events as any)[calName];
+    if (!calObj) return res.status(404).send("doesn't exist");
+    if (!calObj[date]) return res.status(404).send("doesn't exist");
+    (jsonData?.events as any)[calName][date] = (jsonData?.events as any)[
+      calName
+    ][date].filter((event: EventI) => (event.id ? event?.id !== +id : true));
+    res.end();
+  }
+);
 
 app.put(
   "/events/:calName/:date/:id",
