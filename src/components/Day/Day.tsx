@@ -25,14 +25,12 @@ import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
 import { useImmerReducer } from "use-immer";
 import { PrimitivesT } from "../Table/Table";
-import Notification from "../Notification/Notification";
-import { CLOSE_NOTIFICATION } from "../../redux/reducers/notifications/notifications";
 
 interface DayProps {}
 
 export type OnDateChangeT = (newDate: Moment) => void;
 
-const centerOFScreen = () => ({
+export const centerOFScreen = () => ({
   x: window.innerWidth / 2 - 225,
   y: window.innerHeight / 2 - 225,
 });
@@ -90,17 +88,6 @@ const Day: FC<DayProps> = () => {
   const calendars = useSelector<ReduxStateI, CalendarsI[]>(
     state => state.calendars.calendars
   );
-
-  const notifications = useSelector<
-    ReduxStateI,
-    { message: string; display: boolean }
-  >(state => ({
-    message:
-      state?.notifications?.notifications[
-        state?.notifications?.notifications?.length - 1
-      ]?.message || "",
-    display: state.notifications.display,
-  }));
 
   const dispatch = useDispatch();
   const [eventFormModalRef, setEventFormModalRef] =
@@ -473,26 +460,8 @@ const Day: FC<DayProps> = () => {
     []
   );
 
-  const closeNotification = useCallback(() => {
-    dispatch(CLOSE_NOTIFICATION());
-  }, [dispatch]);
-
   return (
     <div className={styles.Day} data-testid="Day">
-      {/* Notification */}
-      <Modal
-        x={centerOFScreen().x}
-        y={window.innerHeight - 38}
-        position="fixed"
-        width="fit-content"
-        height="fit-content"
-        display={notifications.display}>
-        <Notification
-          message={notifications.message}
-          closeNotification={closeNotification}
-        />
-      </Modal>
-
       {/* event Details */}
       <Modal
         display={details.display}

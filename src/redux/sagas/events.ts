@@ -50,7 +50,7 @@ export function* addEvent(effect: Effect<string, CreateEventProperties>) {
     },
   });
 
-  yield put(SAVE_ADDED_NOTIFICATION({ message: "رویداد موفقانه ذخیره شد" }));
+  yield put(SAVE_ADDED_NOTIFICATION({ message: "رویداد با موفقیت ذخیره شد" }));
   yield put(OPEN_NOTIFICATION());
   yield delay(10000);
   yield put(CLOSE_NOTIFICATION());
@@ -121,6 +121,10 @@ async function removeEvent({ calName, timeStamp, id }: RemoveEventsProps) {
 export function* deleteEvent(effect: Effect<string, RemoveEventsProps>) {
   yield call(removeEvent, effect.payload);
   yield put({ type: SAVE_DELETED_EVENT, payload: effect.payload });
+  yield put(SAVE_ADDED_NOTIFICATION({ message: "رویداد با موفقیت حذف شد" }));
+  yield put(OPEN_NOTIFICATION());
+  yield delay(10000);
+  yield put(CLOSE_NOTIFICATION());
 }
 
 deleteEvent.type = "DELETE_EVENT";

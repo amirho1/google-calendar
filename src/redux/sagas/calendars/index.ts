@@ -1,9 +1,21 @@
-import { call, Effect, put, takeEvery, takeLatest } from "redux-saga/effects";
+import {
+  call,
+  delay,
+  Effect,
+  put,
+  takeEvery,
+  takeLatest,
+} from "redux-saga/effects";
 import { Api } from "../../../hooks/useFetch";
 import {
   saveAddedCalendarAction,
   SAVE_CALENDARS,
 } from "../../reducers/calendars";
+import {
+  CLOSE_NOTIFICATION,
+  OPEN_NOTIFICATION,
+  SAVE_ADDED_NOTIFICATION,
+} from "../../reducers/notifications/notifications";
 
 export interface TaskI {
   dateFrom: string;
@@ -26,19 +38,18 @@ async function fetchCalenders() {
 }
 
 async function createCalendar(body: CalendarsI) {
-  try {
-    const data = await Api({ method: "POST", url: "calendars", data: body });
+  const data = await Api({ method: "POST", url: "calendars", data: body });
 
-    return data.data;
-  } catch (err) {
-    console.error(err);
-  }
+  return data.data;
 }
 
 export function* addCalendar(effect: Effect<string, CalendarsI>) {
   const newCalendar: CalendarsI = yield call(createCalendar, effect.payload);
-
   yield put(saveAddedCalendarAction(newCalendar));
+  yield put(SAVE_ADDED_NOTIFICATION({ message: "تقویم با موفقیت اضافی شد " }));
+  yield put(OPEN_NOTIFICATION());
+  yield delay(1000);
+  yield put(CLOSE_NOTIFICATION());
 }
 
 addCalendar.ac = (newCalendar: CalendarsI) => ({
