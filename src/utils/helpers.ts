@@ -254,3 +254,6 @@ export function convertAMPMtoPersia(hour: string) {
 export function convertMinutesToHours(minutes: number) {
   return moment().startOf("day").add(minutes, "minutes").format("hh:mm A");
 }
+
+export const delay = (time: number) =>
+  new Promise(resolve => setTimeout(resolve, time));

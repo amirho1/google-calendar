@@ -1,4 +1,4 @@
-import { call, Effect, put, takeEvery } from "redux-saga/effects";
+import { call, delay, Effect, put, takeEvery } from "redux-saga/effects";
 import { Api } from "../../hooks/useFetch";
 import {
   ActionI,
@@ -7,6 +7,11 @@ import {
   SAVE_EVENTS,
 } from "../reducers/events/events";
 import { SAVE_DELETED_EVENT } from "../reducers/events/events";
+import {
+  CLOSE_NOTIFICATION,
+  OPEN_NOTIFICATION,
+  SAVE_ADDED_NOTIFICATION,
+} from "../reducers/notifications/notifications";
 
 interface CreateEventProperties {
   body: EventI;
@@ -44,6 +49,11 @@ export function* addEvent(effect: Effect<string, CreateEventProperties>) {
       calName: effect.payload.calName,
     },
   });
+
+  yield put(SAVE_ADDED_NOTIFICATION({ message: "رویداد موفقانه ذخیره شد" }));
+  yield put(OPEN_NOTIFICATION());
+  yield delay(10000);
+  yield put(CLOSE_NOTIFICATION());
 }
 
 addEvent.type = "ADD_EVENT";
@@ -110,7 +120,7 @@ async function removeEvent({ calName, timeStamp, id }: RemoveEventsProps) {
 
 export function* deleteEvent(effect: Effect<string, RemoveEventsProps>) {
   yield call(removeEvent, effect.payload);
-  yield put({ type: "SAVE_DELETED_EVENT", payload: effect.payload });
+  yield put({ type: SAVE_DELETED_EVENT, payload: effect.payload });
 }
 
 deleteEvent.type = "DELETE_EVENT";

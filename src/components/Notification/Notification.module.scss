@@ -1,0 +1,14 @@
+.Notification {
+  background-color: #202124;
+  padding: 0.5em;
+  min-width: 200px;
+  height: 38px;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+.close {
+  &:hover {
+    color: var(--dark);
+  }
+}

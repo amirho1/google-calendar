@@ -24,6 +24,9 @@ import Task from "../Task/Task";
 import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
 import { useImmerReducer } from "use-immer";
+import { PrimitivesT } from "../Table/Table";
+import Notification from "../Notification/Notification";
+import { CLOSE_NOTIFICATION } from "../../redux/reducers/notifications/notifications";
 
 interface DayProps {}
 
@@ -62,12 +65,18 @@ interface EventDetailsI {
   alarm: number;
 }
 
+interface NotificationStateI {
+  display: boolean;
+  message: PrimitivesT | JSX.Element;
+}
+
 const Day: FC<DayProps> = () => {
   const mainRef = useRef<HTMLDivElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [headerBottomBorderDisplay, setHeaderBottomBorderDisplay] = useState(0);
   const [timeLineMinutes, setTimeLineMinutes] = useState(0);
   const [isMoved, setIsMoved] = useState(false);
+
   const [details, setDetails] = useState({
     display: false,
     title: "",
@@ -81,6 +90,17 @@ const Day: FC<DayProps> = () => {
   const calendars = useSelector<ReduxStateI, CalendarsI[]>(
     state => state.calendars.calendars
   );
+
+  const notifications = useSelector<
+    ReduxStateI,
+    { message: string; display: boolean }
+  >(state => ({
+    message:
+      state?.notifications?.notifications[
+        state?.notifications?.notifications?.length - 1
+      ]?.message || "",
+    display: state.notifications.display,
+  }));
 
   const dispatch = useDispatch();
   const [eventFormModalRef, setEventFormModalRef] =
@@ -172,7 +192,9 @@ const Day: FC<DayProps> = () => {
     });
   }, []);
 
-  const onMouseDown = useCallback<React.MouseEventHandler<HTMLDivElement>>(
+  const onMouseDownCreateEvent = useCallback<
+    React.MouseEventHandler<HTMLDivElement>
+  >(
     e => {
       // prevent from right click
       if (e.button === 2 || eventForm.display) return;
@@ -185,6 +207,7 @@ const Day: FC<DayProps> = () => {
       const m = +time.split(":")[1];
 
       dateClone.set({ h, m });
+
       setEventForm(current => ({
         ...current,
         eventStartTime: roundSpecific(e.clientY - y, 15),
@@ -277,6 +300,7 @@ const Day: FC<DayProps> = () => {
       color: eventForm.color,
       calName: eventForm.calName,
     };
+
     dispatch(addEvent.ac({ body: event, calName: "tasks", timeStamp }));
     setEventForm(current => ({
       ...current,
@@ -449,8 +473,26 @@ const Day: FC<DayProps> = () => {
     []
   );
 
+  const closeNotification = useCallback(() => {
+    dispatch(CLOSE_NOTIFICATION());
+  }, [dispatch]);
+
   return (
     <div className={styles.Day} data-testid="Day">
+      {/* Notification */}
+      <Modal
+        x={centerOFScreen().x}
+        y={window.innerHeight - 38}
+        position="fixed"
+        width="fit-content"
+        height="fit-content"
+        display={notifications.display}>
+        <Notification
+          message={notifications.message}
+          closeNotification={closeNotification}
+        />
+      </Modal>
+
       {/* event Details */}
       <Modal
         display={details.display}
@@ -548,7 +590,7 @@ const Day: FC<DayProps> = () => {
           className={styles.CalendarWrapper}
           data-testid="calendarWrapper"
           // onMouseMove={onMouseMove}
-          onMouseDown={onMouseDown}
+          onMouseDown={onMouseDownCreateEvent}
           onClick={onClick}>
           {moment().startOf("day").valueOf() ===
           date.startOf("day").valueOf() ? (
