@@ -9,7 +9,6 @@ import ULLinks, { CB, IItem } from "../ULLinks/ULLinks";
 import styles from "./Calendars.module.scss";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { getEvents } from "../../redux/sagas/events";
 
 interface CalendarsProps {}
 

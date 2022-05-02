@@ -15,7 +15,7 @@ interface ModalProps {
   zIndex?: number;
   position?: "absolute" | "fixed";
   getRef?: (ref: React.RefObject<HTMLDivElement>) => any;
-  onMouseDown?: onEventMouseDown;
+  onMouseDown?: onEventMouseDownT;
   onMouseUp?: React.MouseEventHandler<HTMLDivElement>;
   onBottomBorderMouseDownOuter?: () => void;
   onBottomBorderMouseUpOuter?: () => void;
@@ -25,7 +25,7 @@ interface ModalProps {
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-export type onEventMouseDown = (
+export type onEventMouseDownT = (
   e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ref: React.RefObject<HTMLDivElement>
 ) => void;
@@ -123,7 +123,6 @@ const Modal: FC<ModalProps> = ({
 
       return e => {
         e.stopPropagation();
-        console.log();
         if (onBottomBorderMouseDownOuter) onBottomBorderMouseDownOuter();
         const bounding = ref.current?.getBoundingClientRect();
         if (bounding?.height) h = bounding?.height;

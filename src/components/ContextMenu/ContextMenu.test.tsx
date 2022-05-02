@@ -10,7 +10,15 @@ describe("<ContextMenu />", () => {
   let element: HTMLElement;
 
   beforeEach(() => {
-    ({ element, query } = before("ContextMenu", <ContextMenu />));
+    ({ element, query } = before(
+      "ContextMenu",
+      <ContextMenu
+        closeContextMenu={() => {}}
+        calName=""
+        id={0}
+        timeStamp={0}
+      />
+    ));
   });
 
   it("should mount", () => {

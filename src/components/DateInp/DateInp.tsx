@@ -101,7 +101,6 @@ const DateInp: FC<DateInpProps> = ({
   const changeEndTimeListDisplay = useCallback(
     e => {
       if (isEditMode) e.stopPropagation();
-      console.log("here");
       setEndTimeListDisplay(current => !current);
     },
     [isEditMode]
