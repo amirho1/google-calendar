@@ -82,6 +82,10 @@ async function delCal(id: number) {
 export function* deleteCalendar(effect: Effect<string, number>) {
   yield call(delCal, effect.payload);
   yield put(SAVE_DELETED_CALENDAR(effect.payload));
+  yield put(SAVE_ADDED_NOTIFICATION({ message: "تقویم با موفقیت حذف شد" }));
+  yield put(OPEN_NOTIFICATION());
+  yield delay(10000);
+  yield put(CLOSE_NOTIFICATION());
 }
 
 deleteCalendar.type = "DELETE_CALENDAR";
