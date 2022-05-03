@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import { RiArrowDownSLine, RiArrowUpSLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,13 +13,23 @@ import ULLinks, { CB, IItem } from "../ULLinks/ULLinks";
 import styles from "./Calendars.module.scss";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import Modal from "../Modal/Modal";
+import { centerOFScreen } from "../Day/Day";
+import Confirmation from "../Confirmation/Confirmation";
 
 interface CalendarsProps {}
 
 const Calendars: FC<CalendarsProps> = () => {
+  const [confirm, setConfirm] = useState({
+    display: false,
+    id: 0,
+    calName: "",
+  });
+
   const [calendars] = useSelector<ReduxStateI, [CalendarsI[]]>(state => [
     state.calendars.calendars,
   ]);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -52,19 +62,11 @@ const Calendars: FC<CalendarsProps> = () => {
     []
   );
 
-  const onCalendarSelectAndDeselect = useCallback(
-    (id: number) => {
-      // dispatch(updateCalendar.ac)
-    },
-    [dispatch]
-  );
+  const onCalendarSelectAndDeselect = useCallback((id: number) => {}, []);
 
-  const onCalendarDelete = useCallback(
-    (id: number) => {
-      dispatch(deleteCalendar.ac(id));
-    },
-    [dispatch]
-  );
+  const onCalendarDelete = useCallback((id: number, calName: string) => {
+    setConfirm({ id, display: true, calName });
+  }, []);
 
   const childCb = useCallback(
     (calendar: CalendarsI, index: number, id: number): CB =>
@@ -93,7 +95,7 @@ const Calendars: FC<CalendarsProps> = () => {
                 backgroundColor="var(--dark)"
                 className={styles.howColWhite}
                 dataTip="حذف">
-                <div onClick={() => onCalendarDelete(id)}>
+                <div onClick={() => onCalendarDelete(id, item.tag as string)}>
                   <FaTimes />
                 </div>
               </HoverCircle>
@@ -135,8 +137,36 @@ const Calendars: FC<CalendarsProps> = () => {
     [cb, mappedCalenders]
   );
 
+  const { x, y } = useMemo(() => centerOFScreen(), []);
+
+  const onDecline = useCallback(() => {
+    setConfirm(current => ({ ...current, display: false }));
+  }, []);
+
+  const onConfirm = useCallback(() => {
+    setConfirm(current => ({ ...current, display: false }));
+    dispatch(deleteCalendar.ac(confirm.id));
+  }, [confirm.id, dispatch]);
+
   return (
     <div className={styles.Calendars} data-testid="Calendars">
+      <Modal
+        display={confirm.display}
+        x={x}
+        y={y}
+        height=""
+        width=""
+        zIndex={200}>
+        <Confirmation
+          onDecline={onDecline}
+          onConfirm={onConfirm}
+          text={`مطمئنید می‌خواهید ${confirm.calName} را حذف کنید؟ دیگر به این تقویم و رویدادهایش دسترسی نخواهید داشت. سایر افراد دارای دسترسی به این تقویم می‌توانند همچنان از آن استفاده کنند`}
+        />
+      </Modal>
+      <div
+        style={{ display: confirm.display ? "block" : "none" }}
+        className={styles.fade}></div>
+
       <ULLinks listOfItems={listOfItems} />
     </div>
   );
