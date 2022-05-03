@@ -25,3 +25,9 @@
 .setting {
   visibility: hidden;
 }
+
+.howColWhite {
+  &:hover {
+    color: white;
+  }
+}

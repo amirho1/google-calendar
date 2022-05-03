@@ -10,6 +10,7 @@ import { Api } from "../../../hooks/useFetch";
 import {
   saveAddedCalendarAction,
   SAVE_CALENDARS,
+  SAVE_DELETED_CALENDAR,
 } from "../../reducers/calendars";
 import {
   CLOSE_NOTIFICATION,
@@ -30,11 +31,6 @@ export interface CalendarsI {
   name: string;
   color: string;
   selected: boolean;
-}
-
-async function fetchCalenders() {
-  const data = await Api({ method: "get", url: "/calendars" });
-  return data.data;
 }
 
 async function createCalendar(body: CalendarsI) {
@@ -58,6 +54,14 @@ addCalendar.ac = (newCalendar: CalendarsI) => ({
 });
 addCalendar.type = "ADD_CALENDAR";
 
+export function* watchAddingCalendar() {
+  yield takeEvery(addCalendar.type, addCalendar);
+}
+
+async function fetchCalenders() {
+  const data = await Api({ method: "get", url: "/calendars" });
+  return data.data;
+}
 export function* getCalendars() {
   const calendars: CalendarsI[] = yield call(fetchCalenders);
 
@@ -71,6 +75,21 @@ export default function* watchGettingCalenders() {
   yield takeLatest(getCalendars.type, getCalendars);
 }
 
-export function* watchAddingCalendar() {
-  yield takeEvery(addCalendar.type, addCalendar);
+async function delCal(id: number) {
+  Api({ method: "DELETE", url: `/calendars/${id}` });
+}
+
+export function* deleteCalendar(effect: Effect<string, number>) {
+  yield call(delCal, effect.payload);
+  yield put(SAVE_DELETED_CALENDAR(effect.payload));
+}
+
+deleteCalendar.type = "DELETE_CALENDAR";
+deleteCalendar.ac = (id: number) => ({
+  type: deleteCalendar.type,
+  payload: id,
+});
+
+export function* watchDeletingCalendar() {
+  yield takeLatest(deleteCalendar.type, deleteCalendar);
 }

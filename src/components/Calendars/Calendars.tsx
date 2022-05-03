@@ -1,9 +1,13 @@
 import React, { FC, useCallback, useEffect, useMemo } from "react";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaTimes } from "react-icons/fa";
 import { RiArrowDownSLine, RiArrowUpSLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
-import { CalendarsI, getCalendars } from "../../redux/sagas/calendars";
+import {
+  CalendarsI,
+  deleteCalendar,
+  getCalendars,
+} from "../../redux/sagas/calendars";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import ULLinks, { CB, IItem } from "../ULLinks/ULLinks";
 import styles from "./Calendars.module.scss";
@@ -55,8 +59,15 @@ const Calendars: FC<CalendarsProps> = () => {
     [dispatch]
   );
 
+  const onCalendarDelete = useCallback(
+    (id: number) => {
+      dispatch(deleteCalendar.ac(id));
+    },
+    [dispatch]
+  );
+
   const childCb = useCallback(
-    (calendar: CalendarsI, index: number): CB =>
+    (calendar: CalendarsI, index: number, id: number): CB =>
       item =>
         (
           <div className={`${styles.row} f-between`}>
@@ -77,20 +88,34 @@ const Calendars: FC<CalendarsProps> = () => {
               {item.tag}
             </label>
 
-            <BsThreeDotsVertical
-              className={styles.setting}
-              data-tip={"Click to view"}
-            />
+            <div className={`${styles.setting} f-between`}>
+              <HoverCircle
+                backgroundColor="var(--dark)"
+                className={styles.howColWhite}
+                dataTip="حذف">
+                <div onClick={() => onCalendarDelete(id)}>
+                  <FaTimes />
+                </div>
+              </HoverCircle>
+
+              <HoverCircle
+                backgroundColor="var(--dark)"
+                className={styles.howColWhite}>
+                <div>
+                  <BsThreeDotsVertical data-tip={"Click to view"} />
+                </div>
+              </HoverCircle>
+            </div>
           </div>
         ),
-    []
+    [onCalendarDelete, onCalendarSelectAndDeselect]
   );
 
   const mappedCalenders = useMemo<IItem[]>(
     () =>
       calendars.map((calendar, index) => ({
         tag: calendar.name,
-        cb: childCb(calendar, index),
+        cb: childCb(calendar, index, calendar?.id || 0),
       })),
     [calendars, childCb]
   );

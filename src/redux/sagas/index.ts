@@ -1,5 +1,8 @@
 import { all } from "redux-saga/effects";
-import watchGettingCalenders, { watchAddingCalendar } from "./calendars";
+import watchGettingCalenders, {
+  watchAddingCalendar,
+  watchDeletingCalendar,
+} from "./calendars";
 import watchAddingEvents, {
   watchGettingEvents,
   watchingDeletingEvent,
@@ -11,6 +14,7 @@ const sagas: any[] = [
   watchAddingCalendar(),
   watchAddingEvents(),
   watchGettingEvents(),
+  watchDeletingCalendar(),
 ];
 
 export default function* rootSaga() {

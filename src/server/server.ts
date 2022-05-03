@@ -47,6 +47,12 @@ app.put("/calendars/:id", ({ params: { id }, body }, res) => {
   res.send(update);
 });
 
+app.delete("/calendars/:id", ({ params: { id } }, res) => {
+  jsonData.calendars = jsonData.calendars.filter(cal => cal.id !== +id);
+  write(JSON.stringify(jsonData), console.error);
+  res.end();
+});
+
 app.get("/events/:calName/:date", ({ params: { calName, date } }, res) => {
   const calObj = (jsonData?.events as any)[calName];
   if (!calObj) return res.status(404).send("doesn't exist");
@@ -79,6 +85,7 @@ app.delete(
     (jsonData?.events as any)[calName][date] = (jsonData?.events as any)[
       calName
     ][date].filter((event: EventI) => (event.id ? event?.id !== +id : true));
+    write(JSON.stringify(jsonData), console.error);
     res.end();
   }
 );
@@ -94,6 +101,7 @@ app.put(
     );
     if (!target) return res.status(404).send("doesn't exist");
     updateGivenObject(target, body);
+    write(JSON.stringify(jsonData), console.error);
     res.send(body);
   }
 );

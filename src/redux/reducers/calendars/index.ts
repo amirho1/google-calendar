@@ -1,8 +1,14 @@
-import { Map } from "immutable";
+import produce from "immer";
 import { Action } from "redux";
 import { CalendarsI } from "../../sagas/calendars";
 
 export const SAVE_CALENDARS = "SAVE_CALENDARS";
+export const SAVE_DELETED_CALENDAR = (payload: number) => ({
+  type: SAVE_DELETED_CALENDAR,
+  payload,
+});
+
+SAVE_DELETED_CALENDAR.type = "SAVE_DELETED_CALENDAR";
 
 export type StatusT = "idle" | "loading" | "success" | "error";
 
@@ -25,18 +31,24 @@ interface ActionI<PayloadT> extends Action {
   payload: PayloadT;
 }
 
-export default function calendarsReducer(
-  state: CalendarsStateI = defaultValue,
-  { type, payload }: ActionI<any>
-) {
-  switch (type) {
-    case SAVE_CALENDARS: {
-      let imuCopy = Map(state);
-      imuCopy = imuCopy.set("status", "success");
-      imuCopy = imuCopy.set("calendars", payload);
-      return imuCopy.toJS();
+const calendarsReducer = produce(
+  (draftState, { type, payload }: ActionI<any>) => {
+    switch (type) {
+      case SAVE_CALENDARS: {
+        draftState.calendars = payload;
+        break;
+      }
+      case SAVE_DELETED_CALENDAR: {
+        draftState.calendars = draftState.calendars.filter(
+          cal => cal.id !== payload
+        );
+        break;
+      }
+      default:
+        return draftState;
     }
-    default:
-      return state;
-  }
-}
+  },
+  defaultValue
+);
+
+export default calendarsReducer;
