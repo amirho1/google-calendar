@@ -5,6 +5,7 @@ import morgan from "morgan";
 import jsonData from "./db.json";
 import { updateGivenObject, write } from "./jsonCrud";
 import { EventI } from "../redux/reducers/events/events";
+import { join } from "path";
 
 const app = express();
 
@@ -14,7 +15,7 @@ app.use(bodyParser.json());
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms")
 );
-
+app.use(express.static(join(__dirname, "../../build")));
 const port = 3001;
 
 app.listen(port, () => {
@@ -23,7 +24,8 @@ app.listen(port, () => {
 });
 
 app.get("/", (req, res) => {
-  res.send(jsonData);
+  console.log();
+  res.sendFile(join(__dirname, "../../build/index.html"));
 });
 
 app.get("/calendars", (req, res) => {
