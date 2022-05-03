@@ -15,6 +15,7 @@ describe("<Plus />", () => {
       "Plus",
       <Plus
         fullSize={true}
+        disable={false}
         text="create"
         onClick={() => console.log("hello world")}
       />

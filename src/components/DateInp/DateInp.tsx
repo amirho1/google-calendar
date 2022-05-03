@@ -180,7 +180,8 @@ const DateInp: FC<DateInpProps> = ({
       <div
         className={`${styles.edits} ${
           isEditMode ? styles.openEdits : ""
-        } owl-mtop owl-mright`}>
+        } owl-mtop owl-mright`}
+        style={{ display: !isEditMode ? "none" : "block" }}>
         <input type="checkbox" name="" id="all-day" />
         <label htmlFor="all-day">تمام روز</label>
 

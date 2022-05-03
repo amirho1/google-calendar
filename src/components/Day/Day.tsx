@@ -1,7 +1,14 @@
 import { convertToHTML } from "draft-convert";
 import { EditorState } from "draft-js";
 import moment, { Moment } from "moment-jalaali";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
@@ -25,6 +32,9 @@ import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
 import { useImmerReducer } from "use-immer";
 import { PrimitivesT } from "../Table/Table";
+import Plus from "../Plus/Plus";
+import { SidebarContext } from "../../App";
+import { current } from "immer";
 
 interface DayProps {}
 
@@ -459,9 +469,22 @@ const Day: FC<DayProps> = () => {
     () => setDetails(current => ({ ...current, display: false })),
     []
   );
+  const { display: sideBarDisplay } = useContext(SidebarContext);
+
+  const onPlusClickOpenEventForm = useCallback(() => {
+    setEventForm(current => ({ ...current, display: true }));
+  }, []);
 
   return (
     <div className={styles.Day} data-testid="Day">
+      <Plus
+        fullSize={sideBarDisplay}
+        onClick={onPlusClickOpenEventForm}
+        text={"اضافه کردن"}
+        className={styles.Plus}
+        disable={eventForm.display}
+      />
+
       {/* event Details */}
       <Modal
         display={details.display}

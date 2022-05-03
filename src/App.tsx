@@ -23,6 +23,8 @@ const ReactTooltipAsAny = ReactTooltip as any;
 
 export const RoutesContext = createContext<SiteMap>(new SiteMap({}));
 
+export const SidebarContext = createContext({ display: false });
+
 function App() {
   const dispatch = useDispatch();
   useTitle("تقویم فارسی گوگل");
@@ -76,27 +78,29 @@ function App() {
 
   return (
     <RoutesContext.Provider value={routes}>
-      <div className={`${styles.App}`} data-testid="App">
-        <Modal
-          x={centerOFScreen().x}
-          y={window.innerHeight - 38}
-          position="fixed"
-          width="fit-content"
-          height="fit-content"
-          display={notifications.display}>
-          <Notification
-            message={notifications.message}
-            closeNotification={closeNotification}
-          />
-        </Modal>
+      <SidebarContext.Provider value={{ display: sideBarDisplay }}>
+        <div className={`${styles.App}`} data-testid="App">
+          <Modal
+            x={centerOFScreen().x}
+            y={window.innerHeight - 38}
+            position="fixed"
+            width="fit-content"
+            height="fit-content"
+            display={notifications.display}>
+            <Notification
+              message={notifications.message}
+              closeNotification={closeNotification}
+            />
+          </Modal>
 
-        <ReactTooltipAsAny />
-        <NavBar closeSideBar={closeSideBar} />
+          <ReactTooltipAsAny />
+          <NavBar closeSideBar={closeSideBar} />
 
-        <main className={styles.Main}>
-          <Routes>{routes.routesToJSX(routes.routes)}</Routes>
-        </main>
-      </div>
+          <main className={styles.Main}>
+            <Routes>{routes.routesToJSX(routes.routes)}</Routes>
+          </main>
+        </div>
+      </SidebarContext.Provider>
     </RoutesContext.Provider>
   );
 }
