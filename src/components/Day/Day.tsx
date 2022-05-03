@@ -13,7 +13,7 @@ import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import { EventI } from "../../redux/reducers/events/events";
-import { CalendarsI } from "../../redux/sagas/calendars";
+import { CalendarI } from "../../redux/sagas/calendars";
 import { addEvent, getEvents } from "../../redux/sagas/events";
 import {
   convertEnglishWeekdaysToPersian,
@@ -95,7 +95,7 @@ const Day: FC<DayProps> = () => {
     alarm: 0,
   });
 
-  const calendars = useSelector<ReduxStateI, CalendarsI[]>(
+  const calendars = useSelector<ReduxStateI, CalendarI[]>(
     state => state.calendars.calendars
   );
 
@@ -145,7 +145,6 @@ const Day: FC<DayProps> = () => {
       ? state?.events?.events["tasks"][timeStamp] || []
       : [];
   });
-
   const day = useMemo(() => date.format("jDD"), [date]);
 
   const weekday = useMemo(
@@ -273,10 +272,12 @@ const Day: FC<DayProps> = () => {
   // fetch events
   useEffect(() => {
     calendars.forEach(calendar => {
-      if (calendar?.selected)
+      if (calendar?.selected) {
+        console.log(calendar);
         dispatch(
           getEvents.ac({ timeStamp: `${timeStamp}`, calName: calendar.name })
         );
+      }
     });
   }, [dispatch, timeStamp, calendars]);
 

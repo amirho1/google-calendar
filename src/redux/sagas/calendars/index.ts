@@ -11,6 +11,7 @@ import {
   saveAddedCalendarAction,
   SAVE_CALENDARS,
   SAVE_DELETED_CALENDAR,
+  SAVE_UPDATED_CALENDAR,
 } from "../../reducers/calendars";
 import {
   CLOSE_NOTIFICATION,
@@ -25,7 +26,7 @@ export interface TaskI {
   description: string;
 }
 
-export interface CalendarsI {
+export interface CalendarI {
   id?: number;
   description?: string;
   name: string;
@@ -33,14 +34,14 @@ export interface CalendarsI {
   selected: boolean;
 }
 
-async function createCalendar(body: CalendarsI) {
+async function createCalendar(body: CalendarI) {
   const data = await Api({ method: "POST", url: "calendars", data: body });
 
   return data.data;
 }
 
-export function* addCalendar(effect: Effect<string, CalendarsI>) {
-  const newCalendar: CalendarsI = yield call(createCalendar, effect.payload);
+export function* addCalendar(effect: Effect<string, CalendarI>) {
+  const newCalendar: CalendarI = yield call(createCalendar, effect.payload);
   yield put(saveAddedCalendarAction(newCalendar));
   yield put(SAVE_ADDED_NOTIFICATION({ message: "تقویم با موفقیت اضافی شد " }));
   yield put(OPEN_NOTIFICATION());
@@ -48,7 +49,7 @@ export function* addCalendar(effect: Effect<string, CalendarsI>) {
   yield put(CLOSE_NOTIFICATION());
 }
 
-addCalendar.ac = (newCalendar: CalendarsI) => ({
+addCalendar.ac = (newCalendar: CalendarI) => ({
   type: addCalendar.type,
   payload: newCalendar,
 });
@@ -63,7 +64,7 @@ async function fetchCalenders() {
   return data.data;
 }
 export function* getCalendars() {
-  const calendars: CalendarsI[] = yield call(fetchCalenders);
+  const calendars: CalendarI[] = yield call(fetchCalenders);
 
   yield put({ type: SAVE_CALENDARS, payload: calendars });
 }
@@ -96,4 +97,29 @@ deleteCalendar.ac = (id: number) => ({
 
 export function* watchDeletingCalendar() {
   yield takeLatest(deleteCalendar.type, deleteCalendar);
+}
+
+async function asyncUpdateCalendar(payload: CalendarI) {
+  const updatedCal = await Api({
+    method: "PUT",
+    url: `/calendars/${payload.id}`,
+    data: payload,
+  });
+
+  return updatedCal.data;
+}
+
+export function* updateCalendar({ payload }: Effect<string, CalendarI>) {
+  yield call(asyncUpdateCalendar, payload);
+  yield put(SAVE_UPDATED_CALENDAR(payload));
+}
+
+updateCalendar.type = "UPDATE_CALENDAR";
+updateCalendar.ac = (updatedCal: CalendarI) => ({
+  type: updateCalendar.type,
+  payload: updatedCal,
+});
+
+export function* watchingUpdatingCalendars() {
+  yield takeLatest(updateCalendar.type, updateCalendar);
 }

@@ -4,9 +4,10 @@ import { RiArrowDownSLine, RiArrowUpSLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import {
-  CalendarsI,
+  CalendarI,
   deleteCalendar,
   getCalendars,
+  updateCalendar,
 } from "../../redux/sagas/calendars";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import ULLinks, { CB, IItem } from "../ULLinks/ULLinks";
@@ -26,7 +27,7 @@ const Calendars: FC<CalendarsProps> = () => {
     calName: "",
   });
 
-  const [calendars] = useSelector<ReduxStateI, [CalendarsI[]]>(state => [
+  const [calendars] = useSelector<ReduxStateI, [CalendarI[]]>(state => [
     state.calendars.calendars,
   ]);
 
@@ -62,14 +63,19 @@ const Calendars: FC<CalendarsProps> = () => {
     []
   );
 
-  const onCalendarSelectAndDeselect = useCallback((id: number) => {}, []);
+  const onCalendarSelectAndDeselect = useCallback(
+    (newCalendar: CalendarI) => {
+      dispatch(updateCalendar.ac(newCalendar));
+    },
+    [dispatch]
+  );
 
   const onCalendarDelete = useCallback((id: number, calName: string) => {
     setConfirm({ id, display: true, calName });
   }, []);
 
   const childCb = useCallback(
-    (calendar: CalendarsI, index: number, id: number): CB =>
+    (calendar: CalendarI, index: number, id: number): CB =>
       item =>
         (
           <div className={`${styles.row} f-between`}>
@@ -79,7 +85,11 @@ const Calendars: FC<CalendarsProps> = () => {
               id={`${index}-calendar`}
               checked={calendar.selected}
               onChange={() =>
-                calendar.id && onCalendarSelectAndDeselect(calendar.id)
+                calendar.id &&
+                onCalendarSelectAndDeselect({
+                  ...calendar,
+                  selected: !calendar.selected,
+                })
               }
             />
 

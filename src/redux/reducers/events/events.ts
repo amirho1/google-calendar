@@ -47,13 +47,13 @@ const eventsReducer = produce(
 
     switch (action.type) {
       case SAVE_EVENTS: {
-        const events: EventI[] = action.payload.response;
-
+        const events: EventI[] = action.payload.response || [];
         if (!draftState.events[calName]) {
           draftState.events[calName] = {};
           draftState.events[calName][timeStamp] = events;
           break;
         }
+
         draftState.events[calName][timeStamp] = events;
         break;
       }
