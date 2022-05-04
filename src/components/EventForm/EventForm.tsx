@@ -28,7 +28,8 @@ interface EventFormProps {
   onTitleChange: (newTitle: string) => void;
   onDescriptionChange: (editorState: EditorState) => void;
   handleAddingEvent: () => void;
-  calName: string;
+  calId: number;
+  onCalChange: (id: number) => void;
 }
 
 const EventForm: FC<EventFormProps> = ({
@@ -43,7 +44,8 @@ const EventForm: FC<EventFormProps> = ({
   onDescriptionChange,
   onTitleChange,
   handleAddingEvent,
-  calName,
+  calId,
+  onCalChange,
 }) => {
   const eventStartT = useMemo(
     () => convertMinutesToHours(eventStartTime),
@@ -116,7 +118,7 @@ const EventForm: FC<EventFormProps> = ({
         </Row>
 
         <Row icon={<FaCalendar />}>
-          <Cal calName={calName} />
+          <Cal calId={calId} onCalChange={onCalChange} />
         </Row>
 
         <div className={`${styles.btnWrapper} owl-mright`}>

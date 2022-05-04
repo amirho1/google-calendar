@@ -34,7 +34,6 @@ import { useImmerReducer } from "use-immer";
 import { PrimitivesT } from "../Table/Table";
 import Plus from "../Plus/Plus";
 import { SidebarContext } from "../../App";
-import { current } from "immer";
 
 interface DayProps {}
 
@@ -162,7 +161,7 @@ const Day: FC<DayProps> = () => {
     eventStartTime: 0,
     eventEndTime: 0,
     color: "blue",
-    calName: "",
+    calId: 1,
   });
 
   useEffect(() => {
@@ -188,7 +187,7 @@ const Day: FC<DayProps> = () => {
     });
   }, []);
 
-  const onMouseDownCreateEvent = useCallback<
+  const onClickCreateEvent = useCallback<
     React.MouseEventHandler<HTMLDivElement>
   >(
     e => {
@@ -273,7 +272,6 @@ const Day: FC<DayProps> = () => {
   useEffect(() => {
     calendars.forEach(calendar => {
       if (calendar?.selected) {
-        console.log(calendar);
         dispatch(
           getEvents.ac({ timeStamp: `${timeStamp}`, calName: calendar.name })
         );
@@ -296,7 +294,7 @@ const Day: FC<DayProps> = () => {
       startTime: eventForm.eventStartTime,
       title: eventForm.title,
       color: eventForm.color,
-      calName: eventForm.calName,
+      calId: eventForm.calId,
     };
 
     dispatch(addEvent.ac({ body: event, calName: "tasks", timeStamp }));
@@ -310,7 +308,7 @@ const Day: FC<DayProps> = () => {
     }));
   }, [
     dispatch,
-    eventForm.calName,
+    eventForm.calId,
     eventForm.color,
     eventForm.description,
     eventForm.eventEndTime,
@@ -476,6 +474,10 @@ const Day: FC<DayProps> = () => {
     setEventForm(current => ({ ...current, display: true }));
   }, []);
 
+  const onCalChange = useCallback((calId: number) => {
+    setEventForm(current => ({ ...current, calId }));
+  }, []);
+
   return (
     <div className={styles.Day} data-testid="Day">
       <Plus
@@ -535,7 +537,8 @@ const Day: FC<DayProps> = () => {
         x={eventForm.x}
         y={eventForm.y}>
         <EventForm
-          calName={eventForm.calName}
+          onCalChange={onCalChange}
+          calId={eventForm.calId}
           handleAddingEvent={handleAddingEvent}
           eventEndTime={eventForm.eventEndTime}
           onEndTimeChang={onEndTimeChang}
@@ -573,7 +576,9 @@ const Day: FC<DayProps> = () => {
       <main
         ref={mainRef}
         className={styles.main}
-        onClick={e => e.stopPropagation()}
+        onClick={e => {
+          e.stopPropagation();
+        }}
         onContextMenu={e => e.stopPropagation()}
         onScroll={e => {
           setHeaderBottomBorderDisplay(e.currentTarget.scrollTop);
@@ -582,9 +587,10 @@ const Day: FC<DayProps> = () => {
         <div
           className={styles.CalendarWrapper}
           data-testid="calendarWrapper"
-          // onMouseMove={onMouseMove}
-          onMouseDown={onMouseDownCreateEvent}
-          onClick={onClick}>
+          onClick={e => {
+            onClickCreateEvent(e);
+            onClick(e);
+          }}>
           {moment().startOf("day").valueOf() ===
           date.startOf("day").valueOf() ? (
             <TimeLine y={timeLineMinutes} color="red" />
@@ -612,7 +618,7 @@ const Day: FC<DayProps> = () => {
           {/* Event */}
           {events.map(
             (
-              { title, endTime, description, startTime, id, color, calName },
+              { title, endTime, description, startTime, id, color, calId },
               index
             ) => (
               <Modal
@@ -645,7 +651,7 @@ const Day: FC<DayProps> = () => {
                 }
                 onBottomBorderMouseUpOuter={onBottomBorderMouseUp}
                 onMouseDown={onEventMouseDown(id || 0)}
-                onRightClick={e => onEventRightClick(e, id || 0, calName)}
+                onRightClick={e => onEventRightClick(e, id || 0, calId)}
               />
             )
           )}

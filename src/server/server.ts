@@ -24,7 +24,6 @@ app.listen(port, () => {
 });
 
 app.get("/", (req, res) => {
-  console.log();
   res.sendFile(join(__dirname, "../../build/index.html"));
 });
 

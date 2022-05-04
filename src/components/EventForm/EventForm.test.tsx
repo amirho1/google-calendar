@@ -15,6 +15,7 @@ describe("<EventForm />", () => {
     ({ element, query } = before(
       "EventForm",
       <EventForm
+        onCalChange={() => {}}
         handleAddingEvent={() => {}}
         onDescriptionChange={() => {}}
         onTitleChange={() => {}}
@@ -26,7 +27,7 @@ describe("<EventForm />", () => {
         onHeaderMouseDown={() => {}}
         onStartTimeChange={() => {}}
         setModalDisplay={() => {}}
-        calName=""
+        calId={0}
       />
     ));
   });

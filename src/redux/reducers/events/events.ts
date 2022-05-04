@@ -9,7 +9,7 @@ export interface EventI {
   title: string;
   description: string;
   color: string;
-  calName: string;
+  calId: number;
 }
 
 export interface Events {
