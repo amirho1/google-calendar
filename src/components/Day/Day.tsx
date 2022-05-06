@@ -33,7 +33,7 @@ import styles from "./Day.module.scss";
 import { useImmerReducer } from "use-immer";
 import { PrimitivesT } from "../Table/Table";
 import Plus from "../Plus/Plus";
-import { SidebarContext } from "../../App";
+import { FadeContext, SidebarContext } from "../../App";
 
 interface DayProps {}
 
@@ -77,7 +77,10 @@ interface NotificationStateI {
   message: PrimitivesT | JSX.Element;
 }
 
+export type OnColorChangeT = (color: string) => void;
+
 const Day: FC<DayProps> = () => {
+  const { closeFade } = useContext(FadeContext);
   const mainRef = useRef<HTMLDivElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [headerBottomBorderDisplay, setHeaderBottomBorderDisplay] = useState(0);
@@ -440,7 +443,8 @@ const Day: FC<DayProps> = () => {
     });
     setEventForm(current => ({ ...current, display: false }));
     setDetails(current => ({ ...current, display: false }));
-  }, [dispatchContextMenuStates]);
+    closeFade();
+  }, [closeFade, dispatchContextMenuStates]);
 
   useEffect(() => {
     document.addEventListener("mousedown", onDocumentClickCloseModals);
@@ -476,6 +480,10 @@ const Day: FC<DayProps> = () => {
 
   const onCalChange = useCallback((calId: number) => {
     setEventForm(current => ({ ...current, calId }));
+  }, []);
+
+  const onColorChange = useCallback<OnColorChangeT>(color => {
+    setEventForm(current => ({ ...current, color }));
   }, []);
 
   return (
@@ -530,13 +538,14 @@ const Day: FC<DayProps> = () => {
       <Modal
         display={eventForm.display}
         getRef={getRef}
-        zIndex={100}
+        zIndex={210}
         height="fit-content"
         width="450px"
         position="fixed"
         x={eventForm.x}
         y={eventForm.y}>
         <EventForm
+          onColorChange={onColorChange}
           onCalChange={onCalChange}
           calId={eventForm.calId}
           handleAddingEvent={handleAddingEvent}
@@ -606,7 +615,7 @@ const Day: FC<DayProps> = () => {
             className="pointer"
             boxShadow={false}
             data-testid="Task"
-            backgroundColor="var(--blue)"
+            backgroundColor={eventForm.color}
             x={0}
             y={eventForm.eventStartTime}
             resizeAble={true}

@@ -1,4 +1,11 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import { RiArrowDownSLine, RiArrowUpSLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,10 +24,12 @@ import { Link } from "react-router-dom";
 import Modal from "../Modal/Modal";
 import { centerOFScreen } from "../Day/Day";
 import Confirmation from "../Confirmation/Confirmation";
+import { FadeContext } from "../../App";
 
 interface CalendarsProps {}
 
 const Calendars: FC<CalendarsProps> = () => {
+  const { closeFade, openFade } = useContext(FadeContext);
   const [confirm, setConfirm] = useState({
     display: false,
     id: 0,
@@ -70,9 +79,13 @@ const Calendars: FC<CalendarsProps> = () => {
     [dispatch]
   );
 
-  const onCalendarDelete = useCallback((id: number, calName: string) => {
-    setConfirm({ id, display: true, calName });
-  }, []);
+  const onCalendarDelete = useCallback(
+    (id: number, calName: string) => {
+      openFade();
+      setConfirm({ id, display: true, calName });
+    },
+    [openFade]
+  );
 
   const childCb = useCallback(
     (calendar: CalendarI, index: number, id: number): CB =>
@@ -150,13 +163,15 @@ const Calendars: FC<CalendarsProps> = () => {
   const { x, y } = useMemo(() => centerOFScreen(), []);
 
   const onDecline = useCallback(() => {
+    closeFade();
     setConfirm(current => ({ ...current, display: false }));
-  }, []);
+  }, [closeFade]);
 
   const onConfirm = useCallback(() => {
+    closeFade();
     setConfirm(current => ({ ...current, display: false }));
     dispatch(deleteCalendar.ac(confirm.id));
-  }, [confirm.id, dispatch]);
+  }, [closeFade, confirm.id, dispatch]);
 
   return (
     <div className={styles.Calendars} data-testid="Calendars">
@@ -166,16 +181,13 @@ const Calendars: FC<CalendarsProps> = () => {
         y={y}
         height=""
         width=""
-        zIndex={200}>
+        zIndex={220}>
         <Confirmation
           onDecline={onDecline}
           onConfirm={onConfirm}
           text={`مطمئنید می‌خواهید ${confirm.calName} را حذف کنید؟ دیگر به این تقویم و رویدادهایش دسترسی نخواهید داشت. سایر افراد دارای دسترسی به این تقویم می‌توانند همچنان از آن استفاده کنند`}
         />
       </Modal>
-      <div
-        style={{ display: confirm.display ? "block" : "none" }}
-        className={styles.fade}></div>
 
       <ULLinks listOfItems={listOfItems} />
     </div>

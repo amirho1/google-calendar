@@ -7,14 +7,19 @@ import Modal from "../../Modal/Modal";
 import { useSelector } from "react-redux";
 import { ReduxStateI } from "../../../redux";
 import { CalendarI } from "../../../redux/sagas/calendars";
+import ColorForm from "../../ColorForm/ColorForm";
+import Color from "../../Color/Color";
+import { OnColorChangeT } from "../../Day/Day";
 
 interface CalProps {
   calId: number;
   onCalChange: (id: number) => void;
+  onColorChange: OnColorChangeT;
 }
 
-const Cal: FC<CalProps> = ({ calId, onCalChange }) => {
+const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
   const [calListDisplay, setCalListDisplay] = useState(false);
+  const [colorFormDisplay, setColorFormDisplay] = useState(false);
 
   const [isEditorMode, setIsEditorMode] = useState(false);
 
@@ -33,7 +38,6 @@ const Cal: FC<CalProps> = ({ calId, onCalChange }) => {
   }, []);
 
   const closeModals = useCallback(() => {
-    console.log("Hello world");
     setCalListDisplay(false);
   }, []);
 
@@ -54,7 +58,11 @@ const Cal: FC<CalProps> = ({ calId, onCalChange }) => {
       return (c.id as any) === calId;
     })
   );
-  console.log(calendar?.color);
+
+  const changeColorFormDisplay = useCallback(() => {
+    setColorFormDisplay(current => !current);
+  }, []);
+
   return (
     <div
       className={`${styles.Cal} ${calConditionalClassNames}`}
@@ -65,9 +73,7 @@ const Cal: FC<CalProps> = ({ calId, onCalChange }) => {
         style={{ display: !isEditorMode ? "block" : "none" }}>
         <div className={`f-between ${styles.mainRow} `}>
           <h2>{calendar?.name}</h2>{" "}
-          <div
-            className={`${styles.color} m-right2`}
-            style={{ backgroundColor: calendar?.color }}></div>
+          <Color color={calendar?.color || ""} onColorChange={onColorChange} />
         </div>
 
         <div className={styles.otherThings}>
@@ -96,14 +102,28 @@ const Cal: FC<CalProps> = ({ calId, onCalChange }) => {
           </Modal>
 
           <Button
+            onClick={() => changeColorFormDisplay()}
             className={`${styles.btn} ${colorBtnConditionalClassNames} f-between m-right2`}>
             <>
-              <div
-                className={styles.color}
-                style={{ backgroundColor: calendar?.color }}></div>
+              <Color
+                color={calendar?.color || ""}
+                onColorChange={onColorChange}
+              />
               <RiArrowDownSLine />
             </>
           </Button>
+
+          <Modal
+            display={colorFormDisplay}
+            width="120px"
+            x={-30}
+            y={40}
+            height="fit-content">
+            <ColorForm
+              onColorChange={onColorChange}
+              color={calendar ? calendar.color : "blue"}
+            />
+          </Modal>
         </div>
       </div>
     </div>

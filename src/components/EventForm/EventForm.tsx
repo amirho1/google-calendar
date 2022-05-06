@@ -15,6 +15,7 @@ import Description from "../Description/Description";
 import { convertMinutesToHours } from "../../utils/helpers";
 import { EditorState } from "draft-js";
 import Cal from "./Cal/Cal";
+import { OnColorChangeT } from "../Day/Day";
 
 interface EventFormProps {
   onHeaderMouseDown: React.MouseEventHandler<HTMLDivElement>;
@@ -30,6 +31,7 @@ interface EventFormProps {
   handleAddingEvent: () => void;
   calId: number;
   onCalChange: (id: number) => void;
+  onColorChange: OnColorChangeT;
 }
 
 const EventForm: FC<EventFormProps> = ({
@@ -46,6 +48,7 @@ const EventForm: FC<EventFormProps> = ({
   handleAddingEvent,
   calId,
   onCalChange,
+  onColorChange,
 }) => {
   const eventStartT = useMemo(
     () => convertMinutesToHours(eventStartTime),
@@ -118,7 +121,11 @@ const EventForm: FC<EventFormProps> = ({
         </Row>
 
         <Row icon={<FaCalendar />}>
-          <Cal calId={calId} onCalChange={onCalChange} />
+          <Cal
+            calId={calId}
+            onCalChange={onCalChange}
+            onColorChange={onColorChange}
+          />
         </Row>
 
         <div className={`${styles.btnWrapper} owl-mright`}>

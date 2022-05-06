@@ -1,0 +1,22 @@
+.ColorPicker {
+  border: none;
+  padding: 1em;
+  width: 350px;
+}
+
+.canvas {
+  display: block;
+  margin: auto;
+  margin-top: 1em;
+}
+
+.btns {
+  display: flex;
+  justify-content: flex-end;
+
+  & > * {
+    border: none;
+    background-color: transparent;
+    margin-right: 1em;
+  }
+}

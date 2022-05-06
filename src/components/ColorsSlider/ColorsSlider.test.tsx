@@ -1,18 +1,18 @@
-// templates/component/Cal.js
+// templates/component/ColorsSlider.js
 
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
-import Cal from "./Cal";
-import { before, Query } from "../../../utils/testHelper";
+import ColorsSlider from "./ColorsSlider";
+import { before, Query } from "../../utils/testHelper";
 
-describe("<Cal />", () => {
+describe("<ColorsSlider />", () => {
   let query: Query;
   let element: HTMLElement;
 
   beforeEach(() => {
     ({ element, query } = before(
-      "Cal",
-      <Cal calId={0} onCalChange={() => {}} onColorChange={() => {}} />
+      "ColorsSlider",
+      <ColorsSlider setColorPickerColor={() => {}} />
     ));
   });
 

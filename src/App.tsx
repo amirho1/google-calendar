@@ -17,15 +17,22 @@ import Modal from "./components/Modal/Modal";
 import { centerOFScreen } from "./components/Day/Day";
 import Notification from "./components/Notification/Notification";
 import { CLOSE_NOTIFICATION } from "./redux/reducers/notifications/notifications";
+import Fade from "./components/Fade/Fade";
 
 // it has some problems with types
 const ReactTooltipAsAny = ReactTooltip as any;
+export const FadeContext = createContext({
+  display: false,
+  openFade: () => {},
+  closeFade: () => {},
+});
 
 export const RoutesContext = createContext<SiteMap>(new SiteMap({}));
 
 export const SidebarContext = createContext({ display: false });
 
 function App() {
+  const [fadeDisplay, setFadeDisplay] = useState(false);
   const dispatch = useDispatch();
   useTitle("تقویم فارسی گوگل");
   const [sideBarDisplay, setSideBarDisplay] = useState(true);
@@ -76,30 +83,42 @@ function App() {
     dispatch(CLOSE_NOTIFICATION());
   }, [dispatch]);
 
+  const openFade = useCallback(() => {
+    setFadeDisplay(true);
+  }, []);
+
+  const closeFade = useCallback(() => {
+    setFadeDisplay(false);
+  }, []);
+
   return (
     <RoutesContext.Provider value={routes}>
       <SidebarContext.Provider value={{ display: sideBarDisplay }}>
-        <div className={`${styles.App}`} data-testid="App">
-          <Modal
-            x={centerOFScreen().x}
-            y={window.innerHeight - 38}
-            position="fixed"
-            width="fit-content"
-            height="fit-content"
-            display={notifications.display}>
-            <Notification
-              message={notifications.message}
-              closeNotification={closeNotification}
-            />
-          </Modal>
+        <FadeContext.Provider
+          value={{ openFade, closeFade, display: fadeDisplay }}>
+          <div className={`${styles.App}`} data-testid="App">
+            <Fade display={fadeDisplay} />
+            <Modal
+              x={centerOFScreen().x}
+              y={window.innerHeight - 38}
+              position="fixed"
+              width="fit-content"
+              height="fit-content"
+              display={notifications.display}>
+              <Notification
+                message={notifications.message}
+                closeNotification={closeNotification}
+              />
+            </Modal>
 
-          <ReactTooltipAsAny />
-          <NavBar closeSideBar={closeSideBar} />
+            <ReactTooltipAsAny />
+            <NavBar closeSideBar={closeSideBar} />
 
-          <main className={styles.Main}>
-            <Routes>{routes.routesToJSX(routes.routes)}</Routes>
-          </main>
-        </div>
+            <main className={styles.Main}>
+              <Routes>{routes.routesToJSX(routes.routes)}</Routes>
+            </main>
+          </div>
+        </FadeContext.Provider>
       </SidebarContext.Provider>
     </RoutesContext.Provider>
   );

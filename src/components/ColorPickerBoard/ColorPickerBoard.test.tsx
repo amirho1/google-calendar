@@ -1,18 +1,18 @@
-// templates/component/Cal.js
+// templates/component/ColorPickerBoard.js
 
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
-import Cal from "./Cal";
-import { before, Query } from "../../../utils/testHelper";
+import ColorPickerBoard from "./ColorPickerBoard";
+import { before, Query } from "../../utils/testHelper";
 
-describe("<Cal />", () => {
+describe("<ColorPickerBoard />", () => {
   let query: Query;
   let element: HTMLElement;
 
   beforeEach(() => {
     ({ element, query } = before(
-      "Cal",
-      <Cal calId={0} onCalChange={() => {}} onColorChange={() => {}} />
+      "ColorPickerBoard",
+      <ColorPickerBoard color="" onColorChange={() => {}} />
     ));
   });
 
