@@ -25,6 +25,7 @@ import Modal from "../Modal/Modal";
 import { centerOFScreen } from "../Day/Day";
 import Confirmation from "../Confirmation/Confirmation";
 import { FadeContext } from "../../App";
+import { Tooltip } from "react-tippy";
 
 interface CalendarsProps {}
 
@@ -106,13 +107,11 @@ const Calendars: FC<CalendarsProps> = () => {
               }
             />
 
-            <label
-              htmlFor=""
-              data-tip={item.tag}
-              className={styles.myCalenders}>
-              {item.tag}
-            </label>
-
+            <Tooltip title={item.tag as any}>
+              <label htmlFor="" className={styles.myCalenders}>
+                {item.tag}
+              </label>
+            </Tooltip>
             <div className={`${styles.setting} f-between`}>
               <HoverCircle
                 backgroundColor="var(--dark)"
@@ -125,9 +124,13 @@ const Calendars: FC<CalendarsProps> = () => {
 
               <HoverCircle
                 backgroundColor="var(--dark)"
-                className={styles.howColWhite}>
+                className={styles.howColWhite}
+                width="25px"
+                height="25px">
                 <div>
-                  <BsThreeDotsVertical data-tip={"Click to view"} />
+                  <Tooltip title="Click to view">
+                    <BsThreeDotsVertical />
+                  </Tooltip>
                 </div>
               </HoverCircle>
             </div>

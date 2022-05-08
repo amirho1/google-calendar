@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef } from "react";
+import { Tooltip } from "react-tippy";
 import { PrimitivesT } from "../Table/Table";
 import styles from "./HoverCircle.module.scss";
 
@@ -41,23 +42,24 @@ const HoverCircle: FC<HoverCircleProps> = ({
   }, []);
 
   return (
-    <div
-      data-testid="HoverCircle"
-      ref={ref}
-      data-tip={dataTip}
-      onMouseOver={hover ? onMouseOver : undefined}
-      onMouseOut={hover ? onMouseOut : undefined}
-      style={{
-        backgroundColor: background ? backgroundColor : "",
-        width,
-        height,
-      }}
-      className={`${styles.HoverCircle} f-center ${className}`}
-      onClick={e => {
-        (e.currentTarget.children[0] as HTMLElement).click();
-      }}>
-      {children}
-    </div>
+    <Tooltip title={dataTip}>
+      <div
+        data-testid="HoverCircle"
+        ref={ref}
+        onMouseOver={hover ? onMouseOver : undefined}
+        onMouseOut={hover ? onMouseOut : undefined}
+        style={{
+          backgroundColor: background ? backgroundColor : "",
+          width,
+          height,
+        }}
+        className={`${styles.HoverCircle} f-center ${className}`}
+        onClick={e => {
+          (e.currentTarget.children[0] as HTMLElement).click();
+        }}>
+        {children}
+      </div>
+    </Tooltip>
   );
 };
 

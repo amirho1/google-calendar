@@ -2,7 +2,6 @@ import React, { createContext, useCallback, useMemo, useState } from "react";
 import styles from "./App.module.scss";
 import useTitle from "./hooks/useTitle";
 import "./styles/globals.scss";
-import ReactTooltip from "react-tooltip";
 import NavBar from "./components/NavBar/NavBar";
 import Main from "./pages/Main/Main";
 import { Routes } from "react-router";
@@ -18,9 +17,9 @@ import { centerOFScreen } from "./components/Day/Day";
 import Notification from "./components/Notification/Notification";
 import { CLOSE_NOTIFICATION } from "./redux/reducers/notifications/notifications";
 import Fade from "./components/Fade/Fade";
+import "react-tippy/dist/tippy.css";
 
 // it has some problems with types
-const ReactTooltipAsAny = ReactTooltip as any;
 export const FadeContext = createContext({
   display: false,
   openFade: () => {},
@@ -111,7 +110,6 @@ function App() {
               />
             </Modal>
 
-            <ReactTooltipAsAny />
             <NavBar closeSideBar={closeSideBar} />
 
             <main className={styles.Main}>
