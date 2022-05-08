@@ -22,9 +22,37 @@ interface CreateEventProperties {
 export interface UpdateEventPayload {
   id: number;
   body: EventI;
+  timeStamp: number;
+  calName: string;
 }
 
-export function* updateEvent(effect: Effect<string, UpdateEventPayload>) {}
+async function asyncUpdateEven({
+  body,
+  id,
+  calName,
+  timeStamp,
+}: UpdateEventPayload) {
+  const res = await Api({
+    method: "put",
+    data: body,
+    url: `/events/${calName}/${timeStamp}/${id}`,
+  });
+  return res.data;
+}
+
+export function* updateEvent(effect: Effect<string, UpdateEventPayload>) {
+  const res: EventI = yield call(asyncUpdateEven, effect.payload);
+}
+
+updateEvent.type = "UPDATE_EVENT";
+updateEvent.ac = (payload: UpdateEventPayload) => ({
+  type: updateEvent.type,
+  payload,
+});
+
+export function* watchingUpdatingEvent() {
+  yield takeEvery(updateEvent.type, updateEvent);
+}
 
 async function createEvent({
   body,

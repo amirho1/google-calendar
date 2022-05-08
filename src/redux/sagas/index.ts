@@ -7,6 +7,7 @@ import watchGettingCalenders, {
 import watchAddingEvents, {
   watchGettingEvents,
   watchingDeletingEvent,
+  watchingUpdatingEvent,
 } from "./events";
 
 const sagas: any[] = [
@@ -17,6 +18,7 @@ const sagas: any[] = [
   watchGettingEvents(),
   watchDeletingCalendar(),
   watchingUpdatingCalendars(),
+  watchingUpdatingEvent(),
 ];
 
 export default function* rootSaga() {

@@ -10,19 +10,11 @@ const ColorPickerBoard: FC<ColorPickerBoardProps> = ({
   color,
   onColorChange,
 }) => {
-  const colorPickerRef = useRef<HTMLCanvasElement>(null);
-  const ctx = useMemo(
-    () => colorPickerRef.current?.getContext("2d"),
-    [colorPickerRef, colorPickerRef.current]
-  );
+  const ref = useRef<HTMLCanvasElement>(null);
 
-  const clear = useCallback(() => {
-    ctx?.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  }, [ctx]);
-
-  const drawBoard = useCallback(() => {
-    clear();
-
+  useEffect(() => {
+    const ctx = ref.current?.getContext("2d");
+    console.log(ctx);
     const gradientH = ctx?.createLinearGradient(0, 0, ctx.canvas.width, 0);
     gradientH?.addColorStop(0, "#fff");
     gradientH?.addColorStop(1, color);
@@ -38,15 +30,12 @@ const ColorPickerBoard: FC<ColorPickerBoardProps> = ({
       ctx.fillStyle = gradientV || "";
       ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     }
-  }, [clear, ctx, color]);
-
-  // main board
-  useEffect(() => {
-    drawBoard();
-  }, [drawBoard, clear]);
+  }, [color, ref, ref.current, ref]);
 
   const onClick = useCallback<React.MouseEventHandler<HTMLCanvasElement>>(
     e => {
+      const ctx = ref.current?.getContext("2d");
+
       const { x: elementX, y: elementY } =
         e.currentTarget.getBoundingClientRect();
       const x = e.clientX - elementX;
@@ -58,12 +47,12 @@ const ColorPickerBoard: FC<ColorPickerBoardProps> = ({
         onColorChange(rgb);
       }
     },
-    [ctx, onColorChange]
+    [onColorChange]
   );
 
   return (
     <canvas
-      ref={colorPickerRef}
+      ref={ref}
       width={250}
       height={250}
       className={`${styles.ColorPickerBoard}`}

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { FC, useCallback, useEffect, useRef } from "react";
 import styles from "./ColorsSlider.module.scss";
 
 interface ColorsSliderProps {
@@ -6,36 +6,28 @@ interface ColorsSliderProps {
 }
 
 const ColorsSlider: FC<ColorsSliderProps> = ({ setColorPickerColor }) => {
-  const colorsRef = useRef<HTMLCanvasElement>(null);
-
-  const colorsCtx = useMemo(
-    () => colorsRef.current?.getContext("2d"),
-    [colorsRef, colorsRef.current]
-  );
+  const ref = useRef<HTMLCanvasElement>(null);
 
   const onColorsClick = useCallback<React.MouseEventHandler<HTMLCanvasElement>>(
     e => {
+      const ctx = ref.current?.getContext("2d");
       const { x: elementX, y: elementY } =
         e.currentTarget.getBoundingClientRect();
       const x = e.clientX - elementX;
       const y = e.clientY - elementY;
-      const pixel = colorsCtx?.getImageData(x, y, 1, 1).data;
+      const pixel = ctx?.getImageData(x, y, 1, 1).data;
       if (pixel) {
         const rbg = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
         setColorPickerColor(rbg);
       }
     },
-    [colorsCtx, setColorPickerColor]
+    [setColorPickerColor]
   );
 
-  // different Colors
   useEffect(() => {
-    const gradientH = colorsCtx?.createLinearGradient(
-      0,
-      0,
-      colorsCtx.canvas.width,
-      0
-    );
+    const ctx = ref.current?.getContext("2d");
+
+    const gradientH = ctx?.createLinearGradient(0, 0, ctx.canvas.width, 0);
 
     const oneDividedByEight = 1 / 8;
 
@@ -47,15 +39,15 @@ const ColorsSlider: FC<ColorsSliderProps> = ({ setColorPickerColor }) => {
     gradientH?.addColorStop(oneDividedByEight * 6, "#ff00e1");
     gradientH?.addColorStop(oneDividedByEight * 7, "#ff0000");
 
-    if (colorsCtx) {
-      colorsCtx.fillStyle = gradientH || "";
-      colorsCtx.fillRect(0, 0, colorsCtx.canvas.width, colorsCtx.canvas.height);
+    if (ctx) {
+      ctx.fillStyle = gradientH || "";
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     }
-  }, [colorsCtx]);
+  }, [ref]);
 
   return (
     <canvas
-      ref={colorsRef}
+      ref={ref}
       width={300}
       height={30}
       className={`${styles.ColorsSlider}`}

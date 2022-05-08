@@ -122,8 +122,8 @@ const Day: FC<DayProps> = () => {
         case "contextMenuId":
           draft.id = action.payload.id;
           break;
-        case "contextMenuCalName":
-          draft.calName = action.payload.calName;
+        case "contextMenuCalId":
+          draft.calId = action.payload.calId;
           break;
         default:
           break;
@@ -134,7 +134,7 @@ const Day: FC<DayProps> = () => {
       y: 0,
       display: false,
       id: 0,
-      calName: "",
+      calId: 0,
     }
   );
 
@@ -375,9 +375,12 @@ const Day: FC<DayProps> = () => {
   }, []);
 
   const onEventRightClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement, MouseEvent>, id: number, calName) => {
+    (
+      e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+      id: number,
+      calId: number
+    ) => {
       e.stopPropagation();
-
       dispatchContextMenuStates({
         type: "contextMenuCoordinate",
         payload: { x: e.clientX, y: e.clientY },
@@ -391,8 +394,8 @@ const Day: FC<DayProps> = () => {
         payload: { id: id },
       });
       dispatchContextMenuStates({
-        type: "contextMenuCalName",
-        payload: { calName: calName },
+        type: "contextMenuCalId",
+        payload: { calId: calId },
       });
     },
     [dispatchContextMenuStates]
@@ -529,8 +532,9 @@ const Day: FC<DayProps> = () => {
         <ContextMenu
           closeContextMenu={closeContextMenu}
           timeStamp={timeStamp}
+          color={eventForm.color}
           id={contextMenuStates.id}
-          calName={contextMenuStates.calName}
+          calId={contextMenuStates.id}
         />
       </Modal>
 

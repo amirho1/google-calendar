@@ -1,43 +1,32 @@
-import React, {
-  FC,
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
+import React, { FC, MouseEventHandler, useCallback, useEffect } from "react";
 import { FaTrash } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { deleteEvent } from "../../redux/sagas/events";
+import { useDispatch, useSelector } from "react-redux";
+import { selectEventById } from "../../redux/reducers/events/selectors";
+import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
+import { deleteEvent, updateEvent } from "../../redux/sagas/events";
 import Button from "../Button/Button";
+import ColorForm from "../ColorForm/ColorForm";
 import styles from "./ContextMenu.module.scss";
 
 interface ContextMenuProps {
   id: number;
-  calName: string;
+  calId: number;
   timeStamp: number;
   closeContextMenu: () => void;
+  color: string;
 }
 
 const ContextMenu: FC<ContextMenuProps> = ({
   id,
-  calName,
   timeStamp,
   closeContextMenu,
+  color,
+  calId,
 }) => {
   const dispatch = useDispatch();
-
-  const colors = useMemo<{ name: string; color: string }[]>(
-    () => [
-      { name: "قرمز", color: "red" },
-      { name: "آبی", color: "blue" },
-      { name: "زرد", color: "yellow" },
-      { name: "سبز", color: "green" },
-      { name: "بنفش", color: "purple" },
-      { name: "نارنجی", color: "orange" },
-      { name: "صورتی", color: "pink" },
-    ],
-    []
-  );
+  const calName = useSelector(selectCalendarById(calId))?.name || "";
+  console.log(calName);
+  const event = useSelector(selectEventById({ id, calName, timeStamp }));
 
   const onDeleteClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
     e => {
@@ -56,6 +45,20 @@ const ContextMenu: FC<ContextMenuProps> = ({
     };
   }, [closeContextMenu]);
 
+  const changeEventColor = useCallback(
+    (color: string) => {
+      const eventCopy = event && { ...event };
+
+      if (eventCopy) {
+        eventCopy.color = color;
+        dispatch(
+          updateEvent.ac({ id: id, body: eventCopy, calName, timeStamp })
+        );
+      }
+    },
+    [calName, dispatch, event, id, timeStamp]
+  );
+
   return (
     <div
       className={`${styles.ContextMenu} d-flex`}
@@ -70,15 +73,7 @@ const ContextMenu: FC<ContextMenuProps> = ({
         </>
       </Button>
 
-      <div className={`${styles.colorWrapper} f-between`}>
-        {colors.map((color, index) => (
-          <div
-            className={styles.color}
-            key={index}
-            style={{ backgroundColor: color.color }}
-            data-tip={color.name}></div>
-        ))}
-      </div>
+      <ColorForm color={color} onColorChange={changeEventColor} />
     </div>
   );
 };

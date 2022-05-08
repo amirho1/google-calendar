@@ -61,7 +61,6 @@ const Modal: FC<ModalProps> = ({
 
   const styles = useMemo<React.CSSProperties>(
     () => ({
-      display: display ? "block" : "none",
       height: height,
       width,
       minHeight: "15px",
@@ -74,7 +73,6 @@ const Modal: FC<ModalProps> = ({
       zIndex: zIndex,
     }),
     [
-      display,
       height,
       width,
       position,
@@ -138,6 +136,8 @@ const Modal: FC<ModalProps> = ({
     },
     [onMouseDown]
   );
+
+  if (!display) return null;
 
   return (
     <div
