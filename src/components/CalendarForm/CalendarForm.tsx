@@ -31,6 +31,9 @@ const CalendarForm: FC<CalendarFormProps> = () => {
       dispatch(
         addCalendar.ac({ color: "#e8541a", name, description, selected: true })
       );
+
+      setDescription("");
+      setName("");
     },
     [description, dispatch, name]
   );
