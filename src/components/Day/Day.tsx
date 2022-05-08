@@ -535,7 +535,7 @@ const Day: FC<DayProps> = () => {
           timeStamp={timeStamp}
           color={eventForm.color}
           id={contextMenuStates.id}
-          calId={contextMenuStates.id}
+          calId={contextMenuStates.calId}
         />
       </Modal>
 
@@ -644,9 +644,6 @@ const Day: FC<DayProps> = () => {
               <Modal
                 key={index}
                 borderRadios="8px"
-                children={
-                  <Task title={title} endTime={endTime} startTime={startTime} />
-                }
                 boxShadow={false}
                 data-testid="Task"
                 backgroundColor={color}
@@ -671,8 +668,11 @@ const Day: FC<DayProps> = () => {
                 }
                 onBottomBorderMouseUpOuter={onBottomBorderMouseUp}
                 onMouseDown={onEventMouseDown(id || 0)}
-                onRightClick={e => onEventRightClick(e, id || 0, calId)}
-              />
+                onRightClick={e => onEventRightClick(e, id || 0, calId)}>
+                <>
+                  <Task title={title} endTime={endTime} startTime={startTime} />
+                </>
+              </Modal>
             )
           )}
 
