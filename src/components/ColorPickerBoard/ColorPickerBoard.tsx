@@ -14,7 +14,6 @@ const ColorPickerBoard: FC<ColorPickerBoardProps> = ({
 
   useEffect(() => {
     const ctx = ref.current?.getContext("2d");
-    console.log(ctx);
     const gradientH = ctx?.createLinearGradient(0, 0, ctx.canvas.width, 0);
     gradientH?.addColorStop(0, "#fff");
     gradientH?.addColorStop(1, color);

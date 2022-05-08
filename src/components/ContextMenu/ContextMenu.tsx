@@ -25,7 +25,6 @@ const ContextMenu: FC<ContextMenuProps> = ({
 }) => {
   const dispatch = useDispatch();
   const calName = useSelector(selectCalendarById(calId))?.name || "";
-  console.log(calName);
   const event = useSelector(selectEventById({ id, calName, timeStamp }));
 
   const onDeleteClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
