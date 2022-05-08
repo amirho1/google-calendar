@@ -6,6 +6,7 @@ import {
   convertFinglishMonthToPersian,
   dateHelper,
   indexOfFirstDayOfMonthInWeek,
+  isSameDate,
   weekDaysInPersianLetters,
   weekDaysInPersianWord,
 } from "../../utils/helpers";
@@ -99,14 +100,28 @@ const CalMonth: FC<CalMonthProps> = ({
           currentIndex >= firstDayOfMonthInWeek &&
           currentIndex <= monthDaysCount + firstDayOfMonthInWeek;
 
+        const isChosenDate =
+          isSameDate(
+            date,
+            moment(`${year}/${month}/${row[columnIndex]}`, "jYYYY/jMM/jDD")
+          ) &&
+          currentIndex >= firstDayOfMonthInWeek &&
+          currentIndex <= monthDaysCount + firstDayOfMonthInWeek;
+
+        const backgroundColor = isCurrentDay
+          ? `var(--blue)`
+          : isChosenDate
+          ? "var(--lighter-blue)"
+          : undefined;
+
         return (newRow[letter] = (
           <HoverCircle
             width="30px"
             height="30px"
             className={`pointer`}
-            backgroundColor={isCurrentDay ? `var(--blue)` : undefined}
-            hover={!isCurrentDay}
-            background={isCurrentDay}>
+            backgroundColor={backgroundColor}
+            hover={isCurrentDay ? false : isChosenDate ? false : true}
+            background={isCurrentDay || isChosenDate}>
             <div
               style={{ color: isCurrentDay ? "white" : undefined }}
               onClick={() => {
@@ -140,6 +155,7 @@ const CalMonth: FC<CalMonthProps> = ({
     currentDay,
     currentMonth,
     currentYear,
+    date,
     days,
     firstDayOfMonthInWeek,
     month,

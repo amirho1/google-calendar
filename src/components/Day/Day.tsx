@@ -488,7 +488,7 @@ const Day: FC<DayProps> = () => {
     setEventForm(current => ({ ...current, color }));
   }, []);
 
-  const isCurrentDate = useMemo(() => isSameDate(date), [date]);
+  const isCurrentDate = useMemo(() => isSameDate(date, moment()), [date]);
 
   return (
     <div className={styles.Day} data-testid="Day">
