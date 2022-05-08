@@ -5,6 +5,7 @@ import {
   EventI,
   SAVE_ADDED_EVENT,
   SAVE_EVENTS,
+  SAVE_UPDATED_EVENT,
 } from "../reducers/events/events";
 import { SAVE_DELETED_EVENT } from "../reducers/events/events";
 import {
@@ -42,6 +43,13 @@ async function asyncUpdateEven({
 
 export function* updateEvent(effect: Effect<string, UpdateEventPayload>) {
   const res: EventI = yield call(asyncUpdateEven, effect.payload);
+  yield put(
+    SAVE_UPDATED_EVENT({
+      event: res,
+      calName: effect.payload.calName,
+      timeStamp: effect.payload.timeStamp,
+    })
+  );
 }
 
 updateEvent.type = "UPDATE_EVENT";
