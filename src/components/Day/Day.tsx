@@ -19,6 +19,7 @@ import {
   convertEnglishWeekdaysToPersian,
   convertHoursToMinutes,
   convertMinutesToHours,
+  isSameDate,
   roundSpecific,
 } from "../../utils/helpers";
 import ContextMenu from "../ContextMenu/ContextMenu";
@@ -139,7 +140,6 @@ const Day: FC<DayProps> = () => {
   );
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
-
   const timeStamp = useMemo(() => date.valueOf(), [date]);
 
   const events = useSelector<ReduxStateI, EventI[]>(state => {
@@ -214,7 +214,6 @@ const Day: FC<DayProps> = () => {
     },
     [eventForm.display, date]
   );
-
   const onClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
       if (e.button === 2 && isMouseDown) return;
@@ -489,6 +488,8 @@ const Day: FC<DayProps> = () => {
     setEventForm(current => ({ ...current, color }));
   }, []);
 
+  const isCurrentDate = useMemo(() => isSameDate(date), [date]);
+
   return (
     <div className={styles.Day} data-testid="Day">
       <Plus
@@ -577,12 +578,18 @@ const Day: FC<DayProps> = () => {
           <span className={styles.Weekday}>{weekday}</span>
           <HoverCircle
             hover={false}
-            background={true}
+            background={isCurrentDate}
             backgroundColor={"var(--blue)"}
             width="50px"
             height="50px"
-            className="pointer">
-            <div className={styles.date}>{day}</div>
+            className={`pointer`}>
+            <div
+              className={`${styles.date}`}
+              style={{
+                color: !isCurrentDate ? "var(--text-secondary)" : undefined,
+              }}>
+              {day}
+            </div>
           </HoverCircle>
         </div>
       </div>

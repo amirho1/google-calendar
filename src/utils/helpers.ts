@@ -257,3 +257,7 @@ export function convertMinutesToHours(minutes: number) {
 
 export const delay = (time: number) =>
   new Promise(resolve => setTimeout(resolve, time));
+
+export const isSameDate = (date: Moment) => {
+  return moment().format("YYYY/MM/DD") === date.format("YYYY/MM/DD");
+};
