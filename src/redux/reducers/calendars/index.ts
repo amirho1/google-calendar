@@ -4,7 +4,7 @@ import { CalendarI } from "../../sagas/calendars";
 
 export const SAVE_CALENDARS = "SAVE_CALENDARS";
 export const SAVE_DELETED_CALENDAR = (payload: number) => ({
-  type: SAVE_DELETED_CALENDAR,
+  type: SAVE_DELETED_CALENDAR.type,
   payload,
 });
 
@@ -46,6 +46,7 @@ const calendarsReducer = produce(
         break;
       }
       case SAVE_DELETED_CALENDAR.type: {
+        console.log("here");
         draftState.calendars = draftState.calendars.filter(
           cal => cal.id !== payload
         );
