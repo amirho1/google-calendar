@@ -38,9 +38,10 @@ const CalMonth: FC<CalMonthProps> = ({
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
   date.locale("fa");
+
   const [days, setDays] = useState(calculateDaysOrder(date));
   const [month, setMonth] = useState(+date.format("jMM"));
-  const [year, setYear] = useState(+currentYear);
+  const [year, setYear] = useState(+date.format("jYYYY"));
   const [monthName, setMonthName] = useState(currentMonthName);
   const monthDaysCount = useMemo(
     () => moment.jDaysInMonth(year, month - 1),
@@ -54,6 +55,15 @@ const CalMonth: FC<CalMonthProps> = ({
     () => monthDaysCount + firstDayOfMonthInWeek,
     [firstDayOfMonthInWeek, monthDaysCount]
   );
+
+  useEffect(() => {
+    // base on date change change the days year and so on
+    setDays(calculateDaysOrder(date));
+    setMonth(+date.format("jMM"));
+    setYear(+date.format("jYYYY"));
+    setMonthName(convertFinglishMonthToPersian(date.format("jMMMM")));
+  }, [date]);
+
   const onDateClick = useCallback(
     (year: number, month: number, day: number) => {
       onDateChange(moment(`${year}/${month}/${day}`, "jYYYY/jMM/jDD"));
@@ -77,10 +87,11 @@ const CalMonth: FC<CalMonthProps> = ({
   );
 
   const mappedRows = useMemo(() => {
-    return days.map((row, RowIndex) => {
+    return days.map((row, rowIndex) => {
       const newRow: { [props: string]: JSX.Element } = {};
+
       weekDaysInPersianLetters.forEach((letter, columnIndex) => {
-        const currentIndex = RowIndex * 7 + columnIndex;
+        const currentIndex = rowIndex * 7 + columnIndex;
         const isCurrentDay =
           year === currentYear &&
           month === currentMonth &&
@@ -99,13 +110,30 @@ const CalMonth: FC<CalMonthProps> = ({
             <div
               style={{ color: isCurrentDay ? "white" : undefined }}
               onClick={() => {
-                onDateClick(year, whichMonth(currentIndex), row[columnIndex]);
+                const changedMonth = whichMonth(currentIndex);
+                // check if month is bigger than 12 or less or equal 0 change the year
+                const changedYear =
+                  changedMonth <= 0
+                    ? year - 1
+                    : changedMonth >= 13
+                    ? year + 1
+                    : year;
+
+                // check if month is bigger than 12 return 1 or less than 0 return 12 else
+                const month =
+                  changedMonth <= 0
+                    ? 12
+                    : changedMonth >= 13
+                    ? 1
+                    : changedMonth;
+                onDateClick(changedYear, month, row[columnIndex]);
               }}>
               {row[columnIndex]}
             </div>
           </HoverCircle>
         ));
       });
+
       return newRow;
     });
   }, [
