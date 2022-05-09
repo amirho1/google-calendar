@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useMemo, useState } from "react";
+import React, { createContext, useCallback, useState } from "react";
 import styles from "./App.module.scss";
 import useTitle from "./hooks/useTitle";
 import "./styles/globals.scss";
@@ -9,7 +9,7 @@ import Settings from "./pages/Settings/Settings";
 import DayP from "./pages/DayP/DayP";
 import WeekP from "./pages/WeekP/WeekP";
 import CalendarForm from "./components/CalendarForm/CalendarForm";
-import SiteMap, { RoutesI } from "./utils/SiteMap";
+import SiteMap from "./utils/SiteMap";
 import { ReduxStateI } from "./redux";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "./components/Modal/Modal";
@@ -18,6 +18,8 @@ import Notification from "./components/Notification/Notification";
 import { CLOSE_NOTIFICATION } from "./redux/reducers/notifications/notifications";
 import Fade from "./components/Fade/Fade";
 import "react-tippy/dist/tippy.css";
+import routes, { RouteI } from "./pages/routes";
+import FOF from "./components/FOF/FOF";
 
 // it has some problems with types
 export const FadeContext = createContext({
@@ -51,32 +53,30 @@ function App() {
     display: state.notifications.display,
   }));
 
-  const routesO: RoutesI = useMemo(
-    () => ({
-      "/": {
-        path: "",
-        element: <Main sideBarDisplay={sideBarDisplay} />,
-        nest: {
-          day: { element: <DayP />, path: "day" },
-          week: { element: <WeekP />, path: "week" },
-          index: { element: <DayP />, index: true },
+  const routesList: RouteI[] = [
+    {
+      component: <Main sideBarDisplay={sideBarDisplay} />,
+      name: "/",
+      nest: [
+        { component: <DayP />, index: true },
+        { component: <WeekP />, name: "week" },
+      ],
+    },
+    {
+      component: <Settings />,
+      name: "settings",
+      nest: [
+        {
+          name: "create-new-calendar",
+          component: <CalendarForm />,
         },
-      },
-      settings: {
-        element: <Settings />,
-        path: "settings",
-        nest: {
-          "create-new-calendar": {
-            path: "create-new-calendar",
-            element: <CalendarForm />,
-          },
-        },
-      },
-    }),
-    [sideBarDisplay]
-  );
-
-  const routes = new SiteMap(routesO);
+      ],
+    },
+    {
+      name: "*",
+      component: <FOF />,
+    },
+  ];
 
   const closeNotification = useCallback(() => {
     dispatch(CLOSE_NOTIFICATION());
@@ -91,34 +91,32 @@ function App() {
   }, []);
 
   return (
-    <RoutesContext.Provider value={routes}>
-      <SidebarContext.Provider value={{ display: sideBarDisplay }}>
-        <FadeContext.Provider
-          value={{ openFade, closeFade, display: fadeDisplay }}>
-          <div className={`${styles.App}`} data-testid="App">
-            <Fade display={fadeDisplay} />
-            <Modal
-              x={centerOFScreen().x}
-              y={window.innerHeight - 38}
-              position="fixed"
-              width="fit-content"
-              height="fit-content"
-              display={notifications.display}>
-              <Notification
-                message={notifications.message}
-                closeNotification={closeNotification}
-              />
-            </Modal>
+    <SidebarContext.Provider value={{ display: sideBarDisplay }}>
+      <FadeContext.Provider
+        value={{ openFade, closeFade, display: fadeDisplay }}>
+        <div className={`${styles.App}`} data-testid="App">
+          <Fade display={fadeDisplay} />
+          <Modal
+            x={centerOFScreen().x}
+            y={window.innerHeight - 38}
+            position="fixed"
+            width="fit-content"
+            height="fit-content"
+            display={notifications.display}>
+            <Notification
+              message={notifications.message}
+              closeNotification={closeNotification}
+            />
+          </Modal>
 
-            <NavBar closeSideBar={closeSideBar} />
+          <NavBar closeSideBar={closeSideBar} />
 
-            <main className={styles.Main}>
-              <Routes>{routes.routesToJSX(routes.routes)}</Routes>
-            </main>
-          </div>
-        </FadeContext.Provider>
-      </SidebarContext.Provider>
-    </RoutesContext.Provider>
+          <main className={styles.Main}>
+            <Routes>{routes(routesList)}</Routes>
+          </main>
+        </div>
+      </FadeContext.Provider>
+    </SidebarContext.Provider>
   );
 }
 

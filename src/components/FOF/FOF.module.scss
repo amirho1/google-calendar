@@ -1,0 +1,33 @@
+.FOF {
+  width: 100%;
+}
+
+.logo {
+  margin-bottom: 3em;
+
+  & > * {
+    font-size: 3rem;
+  }
+
+  text-align: left;
+}
+
+.blue {
+  color: #4285f4;
+}
+
+.red {
+  color: #ea4335;
+}
+
+.yellow {
+  color: #fbbc05;
+}
+
+.green {
+  color: #34a853;
+}
+
+.text {
+  margin-right: 5em;
+}
