@@ -1,4 +1,11 @@
-import { call, delay, Effect, put, takeEvery } from "redux-saga/effects";
+import {
+  call,
+  delay,
+  Effect,
+  put,
+  takeEvery,
+  takeLatest,
+} from "redux-saga/effects";
 import { Api } from "../../hooks/useFetch";
 import {
   ActionI,
@@ -63,7 +70,7 @@ updateEvent.ac = (payload: UpdateEventPayload) => ({
 });
 
 export function* watchingUpdatingEvent() {
-  yield takeEvery(updateEvent.type, updateEvent);
+  yield takeLatest(updateEvent.type, updateEvent);
 }
 
 async function createEvent({

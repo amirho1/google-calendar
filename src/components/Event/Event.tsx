@@ -6,7 +6,7 @@ import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
 import { updateEvent } from "../../redux/sagas/events";
 import { roundSpecific } from "../../utils/helpers";
 import { EventDetailsI } from "../Day/Day";
-import Modal, { onEventMouseDownT } from "../Modal/Modal";
+import Modal, { onEventMouseDownT, OnResizeT } from "../Modal/Modal";
 import Task from "../Task/Task";
 
 interface EventProps {
@@ -113,6 +113,36 @@ const Event: FC<EventProps> = ({
     [calName, dispatch, setEventForm, setIsMoved, timeStamp]
   );
 
+  const onResize = useCallback<OnResizeT>(
+    height => {
+      const didHeightChanged = height !== endTime;
+      if (didHeightChanged && id && height && calName) {
+        const event = {
+          calId,
+          color,
+          description,
+          endTime: height,
+          startTime,
+          title,
+          id,
+        };
+        dispatch(updateEvent.ac({ body: event, calName, id, timeStamp }));
+      }
+    },
+    [
+      calId,
+      calName,
+      color,
+      description,
+      dispatch,
+      endTime,
+      id,
+      startTime,
+      timeStamp,
+      title,
+    ]
+  );
+
   return (
     <Modal
       borderRadios="8px"
@@ -124,7 +154,8 @@ const Event: FC<EventProps> = ({
       resizeAble={true}
       width={`${100}%`}
       display={true}
-      height="60px"
+      height={`${endTime}px`}
+      onResize={onResize}
       onBottomBorderMouseDownOuter={onEventBottomMouseDownSetIsMouseDownTrue}
       onClick={e => {
         e.stopPropagation();

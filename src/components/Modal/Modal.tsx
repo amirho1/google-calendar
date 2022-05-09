@@ -2,6 +2,8 @@ import React, { FC, useCallback, useEffect, useMemo, useRef } from "react";
 import { addOrSubtractSpecificAmount } from "../../utils/helpers";
 import { PrimitivesT } from "../Table/Table";
 
+export type OnResizeT = (resize: number | undefined) => void;
+
 interface ModalProps {
   children: JSX.Element | PrimitivesT;
   display: boolean;
@@ -23,6 +25,7 @@ interface ModalProps {
   className?: string;
   borderRadios?: string;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onResize?: OnResizeT;
 }
 
 export type onEventMouseDownT = (
@@ -52,6 +55,7 @@ const Modal: FC<ModalProps> = ({
   className,
   borderRadios = "2px",
   onClick,
+  onResize,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -101,20 +105,21 @@ const Modal: FC<ModalProps> = ({
     useCallback((): React.MouseEventHandler<HTMLDivElement> => {
       let y = 0;
       let h = 60;
+      let finalHeight: number | undefined = undefined;
       const onMouseMove = (e: MouseEvent) => {
         const YDir = e.clientY - y + 5;
         if (ref.current) {
+          finalHeight = addOrSubtractSpecificAmount(h, h + YDir, 15);
           ref.current.style.position = "none";
-          ref.current.style.height = `${addOrSubtractSpecificAmount(
-            h,
-            h + YDir,
-            15
-          )}px`;
+          ref.current.style.height = `${finalHeight}px`;
         }
       };
 
       const onMouseUp = (e: MouseEvent) => {
         e.stopPropagation();
+        if (finalHeight && onResize) {
+          onResize(finalHeight);
+        }
         document.removeEventListener("mousemove", onMouseMove);
         if (onBottomBorderMouseUpOuter) onBottomBorderMouseUpOuter();
       };
@@ -128,7 +133,7 @@ const Modal: FC<ModalProps> = ({
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
       };
-    }, [onBottomBorderMouseDownOuter, onBottomBorderMouseUpOuter]);
+    }, [onBottomBorderMouseDownOuter, onBottomBorderMouseUpOuter, onResize]);
 
   const onBodyMouseDon = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
