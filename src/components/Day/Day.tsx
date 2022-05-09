@@ -32,9 +32,9 @@ import Task from "../Task/Task";
 import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
 import { useImmerReducer } from "use-immer";
-import { PrimitivesT } from "../Table/Table";
 import Plus from "../Plus/Plus";
 import { FadeContext, SidebarContext } from "../../App";
+import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
 
 interface DayProps {}
 
@@ -71,11 +71,6 @@ interface EventDetailsI {
   endTime: number;
   calendarName: string;
   alarm: number;
-}
-
-interface NotificationStateI {
-  display: boolean;
-  message: PrimitivesT | JSX.Element;
 }
 
 export type OnColorChangeT = (color: string) => void;
@@ -143,10 +138,23 @@ const Day: FC<DayProps> = () => {
   const timeStamp = useMemo(() => date.valueOf(), [date]);
 
   const events = useSelector<ReduxStateI, EventI[]>(state => {
-    return state?.events && state?.events?.events["tasks"]
-      ? state?.events?.events["tasks"][timeStamp] || []
-      : [];
+    const calendars = state.calendars.calendars.filter(cal => cal.selected);
+
+    const result: EventI[] = calendars.reduce(
+      (prev: any, next) =>
+        prev.concat(
+          state.events &&
+            state.events.events[next.name] &&
+            state.events.events[next.name][timeStamp]
+            ? state.events.events[next.name][timeStamp]
+            : []
+        ),
+      []
+    );
+
+    return result;
   });
+
   const day = useMemo(() => date.format("jDD"), [date]);
 
   const weekday = useMemo(
@@ -289,6 +297,8 @@ const Day: FC<DayProps> = () => {
     setEventForm(current => ({ ...current, title: newDescription }));
   }, []);
 
+  const calName = useSelector(selectCalendarById(eventForm.calId))?.name;
+
   const handleAddingEvent = useCallback(() => {
     const event: EventI = {
       description: convertToHTML(eventForm.description.getCurrentContent()),
@@ -299,7 +309,7 @@ const Day: FC<DayProps> = () => {
       calId: eventForm.calId,
     };
 
-    dispatch(addEvent.ac({ body: event, calName: "tasks", timeStamp }));
+    dispatch(addEvent.ac({ body: event, calName: calName || "", timeStamp }));
     setEventForm(current => ({
       ...current,
       display: false,
@@ -309,6 +319,7 @@ const Day: FC<DayProps> = () => {
       eventStartTime: 0,
     }));
   }, [
+    calName,
     dispatch,
     eventForm.calId,
     eventForm.color,

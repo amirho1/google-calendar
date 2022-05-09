@@ -36,7 +36,6 @@ export interface CalendarI {
 
 async function createCalendar(body: CalendarI) {
   const data = await Api({ method: "POST", url: "calendars", data: body });
-
   return data.data;
 }
 

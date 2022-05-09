@@ -69,7 +69,7 @@ async function createEvent({
 }: CreateEventProperties) {
   const res = await Api({
     method: "POST",
-    url: `/events/${calName}/${timeStamp}`,
+    url: decodeURIComponent(`/events/${calName}/${timeStamp}`),
     data: body,
   });
   return res.data;
