@@ -18,28 +18,23 @@ import {
   convertFinglishMonthToPersian,
   convertMinutesToHours,
 } from "../../utils/helpers";
+import { EventI } from "../../redux/reducers/events/events";
+import { useSelector } from "react-redux";
+import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
 
 export interface DetailsProps {
-  title: string;
+  event: EventI;
   date: Moment;
-  startTime: number;
-  endTime: number;
-  calendarName: string;
-  description: string;
-  alarm: number;
   closeDetails: () => void;
 }
 
 const Details: FC<DetailsProps> = ({
-  title,
-  calendarName,
+  event: { description, endTime, startTime, title, calId },
   date,
-  description,
-  endTime,
-  alarm,
-  startTime,
   closeDetails,
 }) => {
+  const calName = useSelector(selectCalendarById(calId || 0))?.name || "";
+
   const cb = useCallback<CB>(
     item => (
       <HoverCircle className="pointer" dataTip={item.tag as any}>
@@ -105,7 +100,6 @@ const Details: FC<DetailsProps> = ({
   const stopPropagation: React.MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
   };
-
   return (
     <div
       className={styles.Details}
@@ -130,11 +124,11 @@ const Details: FC<DetailsProps> = ({
           </Row>
         ) : null}
         <Row icon={<FaBell className={styles.icon} />}>
-          <>{alarm}</>
+          <>30</>
         </Row>
 
         <Row icon={<FaCalendar className={styles.icon} />}>
-          <>{calendarName}</>
+          <>{calName}</>
         </Row>
       </div>
     </div>

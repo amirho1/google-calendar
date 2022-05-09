@@ -1,9 +1,9 @@
 import { Action } from "redux";
-import { SAVE_UPDATED_CALENDAR, StatusT } from "../calendars";
+import { StatusT } from "../calendars";
 import produce from "immer";
 
 export interface EventI {
-  id?: 1;
+  id?: number;
   startTime: number;
   endTime: number;
   title: string;
@@ -90,14 +90,15 @@ const eventsReducer = produce(
         break;
       }
       case SAVE_UPDATED_EVENT.type: {
-        draftState.events[calName][timeStamp] = draftState.events[calName][
-          timeStamp
-        ].map(event => {
-          if (event.id === action.payload.event.id) {
-            return action.payload.event;
-          }
-          return event;
-        });
+        if (calName && timeStamp)
+          draftState.events[calName][timeStamp] = draftState.events[calName][
+            timeStamp
+          ].map(event => {
+            if (event.id === action.payload.event.id) {
+              return action.payload.event;
+            }
+            return event;
+          });
         break;
       }
 

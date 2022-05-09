@@ -10,21 +10,16 @@ describe("<Details />", () => {
   let query: Query;
   let element: HTMLElement;
 
-  beforeEach(() => {
-    ({ element, query } = before(
-      "Details",
-      <Details
-        closeDetails={() => {}}
-        alarm={0}
-        title={""}
-        calendarName={""}
-        date={moment()}
-        description={""}
-        endTime={0}
-        startTime={0}
-      />
-    ));
-  });
+  // beforeEach(() => {
+  //   ({ element, query } = before(
+  //     "Details",
+  //     <Details
+  //       closeDetails={() => {}}
+  //       date={moment()}
+  //       startTime={0}
+  //     />
+  //   ));
+  // });
 
   it("should mount", () => {
     expect(element).toBeInTheDocument();

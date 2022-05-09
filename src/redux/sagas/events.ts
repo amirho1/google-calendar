@@ -50,6 +50,10 @@ export function* updateEvent(effect: Effect<string, UpdateEventPayload>) {
       timeStamp: effect.payload.timeStamp,
     })
   );
+  yield put(SAVE_ADDED_NOTIFICATION({ message: "رویداد ذخیره شد" }));
+  yield put(OPEN_NOTIFICATION());
+  yield delay(10000);
+  yield put(CLOSE_NOTIFICATION());
 }
 
 updateEvent.type = "UPDATE_EVENT";

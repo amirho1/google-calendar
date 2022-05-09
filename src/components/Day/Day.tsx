@@ -27,7 +27,7 @@ import Details from "../Details/Details";
 import EventForm from "../EventForm/EventForm";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Line from "../Line/Line";
-import Modal, { onEventMouseDownT } from "../Modal/Modal";
+import Modal from "../Modal/Modal";
 import Task from "../Task/Task";
 import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
@@ -35,6 +35,7 @@ import { useImmerReducer } from "use-immer";
 import Plus from "../Plus/Plus";
 import { FadeContext, SidebarContext } from "../../App";
 import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
+import Event from "../Event/Event";
 
 interface DayProps {}
 
@@ -64,13 +65,8 @@ function drawCalendarLines(num: number) {
   return lines;
 }
 
-interface EventDetailsI {
-  title: string;
-  description: string;
-  startTime: number;
-  endTime: number;
-  calendarName: string;
-  alarm: number;
+export interface EventDetailsI extends EventI {
+  display: boolean;
 }
 
 export type OnColorChangeT = (color: string) => void;
@@ -83,14 +79,15 @@ const Day: FC<DayProps> = () => {
   const [timeLineMinutes, setTimeLineMinutes] = useState(0);
   const [isMoved, setIsMoved] = useState(false);
 
-  const [details, setDetails] = useState({
+  const [details, setDetails] = useState<EventDetailsI>({
     display: false,
     title: "",
     description: "",
     startTime: 0,
     endTime: 0,
-    calendarName: "",
-    alarm: 0,
+    calId: 0,
+    color: "",
+    id: 0,
   });
 
   const calendars = useSelector<ReduxStateI, CalendarI[]>(
@@ -330,52 +327,6 @@ const Day: FC<DayProps> = () => {
     timeStamp,
   ]);
 
-  const onEventMouseDown = useCallback(
-    (id: number): onEventMouseDownT =>
-      (e, ref) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsMoved(false);
-
-        if (ref.current && e.button === 0) {
-          let mouseDownY = e.clientY;
-          ref.current.style.zIndex = "200";
-          const currentY = parseInt(ref.current.style.top, 10);
-
-          const onMouseMove = (
-            e: React.MouseEvent<HTMLDivElement, MouseEvent>
-          ) => {
-            setIsMoved(true);
-            ref.current && (ref.current.style.cursor = "move");
-            const dy = e.clientY - mouseDownY;
-            const plus = currentY + dy;
-            const endLimit = 1380;
-            const y = plus < 0 ? 0 : plus >= endLimit ? endLimit : plus;
-            if (ref.current)
-              ref.current.style.top = `${roundSpecific(y, 15)}px`;
-          };
-
-          const onMouseUp = (
-            e: React.MouseEvent<HTMLDivElement, MouseEvent>
-          ) => {
-            e.stopPropagation();
-            if (ref.current) {
-              ref.current.style.cursor = "initial";
-              ref.current.style.zIndex = "90";
-              document.removeEventListener("mousemove", onMouseMove as any);
-              ref.current.removeEventListener("mouseup", onMouseUp as any);
-              document.removeEventListener("mouseup", onMouseUp as any);
-            }
-          };
-
-          ref.current.addEventListener("mouseup", onMouseUp as any);
-          document.addEventListener("mouseup", onMouseUp as any);
-          document.addEventListener("mousemove", onMouseMove as any);
-        }
-      },
-    []
-  );
-
   const onEventBottomMouseDownSetIsMouseDownTrue = useCallback(() => {
     setIsMouseDown(true);
   }, []);
@@ -419,17 +370,7 @@ const Day: FC<DayProps> = () => {
   }, [dispatchContextMenuStates]);
 
   const onEventClick = useCallback(
-    (
-      e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      {
-        alarm,
-        calendarName,
-        description,
-        endTime,
-        startTime,
-        title,
-      }: EventDetailsI
-    ) => {
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>, event: EventI) => {
       dispatchContextMenuStates({
         type: "contextMenuDisplay",
         payload: { display: false },
@@ -438,12 +379,7 @@ const Day: FC<DayProps> = () => {
         setDetails(current => ({
           ...current,
           display: true,
-          description,
-          alarm,
-          calendarName,
-          endTime,
-          startTime,
-          title,
+          ...event,
         }));
     },
     [dispatchContextMenuStates, isMoved]
@@ -520,16 +456,7 @@ const Day: FC<DayProps> = () => {
         zIndex={200}
         width="448px"
         height="fit-content">
-        <Details
-          alarm={details.alarm}
-          title={details.title}
-          calendarName={details.calendarName}
-          date={date}
-          description={details.description}
-          endTime={details.endTime}
-          startTime={details.startTime}
-          closeDetails={closeDetails}
-        />
+        <Details event={details} date={date} closeDetails={closeDetails} />
       </Modal>
 
       {/* contextMenu */}
@@ -647,45 +574,21 @@ const Day: FC<DayProps> = () => {
           />
 
           {/* Event */}
-          {events.map(
-            (
-              { title, endTime, description, startTime, id, color, calId },
-              index
-            ) => (
-              <Modal
-                key={index}
-                borderRadios="8px"
-                boxShadow={false}
-                data-testid="Task"
-                backgroundColor={color}
-                x={0}
-                y={startTime}
-                resizeAble={true}
-                width={`${100}%`}
-                display={true}
-                height="60px"
-                onBottomBorderMouseDownOuter={
-                  onEventBottomMouseDownSetIsMouseDownTrue
-                }
-                onClick={e =>
-                  onEventClick(e, {
-                    alarm: 0,
-                    description,
-                    calendarName: "Tasks",
-                    endTime,
-                    startTime,
-                    title,
-                  })
-                }
-                onBottomBorderMouseUpOuter={onBottomBorderMouseUp}
-                onMouseDown={onEventMouseDown(id || 0)}
-                onRightClick={e => onEventRightClick(e, id || 0, calId)}>
-                <>
-                  <Task title={title} endTime={endTime} startTime={startTime} />
-                </>
-              </Modal>
-            )
-          )}
+          {events.map((event, index) => (
+            <Event
+              key={index}
+              event={event}
+              timeStamp={timeStamp}
+              onBottomBorderMouseUp={onBottomBorderMouseUp}
+              onEventBottomMouseDownSetIsMouseDownTrue={
+                onEventBottomMouseDownSetIsMouseDownTrue
+              }
+              onEventClick={onEventClick}
+              onEventRightClick={onEventRightClick}
+              setEventForm={setEventForm}
+              setIsMoved={setIsMoved}
+            />
+          ))}
 
           <Line
             vertical={true}
