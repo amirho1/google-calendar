@@ -63,6 +63,10 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
     setColorFormDisplay(current => !current);
   }, []);
 
+  const closeColorForm = useCallback(() => {
+    setColorFormDisplay(false);
+  }, []);
+
   return (
     <div
       className={`${styles.Cal} ${calConditionalClassNames}`}
@@ -120,6 +124,7 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
             y={40}
             height="fit-content">
             <ColorForm
+              closeColorForm={closeColorForm}
               onColorChange={onColorChange}
               color={calendar ? calendar.color : "blue"}
             />

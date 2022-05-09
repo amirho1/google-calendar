@@ -10,6 +10,7 @@ import styles from "./ColorForm.module.scss";
 interface ColorFormProps {
   onColorChange: (color: string) => void;
   color: string;
+  closeColorForm: () => void;
 }
 
 interface ColorI {
@@ -17,7 +18,11 @@ interface ColorI {
   dataTip: string;
 }
 
-const ColorForm: FC<ColorFormProps> = ({ onColorChange, color }) => {
+const ColorForm: FC<ColorFormProps> = ({
+  onColorChange,
+  color,
+  closeColorForm,
+}) => {
   const [colorInpDisplay, setColorInpDisplay] = useState(false);
 
   const colors = useMemo<ColorI[]>(
@@ -70,7 +75,10 @@ const ColorForm: FC<ColorFormProps> = ({ onColorChange, color }) => {
             color={color.color}
             className="pointer"
             dataTip={color.dataTip}
-            onColorChange={onColorChange}
+            onColorChange={color => {
+              onColorChange(color);
+              closeColorForm();
+            }}
           />
         ))}
 

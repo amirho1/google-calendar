@@ -72,7 +72,11 @@ const ContextMenu: FC<ContextMenuProps> = ({
         </>
       </Button>
 
-      <ColorForm color={color} onColorChange={changeEventColor} />
+      <ColorForm
+        color={color}
+        onColorChange={changeEventColor}
+        closeColorForm={() => {}}
+      />
     </div>
   );
 };

@@ -12,7 +12,7 @@ describe("<ColorForm />", () => {
   beforeEach(() => {
     ({ element, query } = before(
       "ColorForm",
-      <ColorForm onColorChange={() => {}} color="" />
+      <ColorForm onColorChange={() => {}} color="" closeColorForm={() => {}} />
     ));
   });
 

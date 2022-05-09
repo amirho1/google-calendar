@@ -94,9 +94,9 @@ const Modal: FC<ModalProps> = ({
       cursor: "row-resize",
       width: "100%",
       position: "absolute",
-      bottom: "0",
+      bottom: "5px",
       left: "0",
-      height: "5px",
+      height: "15px",
     }),
     []
   );
@@ -109,6 +109,7 @@ const Modal: FC<ModalProps> = ({
       const onMouseMove = (e: MouseEvent) => {
         const YDir = e.clientY - y + 5;
         if (ref.current) {
+          ref.current.style.cursor = "row-resize";
           finalHeight = addOrSubtractSpecificAmount(h, h + YDir, 15);
           ref.current.style.position = "none";
           ref.current.style.height = `${finalHeight}px`;
@@ -117,9 +118,11 @@ const Modal: FC<ModalProps> = ({
 
       const onMouseUp = (e: MouseEvent) => {
         e.stopPropagation();
+        if (ref.current) ref.current.style.cursor = "initial";
         if (finalHeight && onResize) {
           onResize(finalHeight);
         }
+
         document.removeEventListener("mousemove", onMouseMove);
         if (onBottomBorderMouseUpOuter) onBottomBorderMouseUpOuter();
       };
