@@ -12,7 +12,7 @@ interface TaskProps {
 }
 
 const Task: FC<TaskProps> = ({ title = "بدون عنوان", startTime, endTime }) => (
-  <div className={`${styles.Task} colWhite owl-mright `} data-testid="Task ">
+  <div className={`${styles.Task} colWhite owl-mright `} data-testid="Task">
     <span className={styles.title}>{title || "بدون عنوان"}</span>
     <span>{convertAMPMtoPersia(convertMinutesToHours(startTime))}</span>
     <span>

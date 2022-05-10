@@ -222,7 +222,6 @@ const Day: FC<DayProps> = () => {
   const onClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
       if (e.button === 2 && isMouseDown) return;
-
       setEventForm(current => {
         return {
           ...current,
@@ -272,6 +271,7 @@ const Day: FC<DayProps> = () => {
   );
 
   const closeModalEventForm = useCallback(() => {
+    console.log("here");
     setEventForm(current => ({ ...current, display: false }));
   }, []);
 
@@ -397,18 +397,12 @@ const Day: FC<DayProps> = () => {
 
   useEffect(() => {
     document.addEventListener("mousedown", onDocumentClickCloseModals);
-
-    mainRef?.current?.addEventListener("click", onDocumentClickCloseModals);
     mainRef?.current?.addEventListener(
       "contextmenu",
       onDocumentClickCloseModals
     );
 
     return () => {
-      mainRef?.current?.removeEventListener(
-        "click",
-        onDocumentClickCloseModals
-      );
       document?.removeEventListener("mousedown", onDocumentClickCloseModals);
       mainRef?.current?.removeEventListener(
         "contextmenu",
@@ -436,6 +430,10 @@ const Day: FC<DayProps> = () => {
   }, []);
 
   const isCurrentDate = useMemo(() => isSameDate(date, moment()), [date]);
+
+  const onNewEventResize = useCallback((height: number | undefined) => {
+    height && setEventForm(current => ({ ...current, eventEndTime: height }));
+  }, []);
 
   return (
     <div className={styles.Day} data-testid="Day">
@@ -555,12 +553,6 @@ const Day: FC<DayProps> = () => {
           ) : null}
 
           <Modal
-            children={
-              <Task
-                startTime={eventForm.eventStartTime}
-                endTime={eventForm.eventEndTime}
-              />
-            }
             className="pointer"
             boxShadow={false}
             data-testid="Task"
@@ -571,7 +563,12 @@ const Day: FC<DayProps> = () => {
             width={`${100}%`}
             display={eventForm.display}
             height={`${eventForm.eventEndTime}px`}
-          />
+            onResize={onNewEventResize}>
+            <Task
+              startTime={eventForm.eventStartTime}
+              endTime={eventForm.eventEndTime}
+            />
+          </Modal>
 
           {/* Event */}
           {events.map((event, index) => (

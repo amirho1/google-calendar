@@ -122,13 +122,18 @@ const Modal: FC<ModalProps> = ({
         if (finalHeight && onResize) {
           onResize(finalHeight);
         }
+        if (ref.current) ref.current.style.zIndex = "90";
 
         document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+
         if (onBottomBorderMouseUpOuter) onBottomBorderMouseUpOuter();
       };
 
       return e => {
         e.stopPropagation();
+        if (ref.current) ref.current.style.zIndex = "250";
+
         if (onBottomBorderMouseDownOuter) onBottomBorderMouseDownOuter();
         const bounding = ref.current?.getBoundingClientRect();
         if (bounding?.height) h = bounding?.height;
