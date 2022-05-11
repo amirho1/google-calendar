@@ -1,4 +1,4 @@
-import { Moment } from "moment-jalaali";
+import moment, { Moment } from "moment-jalaali";
 import React, {
   FC,
   useCallback,
@@ -13,7 +13,11 @@ import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { RoutesContext } from "../../App";
 import { ReduxStateI } from "../../redux";
-import { decreaseDay, increaseDay } from "../../redux/reducers/date/actions";
+import {
+  decreaseDay,
+  increaseDay,
+  setDate,
+} from "../../redux/reducers/date/actions";
 import { convertFinglishMonthToPersian } from "../../utils/helpers";
 import Button from "../Button/Button";
 import DateD from "../DateD/DateD";
@@ -54,7 +58,7 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
         ),
       },
     ],
-    []
+    [routes]
   );
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
@@ -93,6 +97,10 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
     });
   }, []);
 
+  const today = useCallback(() => {
+    dispatch(setDate(moment()));
+  }, [dispatch]);
+
   return (
     <div className={`${styles.right} f-around`} data-testid="NavMain">
       <HamburgerMenu
@@ -102,7 +110,12 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
         }}
         dataTip={"فهرست اصلی"}
       />
-      <Button children={"Today"} dataTip={`${monthName} ${year}`} />
+
+      <Button
+        children={"امروز"}
+        dataTip={`${monthName} ${year}`}
+        onClick={today}
+      />
 
       <DateD
         fontSize="1.3rem"
