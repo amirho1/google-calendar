@@ -99,7 +99,11 @@ const CalRow: FC<OptionsProps> = ({
           </div>
         </HoverCircle>
 
-        <Modal width="200px" height="fix-content" display={colorFormDisplay}>
+        <Modal
+          width="200px"
+          zIndex={150}
+          height="fix-content"
+          display={colorFormDisplay}>
           <ColorForm
             color={color}
             closeColorForm={closeColorForm}

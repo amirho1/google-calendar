@@ -1,4 +1,11 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import Button from "../../Button/Button";
 import styles from "./Cal.module.scss";
 import { RiArrowDownSLine } from "react-icons/ri";
@@ -9,7 +16,7 @@ import { ReduxStateI } from "../../../redux";
 import { CalendarI } from "../../../redux/sagas/calendars";
 import ColorForm from "../../ColorForm/ColorForm";
 import Color from "../../Color/Color";
-import { OnColorChangeT } from "../../Day/Day";
+import { EventFormContext, OnColorChangeT } from "../../Day/Day";
 
 interface CalProps {
   calId: number;
@@ -20,6 +27,7 @@ interface CalProps {
 const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
   const [calListDisplay, setCalListDisplay] = useState(false);
   const [colorFormDisplay, setColorFormDisplay] = useState(false);
+  const { eventForm } = useContext(EventFormContext);
 
   const [isEditorMode, setIsEditorMode] = useState(false);
 
@@ -67,6 +75,10 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
     setColorFormDisplay(false);
   }, []);
 
+  useEffect(() => {
+    if (calendar?.color) onColorChange(calendar?.color);
+  }, [calendar?.color, onColorChange]);
+
   return (
     <div
       className={`${styles.Cal} ${calConditionalClassNames}`}
@@ -109,10 +121,7 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
             onClick={() => changeColorFormDisplay()}
             className={`${styles.btn} ${colorBtnConditionalClassNames} f-between m-right2`}>
             <>
-              <Color
-                color={calendar?.color || ""}
-                onColorChange={onColorChange}
-              />
+              <Color color={eventForm.color} onColorChange={onColorChange} />
               <RiArrowDownSLine />
             </>
           </Button>
@@ -126,7 +135,7 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
             <ColorForm
               closeColorForm={closeColorForm}
               onColorChange={onColorChange}
-              color={calendar ? calendar.color : "blue"}
+              color={eventForm.color}
             />
           </Modal>
         </div>

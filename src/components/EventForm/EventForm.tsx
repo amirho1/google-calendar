@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useContext, useMemo } from "react";
 import { FaCalendar, FaTimes } from "react-icons/fa";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import styles from "./EventForm.module.scss";
@@ -15,7 +15,7 @@ import Description from "../Description/Description";
 import { convertMinutesToHours } from "../../utils/helpers";
 import { EditorState } from "draft-js";
 import Cal from "./Cal/Cal";
-import { OnColorChangeT } from "../Day/Day";
+import { EventFormContext, OnColorChangeT } from "../Day/Day";
 
 interface EventFormProps {
   onHeaderMouseDown: React.MouseEventHandler<HTMLDivElement>;

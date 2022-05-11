@@ -2,6 +2,7 @@ import { convertToHTML } from "draft-convert";
 import { EditorState } from "draft-js";
 import moment, { Moment } from "moment-jalaali";
 import React, {
+  createContext,
   FC,
   useCallback,
   useContext,
@@ -28,7 +29,6 @@ import EventForm from "../EventForm/EventForm";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Line from "../Line/Line";
 import Modal from "../Modal/Modal";
-import Task from "../Task/Task";
 import TimeLine from "../TimeLine/TimeLine";
 import styles from "./Day.module.scss";
 import { useImmerReducer } from "use-immer";
@@ -36,6 +36,7 @@ import Plus from "../Plus/Plus";
 import { FadeContext, SidebarContext } from "../../App";
 import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
 import Event from "../Event/Event";
+import NewEvent from "../NewEvent/NewEvent";
 
 interface DayProps {}
 
@@ -65,11 +66,57 @@ function drawCalendarLines(num: number) {
   return lines;
 }
 
+const eventFormDefaultValue = {
+  ...centerOFScreen(),
+  title: "",
+  description: EditorState.createEmpty(),
+  date: moment(),
+  display: false,
+  eventStartTime: 0,
+  eventEndTime: 0,
+  color: "blue",
+  calId: 1,
+};
+
+export interface EventFormI {
+  title: string;
+  description: EditorState;
+  date: moment.Moment;
+  display: boolean;
+  eventStartTime: number;
+  eventEndTime: number;
+  color: string;
+  calId: number;
+  x: number;
+  y: number;
+}
+
+export const EventFormContext = createContext<{
+  eventForm: EventFormI;
+  setEventForm: React.Dispatch<React.SetStateAction<EventFormI>>;
+}>({
+  eventForm: eventFormDefaultValue,
+  setEventForm: () => {},
+});
+
 export interface EventDetailsI extends EventI {
   display: boolean;
 }
 
 export type OnColorChangeT = (color: string) => void;
+
+export interface EventFormStateI {
+  title: string;
+  description: EditorState;
+  date: moment.Moment;
+  display: boolean;
+  eventStartTime: number;
+  eventEndTime: number;
+  color: string;
+  calId: number;
+  x: number;
+  y: number;
+}
 
 const Day: FC<DayProps> = () => {
   const { closeFade } = useContext(FadeContext);
@@ -160,7 +207,7 @@ const Day: FC<DayProps> = () => {
     [date]
   );
 
-  const [eventForm, setEventForm] = useState({
+  const [eventForm, setEventForm] = useState<EventFormI>({
     ...centerOFScreen(),
     title: "",
     description: EditorState.createEmpty(),
@@ -432,6 +479,7 @@ const Day: FC<DayProps> = () => {
   }, []);
 
   const onColorChange = useCallback<OnColorChangeT>(color => {
+    console.log(color);
     setEventForm(current => ({ ...current, color }));
   }, []);
 
@@ -442,174 +490,163 @@ const Day: FC<DayProps> = () => {
   }, []);
 
   return (
-    <div className={styles.Day} data-testid="Day">
-      <Plus
-        fullSize={sideBarDisplay}
-        onClick={onPlusClickOpenEventForm}
-        text={"اضافه کردن"}
-        className={styles.Plus}
-        disable={eventForm.display}
-      />
-
-      {/* event Details */}
-      <Modal
-        display={details.display}
-        x={centerOFScreen().x}
-        y={centerOFScreen().y}
-        position="fixed"
-        zIndex={200}
-        width="448px"
-        height="fit-content">
-        <Details
-          event={details}
-          date={date}
-          closeDetails={closeDetails}
-          timeStamp={timeStamp}
+    <EventFormContext.Provider value={{ eventForm, setEventForm }}>
+      <div className={styles.Day} data-testid="Day">
+        <Plus
+          fullSize={sideBarDisplay}
+          onClick={onPlusClickOpenEventForm}
+          text={"اضافه کردن"}
+          className={styles.Plus}
+          disable={eventForm.display}
         />
-      </Modal>
 
-      {/* contextMenu */}
-      <Modal
-        display={contextMenuStates.display}
-        height="115px"
-        width="192px"
-        x={contextMenuStates.x}
-        y={contextMenuStates.y}
-        position="fixed"
-        zIndex={140}>
-        <ContextMenu
-          closeContextMenu={closeContextMenu}
-          timeStamp={timeStamp}
-          color={eventForm.color}
-          id={contextMenuStates.id}
-          calId={contextMenuStates.calId}
-        />
-      </Modal>
-
-      {/* Event form */}
-      <Modal
-        display={eventForm.display}
-        getRef={getRef}
-        zIndex={210}
-        height="fit-content"
-        width="450px"
-        position="fixed"
-        x={eventForm.x}
-        y={eventForm.y}>
-        <EventForm
-          onColorChange={onColorChange}
-          onCalChange={onCalChange}
-          calId={eventForm.calId}
-          handleAddingEvent={handleAddingEvent}
-          eventEndTime={eventForm.eventEndTime}
-          onEndTimeChang={onEndTimeChang}
-          eventStartTime={eventForm.eventStartTime}
-          setModalDisplay={closeModalEventForm}
-          onStartTimeChange={onStartTimeChange}
-          onHeaderMouseDown={onEventFormHeaderMouseDown}
-          title={eventForm.title}
-          description={eventForm.description}
-          onDescriptionChange={onDescriptionChange}
-          onTitleChange={onTitleChange}
-        />
-      </Modal>
-
-      <div
-        className={styles.Header}
-        style={{
-          borderBottom: headerBottomBorderDisplay
-            ? "2px solid var(--gray)"
-            : undefined,
-        }}>
-        <div className={styles.Info} data-testid="Info">
-          <span className={styles.Weekday}>{weekday}</span>
-          <HoverCircle
-            hover={false}
-            background={isCurrentDate}
-            backgroundColor={"var(--blue)"}
-            width="50px"
-            height="50px"
-            className={`pointer`}>
-            <div
-              className={`${styles.date}`}
-              style={{
-                color: !isCurrentDate ? "var(--text-secondary)" : undefined,
-              }}>
-              {day}
-            </div>
-          </HoverCircle>
-        </div>
-      </div>
-      <main
-        ref={mainRef}
-        className={styles.main}
-        onClick={e => {
-          e.stopPropagation();
-        }}
-        onContextMenu={e => e.stopPropagation()}
-        onScroll={e => {
-          setHeaderBottomBorderDisplay(e.currentTarget.scrollTop);
-        }}>
-        <div className={styles.space}></div>
-        <div
-          className={styles.CalendarWrapper}
-          data-testid="calendarWrapper"
-          onClick={e => {
-            onClickCreateEvent(e);
-            onClick(e);
-          }}>
-          {moment().startOf("day").valueOf() ===
-          date.startOf("day").valueOf() ? (
-            <TimeLine y={timeLineMinutes} color="red" />
-          ) : null}
-
-          <Modal
-            className="pointer"
-            boxShadow={false}
-            data-testid="Task"
-            backgroundColor={eventForm.color}
-            x={0}
-            y={eventForm.eventStartTime}
-            resizeAble={true}
-            width={`${100}%`}
-            display={eventForm.display}
-            height={`${eventForm.eventEndTime}px`}
-            onResize={onNewEventResize}>
-            <Task
-              startTime={eventForm.eventStartTime}
-              endTime={eventForm.eventEndTime}
-            />
-          </Modal>
-
-          {/* Event */}
-          {events.map((event, index) => (
-            <Event
-              key={index}
-              event={event}
-              timeStamp={timeStamp}
-              onBottomBorderMouseUp={onBottomBorderMouseUp}
-              onBottomBorderMouseMove={onBottomBorderMouseMove}
-              onEventBottomMouseDownSetIsMouseDownTrue={
-                onEventBottomMouseDownSetIsMouseDownTrue
-              }
-              onEventClick={onEventClick}
-              onEventRightClick={onEventRightClick}
-              setEventForm={setEventForm}
-              setIsMoved={setIsMoved}
-            />
-          ))}
-
-          <Line
-            vertical={true}
-            height="100%"
-            width="1"
-            right="20px"
-            top="-2%"
+        {/* event Details */}
+        <Modal
+          display={details.display}
+          x={centerOFScreen().x}
+          y={centerOFScreen().y}
+          position="fixed"
+          zIndex={200}
+          width="448px"
+          height="fit-content">
+          <Details
+            event={details}
+            date={date}
+            closeDetails={closeDetails}
+            timeStamp={timeStamp}
           />
-          {drawCalendarLines(24)}
+        </Modal>
+
+        {/* contextMenu */}
+        <Modal
+          display={contextMenuStates.display}
+          height="115px"
+          width="192px"
+          x={contextMenuStates.x}
+          y={contextMenuStates.y}
+          position="fixed"
+          zIndex={140}>
+          <ContextMenu
+            closeContextMenu={closeContextMenu}
+            timeStamp={timeStamp}
+            color={eventForm.color}
+            id={contextMenuStates.id}
+            calId={contextMenuStates.calId}
+          />
+        </Modal>
+
+        {/* Event form */}
+        <Modal
+          display={eventForm.display}
+          getRef={getRef}
+          zIndex={210}
+          height="fit-content"
+          width="450px"
+          position="fixed"
+          x={eventForm.x}
+          y={eventForm.y}>
+          <EventForm
+            onColorChange={onColorChange}
+            onCalChange={onCalChange}
+            calId={eventForm.calId}
+            handleAddingEvent={handleAddingEvent}
+            eventEndTime={eventForm.eventEndTime}
+            onEndTimeChang={onEndTimeChang}
+            eventStartTime={eventForm.eventStartTime}
+            setModalDisplay={closeModalEventForm}
+            onStartTimeChange={onStartTimeChange}
+            onHeaderMouseDown={onEventFormHeaderMouseDown}
+            title={eventForm.title}
+            description={eventForm.description}
+            onDescriptionChange={onDescriptionChange}
+            onTitleChange={onTitleChange}
+          />
+        </Modal>
+
+        <div
+          className={styles.Header}
+          style={{
+            borderBottom: headerBottomBorderDisplay
+              ? "2px solid var(--gray)"
+              : undefined,
+          }}>
+          <div className={styles.Info} data-testid="Info">
+            <span className={styles.Weekday}>{weekday}</span>
+            <HoverCircle
+              hover={false}
+              background={isCurrentDate}
+              backgroundColor={"var(--blue)"}
+              width="50px"
+              height="50px"
+              className={`pointer`}>
+              <div
+                className={`${styles.date}`}
+                style={{
+                  color: !isCurrentDate ? "var(--text-secondary)" : undefined,
+                }}>
+                {day}
+              </div>
+            </HoverCircle>
+          </div>
         </div>
-      </main>
-    </div>
+        <main
+          ref={mainRef}
+          className={styles.main}
+          onClick={e => {
+            e.stopPropagation();
+          }}
+          onContextMenu={e => e.stopPropagation()}
+          onScroll={e => {
+            setHeaderBottomBorderDisplay(e.currentTarget.scrollTop);
+          }}>
+          <div className={styles.space}></div>
+          <div
+            className={styles.CalendarWrapper}
+            data-testid="calendarWrapper"
+            onClick={e => {
+              onClickCreateEvent(e);
+              onClick(e);
+            }}>
+            {moment().startOf("day").valueOf() ===
+            date.startOf("day").valueOf() ? (
+              <TimeLine y={timeLineMinutes} color="red" />
+            ) : null}
+
+            <NewEvent
+              eventForm={eventForm}
+              onNewEventResize={onNewEventResize}
+            />
+
+            {/* Event */}
+            {events.map((event, index) => (
+              <Event
+                key={index}
+                event={event}
+                timeStamp={timeStamp}
+                onBottomBorderMouseUp={onBottomBorderMouseUp}
+                onBottomBorderMouseMove={onBottomBorderMouseMove}
+                onEventBottomMouseDownSetIsMouseDownTrue={
+                  onEventBottomMouseDownSetIsMouseDownTrue
+                }
+                onEventClick={onEventClick}
+                onEventRightClick={onEventRightClick}
+                setEventForm={setEventForm}
+                setIsMoved={setIsMoved}
+              />
+            ))}
+
+            <Line
+              vertical={true}
+              height="100%"
+              width="1"
+              right="20px"
+              top="-2%"
+            />
+            {drawCalendarLines(24)}
+          </div>
+        </main>
+      </div>
+    </EventFormContext.Provider>
   );
 };
 
