@@ -17,6 +17,8 @@ describe("<DateD />", () => {
         year={year}
         onCLickNext={() => {}}
         onClickPrevious={() => {}}
+        nextBtnDataTip={""}
+        previousBtnDataTip={""}
       />
     ));
   });

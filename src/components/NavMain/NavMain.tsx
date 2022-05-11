@@ -123,6 +123,8 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
         monthName={monthName}
         onClickPrevious={onClickPrevious}
         onCLickNext={onClickNext}
+        nextBtnDataTip="روز بعد"
+        previousBtnDataTip="روز قبل"
       />
 
       <Button

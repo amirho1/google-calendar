@@ -223,6 +223,8 @@ const CalMonth: FC<CalMonthProps> = ({
       data-testid="CalMonth"
       style={{ width, height }}>
       <DateD
+        nextBtnDataTip="ماه بعد"
+        previousBtnDataTip="ماه قبل"
         monthName={monthName}
         onCLickNext={onCLickNext}
         onClickPrevious={onClickPrevious}

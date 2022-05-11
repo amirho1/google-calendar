@@ -8,6 +8,8 @@ interface DateDProps {
   year: number;
   monthName: string;
   fontSize?: string;
+  nextBtnDataTip: string;
+  previousBtnDataTip: string;
 }
 
 const DateD: FC<DateDProps> = ({
@@ -16,6 +18,8 @@ const DateD: FC<DateDProps> = ({
   onClickPrevious,
   year,
   fontSize,
+  nextBtnDataTip,
+  previousBtnDataTip,
 }) => {
   return (
     <div className={`${styles.DateD} f-between`} data-testid="DateD">
@@ -30,8 +34,8 @@ const DateD: FC<DateDProps> = ({
       <MonthChanger
         onClickPrevious={onClickPrevious}
         onCLickNext={onCLickNext}
-        dataTipNext="روز بعد"
-        datTipPrevious="روز قبل"
+        dataTipNext={nextBtnDataTip}
+        datTipPrevious={previousBtnDataTip}
       />
     </div>
   );
