@@ -38,6 +38,7 @@ interface EventProps {
       y: number;
     }>
   >;
+  onBottomBorderMouseMove: () => void;
 }
 
 const Event: FC<EventProps> = ({
@@ -49,6 +50,7 @@ const Event: FC<EventProps> = ({
   setEventForm,
   timeStamp,
   setIsMoved,
+  onBottomBorderMouseMove,
 }) => {
   const dispatch = useDispatch();
   const calName = useSelector(selectCalendarById(calId))?.name;
@@ -85,7 +87,8 @@ const Event: FC<EventProps> = ({
             e: React.MouseEvent<HTMLDivElement, MouseEvent>
           ) => {
             e.stopPropagation();
-            const didEventMoved = updatedEvent.startTime !== event.startTime;
+
+            const didEventMoved = updatedEvent?.startTime !== event?.startTime;
             if (event.id && calName && updatedEvent && didEventMoved) {
               dispatch(
                 updateEvent.ac({
@@ -156,6 +159,7 @@ const Event: FC<EventProps> = ({
       display={true}
       height={`${endTime}px`}
       onResize={onResize}
+      onBottomBorderMouseMove={onBottomBorderMouseMove}
       onBottomBorderMouseDownOuter={onEventBottomMouseDownSetIsMouseDownTrue}
       onClick={e => {
         e.stopPropagation();

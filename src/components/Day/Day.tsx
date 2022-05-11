@@ -221,7 +221,7 @@ const Day: FC<DayProps> = () => {
   );
   const onClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
-      if (e.button === 2 && isMouseDown) return;
+      if (e.button === 2 && isMouseDown && !isMoved) return;
       setEventForm(current => {
         return {
           ...current,
@@ -231,7 +231,7 @@ const Day: FC<DayProps> = () => {
       });
       setIsMouseDown(true);
     },
-    [calendars, isMouseDown]
+    [calendars, isMouseDown, isMoved]
   );
 
   const onEventFormHeaderMouseDown = useCallback<
@@ -271,7 +271,6 @@ const Day: FC<DayProps> = () => {
   );
 
   const closeModalEventForm = useCallback(() => {
-    console.log("here");
     setEventForm(current => ({ ...current, display: false }));
   }, []);
 
@@ -329,10 +328,16 @@ const Day: FC<DayProps> = () => {
 
   const onEventBottomMouseDownSetIsMouseDownTrue = useCallback(() => {
     setIsMouseDown(true);
+    setIsMoved(false);
   }, []);
 
   const onBottomBorderMouseUp = useCallback(() => {
     setIsMouseDown(false);
+    setIsMoved(false);
+  }, []);
+
+  const onBottomBorderMouseMove = useCallback(() => {
+    setIsMoved(true);
   }, []);
 
   const onEventRightClick = useCallback(
@@ -371,6 +376,7 @@ const Day: FC<DayProps> = () => {
 
   const onEventClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>, event: EventI) => {
+      if (e.buttons === 2) return;
       dispatchContextMenuStates({
         type: "contextMenuDisplay",
         payload: { display: false },
@@ -378,8 +384,8 @@ const Day: FC<DayProps> = () => {
       if (!isMoved)
         setDetails(current => ({
           ...current,
-          display: true,
           ...event,
+          display: !current.display,
         }));
     },
     [dispatchContextMenuStates, isMoved]
@@ -577,6 +583,7 @@ const Day: FC<DayProps> = () => {
               event={event}
               timeStamp={timeStamp}
               onBottomBorderMouseUp={onBottomBorderMouseUp}
+              onBottomBorderMouseMove={onBottomBorderMouseMove}
               onEventBottomMouseDownSetIsMouseDownTrue={
                 onEventBottomMouseDownSetIsMouseDownTrue
               }

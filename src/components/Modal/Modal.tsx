@@ -26,6 +26,9 @@ interface ModalProps {
   borderRadios?: string;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onResize?: OnResizeT;
+  onBottomBorderMouseMove?: (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => void;
 }
 
 export type onEventMouseDownT = (
@@ -36,7 +39,6 @@ export type onEventMouseDownT = (
 const Modal: FC<ModalProps> = ({
   children,
   display = false,
-  // initial height
   height = "0",
   width = "0",
   x,
@@ -56,6 +58,7 @@ const Modal: FC<ModalProps> = ({
   borderRadios = "2px",
   onClick,
   onResize,
+  onBottomBorderMouseMove,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -94,9 +97,9 @@ const Modal: FC<ModalProps> = ({
       cursor: "row-resize",
       width: "100%",
       position: "absolute",
-      bottom: "5px",
+      bottom: "1px",
       left: "0",
-      height: "15px",
+      height: "5px",
     }),
     []
   );
@@ -107,6 +110,8 @@ const Modal: FC<ModalProps> = ({
       let h = 60;
       let finalHeight: number | undefined = undefined;
       const onMouseMove = (e: MouseEvent) => {
+        onBottomBorderMouseMove && onBottomBorderMouseMove(e as any);
+
         const YDir = e.clientY - y + 5;
         if (ref.current) {
           ref.current.style.cursor = "row-resize";
