@@ -26,6 +26,7 @@ import { centerOFScreen } from "../Day/Day";
 import Confirmation from "../Confirmation/Confirmation";
 import { FadeContext } from "../../App";
 import { Tooltip } from "react-tippy";
+import Checkbox from "../Checkbox/Checkbox";
 
 interface CalendarsProps {}
 
@@ -93,13 +94,10 @@ const Calendars: FC<CalendarsProps> = () => {
       item =>
         (
           <div className={`${styles.row} f-between`}>
-            <input
-              type="checkbox"
-              name={`${index}-calendar`}
-              id={`${index}-calendar`}
-              checked={calendar.selected}
+            <Checkbox
+              value={calendar.selected}
+              color={calendar.color}
               onChange={() =>
-                calendar.id &&
                 onCalendarSelectAndDeselect({
                   ...calendar,
                   selected: !calendar.selected,
