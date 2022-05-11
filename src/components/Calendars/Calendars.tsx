@@ -27,21 +27,29 @@ import Confirmation from "../Confirmation/Confirmation";
 import { FadeContext } from "../../App";
 import { Tooltip } from "react-tippy";
 import Checkbox from "../Checkbox/Checkbox";
+import ColorForm from "../ColorForm/ColorForm";
+import CalRow from "./CalRow/CalRow";
 
 interface CalendarsProps {}
 
 const Calendars: FC<CalendarsProps> = () => {
   const { closeFade, openFade } = useContext(FadeContext);
+
   const [confirm, setConfirm] = useState({
     display: false,
     id: 0,
     calName: "",
   });
-
   const [calendars] = useSelector<ReduxStateI, [CalendarI[]]>(state => [
     state.calendars.calendars,
   ]);
-
+  const onCalendarDelete = useCallback(
+    (id: number, calName: string) => {
+      openFade();
+      setConfirm({ id, display: true, calName });
+    },
+    [openFade]
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -74,67 +82,17 @@ const Calendars: FC<CalendarsProps> = () => {
     []
   );
 
-  const onCalendarSelectAndDeselect = useCallback(
-    (newCalendar: CalendarI) => {
-      dispatch(updateCalendar.ac(newCalendar));
-    },
-    [dispatch]
-  );
-
-  const onCalendarDelete = useCallback(
-    (id: number, calName: string) => {
-      openFade();
-      setConfirm({ id, display: true, calName });
-    },
-    [openFade]
-  );
-
   const childCb = useCallback(
-    (calendar: CalendarI, index: number, id: number): CB =>
-      item =>
-        (
-          <div className={`${styles.row} f-between`}>
-            <Checkbox
-              value={calendar.selected}
-              color={calendar.color}
-              onChange={() =>
-                onCalendarSelectAndDeselect({
-                  ...calendar,
-                  selected: !calendar.selected,
-                })
-              }
-            />
-
-            <Tooltip title={item.tag as any}>
-              <label htmlFor="" className={styles.myCalenders}>
-                {item.tag}
-              </label>
-            </Tooltip>
-            <div className={`${styles.setting} f-between`}>
-              <HoverCircle
-                backgroundColor="var(--dark)"
-                className={styles.howColWhite}
-                dataTip="حذف">
-                <div onClick={() => onCalendarDelete(id, item.tag as string)}>
-                  <FaTimes />
-                </div>
-              </HoverCircle>
-
-              <HoverCircle
-                backgroundColor="var(--dark)"
-                className={styles.howColWhite}
-                width="25px"
-                height="25px">
-                <div>
-                  <Tooltip title="Click to view">
-                    <BsThreeDotsVertical />
-                  </Tooltip>
-                </div>
-              </HoverCircle>
-            </div>
-          </div>
-        ),
-    [onCalendarDelete, onCalendarSelectAndDeselect]
+    (calendar: CalendarI, index: number, id: number): CB => {
+      return item => (
+        <CalRow
+          item={item}
+          calendar={calendar}
+          onCalendarDelete={onCalendarDelete}
+        />
+      );
+    },
+    [onCalendarDelete]
   );
 
   const mappedCalenders = useMemo<IItem[]>(

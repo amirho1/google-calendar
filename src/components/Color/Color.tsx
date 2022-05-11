@@ -26,7 +26,10 @@ const Color: FC<ColorProps> = ({
       className={className}>
       <div
         className={styles.Color}
-        onClick={() => onColorChange && onColorChange(color)}
+        onClick={e => {
+          onColorChange && onColorChange(color);
+          e.stopPropagation();
+        }}
         data-testid="Color"></div>
     </HoverCircle>
   );

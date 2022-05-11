@@ -12,6 +12,7 @@ interface HoverCircleProps {
   backgroundColor?: string;
   className?: string;
   dataTip?: string;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 const HoverCircle: FC<HoverCircleProps> = ({
@@ -23,6 +24,7 @@ const HoverCircle: FC<HoverCircleProps> = ({
   width,
   height,
   dataTip,
+  onClick,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -56,6 +58,7 @@ const HoverCircle: FC<HoverCircleProps> = ({
         className={`${styles.HoverCircle} f-center ${className}`}
         onClick={e => {
           (e.currentTarget.children[0] as HTMLElement).click();
+          onClick && onClick(e);
         }}>
         {children}
       </div>

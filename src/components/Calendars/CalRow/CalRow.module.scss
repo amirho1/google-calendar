@@ -1,0 +1,26 @@
+.CalRow {
+}
+
+.row {
+  padding: 0.3em 1em;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--gray);
+    & > .setting {
+      visibility: visible;
+    }
+  }
+}
+
+.myCalenders {
+  font-size: 1.1rem;
+}
+.setting {
+  visibility: hidden;
+}
+.hoverColWhite {
+  &:hover {
+    color: white;
+  }
+}
