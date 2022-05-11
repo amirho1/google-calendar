@@ -460,7 +460,12 @@ const Day: FC<DayProps> = () => {
         zIndex={200}
         width="448px"
         height="fit-content">
-        <Details event={details} date={date} closeDetails={closeDetails} />
+        <Details
+          event={details}
+          date={date}
+          closeDetails={closeDetails}
+          timeStamp={timeStamp}
+        />
       </Modal>
 
       {/* contextMenu */}

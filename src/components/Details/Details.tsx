@@ -19,21 +19,25 @@ import {
   convertMinutesToHours,
 } from "../../utils/helpers";
 import { EventI } from "../../redux/reducers/events/events";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
+import { deleteEvent } from "../../redux/sagas/events";
 
 export interface DetailsProps {
   event: EventI;
   date: Moment;
+  timeStamp: number;
   closeDetails: () => void;
 }
 
 const Details: FC<DetailsProps> = ({
-  event: { description, endTime, startTime, title, calId },
+  event: { description, endTime, startTime, title, calId, id },
   date,
   closeDetails,
+  timeStamp,
 }) => {
   const calName = useSelector(selectCalendarById(calId || 0))?.name || "";
+  const dispatch = useDispatch();
 
   const cb = useCallback<CB>(
     item => (
@@ -43,6 +47,10 @@ const Details: FC<DetailsProps> = ({
     ),
     []
   );
+
+  const removeEvent = useCallback(() => {
+    if (calName && id) dispatch(deleteEvent.ac({ calName, timeStamp, id }));
+  }, [calName, dispatch, id, timeStamp]);
 
   const tools = useMemo<IItem[]>(
     () => [
@@ -54,7 +62,11 @@ const Details: FC<DetailsProps> = ({
       {
         tag: "حذف رویداد",
         icon: <BsTrash />,
-        cb: cb,
+        cb: item => (
+          <HoverCircle className="pointer" dataTip={item.tag as any}>
+            <div onClick={removeEvent}>{item.icon as any}</div>
+          </HoverCircle>
+        ),
       },
       {
         tag: "گزینه ها",
