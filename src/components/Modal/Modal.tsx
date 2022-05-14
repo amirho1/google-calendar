@@ -29,6 +29,8 @@ interface ModalProps {
   onBottomBorderMouseMove?: (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
+  right?: string;
+  bottom?: string;
 }
 
 export type onEventMouseDownT = (
@@ -59,6 +61,8 @@ const Modal: FC<ModalProps> = ({
   onClick,
   onResize,
   onBottomBorderMouseMove,
+  right,
+  bottom,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -78,6 +82,8 @@ const Modal: FC<ModalProps> = ({
       borderRadius: borderRadios,
       backgroundColor: backgroundColor,
       zIndex: zIndex,
+      right,
+      bottom,
     }),
     [
       height,
@@ -89,6 +95,8 @@ const Modal: FC<ModalProps> = ({
       borderRadios,
       backgroundColor,
       zIndex,
+      right,
+      bottom,
     ]
   );
 

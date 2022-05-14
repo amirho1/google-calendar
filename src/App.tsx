@@ -20,6 +20,7 @@ import Fade from "./components/Fade/Fade";
 import "react-tippy/dist/tippy.css";
 import routes, { RouteI } from "./pages/routes";
 import FOF from "./components/FOF/FOF";
+import TestNetWorkConnection from "./components/TestNetWorkConnection/TestNetWorkConnection";
 
 // it has some problems with types
 export const FadeContext = createContext({
@@ -114,6 +115,7 @@ function App() {
           <main className={styles.Main}>
             <Routes>{routes(routesList)}</Routes>
           </main>
+          <TestNetWorkConnection   />
         </div>
       </FadeContext.Provider>
     </SidebarContext.Provider>
