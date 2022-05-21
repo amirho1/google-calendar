@@ -25,7 +25,23 @@ export const Api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
+
+Api.interceptors?.response.use(
+  res => res,
+  err => {
+    try {
+      const { status } = err?.response || {};
+      if (status === 401) {
+        window.location = "/login" as any;
+      }
+      return Promise.reject(err);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+);
 
 export default function useFetch({
   url = "",
