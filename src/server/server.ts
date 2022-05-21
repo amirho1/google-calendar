@@ -1,108 +1,57 @@
+// it's a fake backend only mocking
+
 import express from "express";
 import bodyParser from "body-parser";
-import cors from "cors";
 import morgan from "morgan";
-import jsonData from "./db.json";
-import { updateGivenObject, write } from "./jsonCrud";
-import { EventI } from "../redux/reducers/events/events";
 import { join } from "path";
+import session from "express-session";
+import connectToDB from "./db/index";
+import MongoStore from "connect-mongo";
+import routes from "./routes";
+import cors from "cors";
 
 const app = express();
 
-app.use(cors());
+connectToDB();
+const port = 3001;
+
+const sessionStorage = new MongoStore({
+  mongoUrl: "mongodb://127.0.0.1:27017/test",
+  collectionName: "session",
+});
+
+if (process.env.NODE_ENV === "development")
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms")
 );
+
 app.use(express.static(join(__dirname, "../../build")));
-const port = 3001;
+app.use(
+  session({
+    secret: "secretKey@secretKey",
+    cookie: { httpOnly: true, maxAge: 60 * 60 * 24 * 1000 },
+    name: "session",
+    saveUninitialized: false,
+    store: sessionStorage,
+    resave: false,
+  })
+);
+
+routes(app);
 
 app.listen(port, () => {
-  console.clear();
   console.log(`listening on http://localhost:${port}`);
 });
 
-app.get("/", (req, res) => {
+app.get("/**", (req, res) => {
   res.sendFile(join(__dirname, "../../build/index.html"));
 });
-
-app.get("/calendars", (req, res) => {
-  res.send(jsonData.calendars);
-});
-
-app.post("/calendars", ({ body }, res) => {
-  body.id = jsonData.calendars.length + 1;
-
-  jsonData.calendars.push(body);
-  (jsonData.events as any)[body.name] = {};
-  write(JSON.stringify(jsonData), err => console.error(err));
-  res.send(body);
-});
-
-app.put("/calendars/:id", ({ params: { id }, body }, res) => {
-  const update = jsonData.calendars.find(calendar => calendar.id === +id);
-  if (!update) return res.status(404).send("not found");
-  updateGivenObject(update, body);
-  write(JSON.stringify(jsonData), console.error);
-  res.send(update);
-});
-
-app.delete("/calendars/:id", ({ params: { id } }, res) => {
-  jsonData.calendars = jsonData.calendars.filter(cal => cal.id !== +id);
-  write(JSON.stringify(jsonData), console.error);
-  res.end();
-});
-
-app.get("/events/:calName/:date", ({ params: { calName, date } }, res) => {
-  const calObj = (jsonData?.events as any)[calName];
-  if (!calObj) return res.status(404).send("doesn't exist");
-  // if (!calObj[date]) return res.status(404).send("doesn't exist");
-  res.send(calObj[date]);
-});
-
-app.post(
-  "/events/:calName/:date",
-  ({ params: { calName, date }, body }, res) => {
-    if (!(jsonData?.events as any)[calName]) {
-      (jsonData?.events as any)[calName] = {};
-    } else if (!(jsonData?.events as any)[calName][date]) {
-      (jsonData?.events as any)[calName][date] = [];
-    }
-
-    body.id = (jsonData?.events as any)[calName][date]?.length + 1;
-    (jsonData?.events as any)[calName][date].push(body);
-    write(JSON.stringify(jsonData), console.error);
-    res.send(body);
-  }
-);
-
-app.delete(
-  "/events/:calName/:date/:id",
-  ({ params: { calName, date, id } }, res) => {
-    const calObj = (jsonData?.events as any)[calName];
-    if (!calObj) return res.status(404).send("doesn't exist");
-    if (!calObj[date]) return res.status(404).send("doesn't exist");
-    (jsonData?.events as any)[calName][date] = (jsonData?.events as any)[
-      calName
-    ][date].filter((event: EventI) => (event.id ? event?.id !== +id : true));
-    write(JSON.stringify(jsonData), console.error);
-    res.end();
-  }
-);
-
-app.put(
-  "/events/:calName/:date/:id",
-  ({ params: { calName, date, id }, body }, res) => {
-    const calObj = (jsonData?.events as any)[calName];
-    if (!calObj) return res.status(404).send("doesn't exist");
-    if (!calObj[date]) return res.status(404).send("doesn't exist");
-    const target = (jsonData?.events as any)[calName][date].find(
-      (date: any) => date.id === +id
-    );
-    if (!target) return res.status(404).send("doesn't exist");
-    updateGivenObject(target, body);
-    write(JSON.stringify(jsonData), console.error);
-    res.send(body);
-  }
-);
