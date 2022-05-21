@@ -4,7 +4,7 @@ import useTitle from "./hooks/useTitle";
 import "./styles/globals.scss";
 import NavBar from "./components/NavBar/NavBar";
 import Main from "./pages/Main/Main";
-import { Routes } from "react-router";
+import { Outlet, Route, Routes } from "react-router";
 import Settings from "./pages/Settings/Settings";
 import DayP from "./pages/DayP/DayP";
 import WeekP from "./pages/WeekP/WeekP";
@@ -17,10 +17,11 @@ import { centerOFScreen } from "./components/Day/Day";
 import Notification from "./components/Notification/Notification";
 import { CLOSE_NOTIFICATION } from "./redux/reducers/notifications/notifications";
 import Fade from "./components/Fade/Fade";
-import "react-tippy/dist/tippy.css";
+import "tippy.js/dist/tippy.css";
 import routes, { RouteI } from "./pages/routes";
 import FOF from "./components/FOF/FOF";
 import TestNetWorkConnection from "./components/TestNetWorkConnection/TestNetWorkConnection";
+import Login from "./components/Login/Login";
 
 // it has some problems with types
 export const FadeContext = createContext({
@@ -73,6 +74,7 @@ function App() {
         },
       ],
     },
+
     {
       name: "*",
       component: <FOF />,
@@ -96,6 +98,26 @@ function App() {
       <FadeContext.Provider
         value={{ openFade, closeFade, display: fadeDisplay }}>
         <div className={`${styles.App}`} data-testid="App">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+
+            <Route
+              path="/"
+              element={
+                <>
+                  <NavBar closeSideBar={closeSideBar} />
+
+                  <main className={styles.Main}>
+                    <Outlet />
+                  </main>
+                </>
+              }>
+              {routes(routesList)}
+            </Route>
+
+            <Route path="*" element={<FOF />} />
+          </Routes>
+
           <Fade display={fadeDisplay} />
           <Modal
             x={centerOFScreen().x}
@@ -110,12 +132,7 @@ function App() {
             />
           </Modal>
 
-          <NavBar closeSideBar={closeSideBar} />
-
-          <main className={styles.Main}>
-            <Routes>{routes(routesList)}</Routes>
-          </main>
-          <TestNetWorkConnection   />
+          <TestNetWorkConnection />
         </div>
       </FadeContext.Provider>
     </SidebarContext.Provider>

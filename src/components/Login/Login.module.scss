@@ -1,0 +1,46 @@
+.Login {
+  height: 100%;
+}
+
+.Form {
+  padding: 3em;
+
+  & > * {
+    text-align: center;
+    margin-bottom: 1em;
+  }
+  height: 100%;
+}
+
+@media only screen and (min-width: 600px) {
+  .Login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .Form {
+    width: 400px;
+    padding: 3em;
+    border: 1px solid var(--gray);
+    height: fit-content;
+    border-radius: 5px;
+  }
+}
+
+.disabled {
+  pointer-events: none;
+}
+
+.NotYourPC {
+  margin-top: 3em;
+  text-align: initial;
+}
+
+.btn {
+  background-color: var(--blue);
+  color: white;
+}
+
+.error {
+  text-align: initial;
+}

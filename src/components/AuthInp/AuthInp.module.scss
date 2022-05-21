@@ -1,0 +1,30 @@
+.AuthInp {
+  position: relative;
+  width: 100%;
+}
+
+.input {
+  border-radius: 5px;
+  border: 2px solid var(--text-gray);
+  outline: none;
+  padding: 1em;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: var(--blue);
+    & + label {
+      color: var(--blue);
+    }
+  }
+}
+
+.label {
+  position: absolute;
+  top: -1em;
+  background-color: white;
+  padding: 0.5em;
+  text-align: center;
+  right: 1em;
+  border-radius: 4px;
+}
