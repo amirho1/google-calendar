@@ -23,44 +23,41 @@ import {
 
 interface CreateEventProperties {
   body: EventI;
-  calName: string;
+  calId: string;
   timeStamp: number;
 }
 
 export interface UpdateEventPayload {
-  id: number;
+  id: string;
   body: EventI;
   timeStamp: number;
-  calName: string;
+  calId: string;
 }
 
-async function asyncUpdateEven({
-  body,
-  id,
-  calName,
-  timeStamp,
-}: UpdateEventPayload) {
+async function asyncUpdateEven({ body, id }: UpdateEventPayload) {
   const res = await Api({
     method: "put",
     data: body,
-    url: `/events/${calName}/${timeStamp}/${id}`,
+    url: `/events/${id}`,
   });
   return res.data;
 }
 
 export function* updateEvent(effect: Effect<string, UpdateEventPayload>) {
-  const res: EventI = yield call(asyncUpdateEven, effect.payload);
-  yield put(
-    SAVE_UPDATED_EVENT({
-      event: res,
-      calName: effect.payload.calName,
-      timeStamp: effect.payload.timeStamp,
-    })
-  );
-  yield put(SAVE_ADDED_NOTIFICATION({ message: "رویداد ذخیره شد" }));
-  yield put(OPEN_NOTIFICATION());
-  yield delay(10000);
-  yield put(CLOSE_NOTIFICATION());
+  try {
+    const res: EventI = yield call(asyncUpdateEven, effect.payload);
+    yield put(
+      SAVE_UPDATED_EVENT({
+        event: res,
+        calId: effect.payload.calId,
+        timeStamp: effect.payload.timeStamp,
+      })
+    );
+
+    yield notificationCaller("رویداد با موفقیت ذخیره شد");
+  } catch (err: any) {
+    yield notificationCaller(err.message);
+  }
 }
 
 updateEvent.type = "UPDATE_EVENT";
@@ -73,34 +70,32 @@ export function* watchingUpdatingEvent() {
   yield takeLatest(updateEvent.type, updateEvent);
 }
 
-async function createEvent({
-  body,
-  timeStamp,
-  calName,
-}: CreateEventProperties) {
+async function createEvent({ body }: CreateEventProperties) {
   const res = await Api({
     method: "POST",
-    url: decodeURIComponent(`/events/${calName}/${timeStamp}`),
+    url: decodeURIComponent(`/events`),
     data: body,
   });
+
   return res.data;
 }
 
 export function* addEvent(effect: Effect<string, CreateEventProperties>) {
-  const event: EventI = yield call(createEvent, effect.payload);
-  yield put({
-    type: SAVE_ADDED_EVENT,
-    payload: {
-      event,
-      timeStamp: effect.payload.timeStamp,
-      calName: effect.payload.calName,
-    },
-  });
+  try {
+    const event: EventI = yield call(createEvent, effect.payload);
+    yield put({
+      type: SAVE_ADDED_EVENT,
+      payload: {
+        event,
+        timeStamp: effect.payload.timeStamp,
+        calId: effect.payload.calId,
+      },
+    });
 
-  yield put(SAVE_ADDED_NOTIFICATION({ message: "رویداد با موفقیت ذخیره شد" }));
-  yield put(OPEN_NOTIFICATION());
-  yield delay(10000);
-  yield put(CLOSE_NOTIFICATION());
+    yield notificationCaller("رویداد با موفقیت ذخیره شد");
+  } catch (err: any) {
+    yield notificationCaller(err.message);
+  }
 }
 
 addEvent.type = "ADD_EVENT";
@@ -114,30 +109,42 @@ export default function* watchAddingEvents() {
 
 interface FetchEventsProps {
   timeStamp: string;
-  calName: string;
+  calId: string;
 }
 
-async function fetchEvents({ timeStamp, calName }: FetchEventsProps) {
+async function fetchEvents({ timeStamp, calId }: FetchEventsProps) {
   if (!timeStamp)
     return console.error(`${fetchEvents.name} should get a timeStamp`);
 
   const res = await Api({
     method: "GET",
-    url: `/events/${calName}/${timeStamp}`,
+    url: `/events/${calId}/${timeStamp}`,
   });
+
   return res.data;
 }
 
+export function* notificationCaller(message: string) {
+  yield put(SAVE_ADDED_NOTIFICATION({ message: message }));
+  yield put(OPEN_NOTIFICATION());
+  yield delay(10000);
+  yield put(CLOSE_NOTIFICATION());
+}
+
 export function* getEvents(effect: Effect<string, FetchEventsProps>) {
-  const response: EventI[] = yield call(fetchEvents, effect.payload);
-  yield put({
-    type: SAVE_EVENTS,
-    payload: {
-      response,
-      timeStamp: effect.payload.timeStamp,
-      calName: effect.payload.calName,
-    },
-  });
+  try {
+    const response: EventI[] = yield call(fetchEvents, effect.payload);
+    yield put({
+      type: SAVE_EVENTS,
+      payload: {
+        response,
+        timeStamp: effect.payload.timeStamp,
+        calId: effect.payload.calId,
+      },
+    });
+  } catch (err: any) {
+    yield notificationCaller(err.message);
+  }
 }
 
 getEvents.type = "GET_EVENTS";
@@ -152,26 +159,27 @@ export function* watchGettingEvents() {
 }
 
 interface RemoveEventsProps {
-  calName: string;
+  calId: string;
   timeStamp: number;
-  id: number;
+  id: string;
 }
 
-async function removeEvent({ calName, timeStamp, id }: RemoveEventsProps) {
+async function removeEvent({ id }: RemoveEventsProps) {
   const res = await Api({
     method: "DELETE",
-    url: `/events/${calName}/${timeStamp}/${id}`,
+    url: `/events/${id}`,
   });
   return res.data;
 }
 
 export function* deleteEvent(effect: Effect<string, RemoveEventsProps>) {
-  yield call(removeEvent, effect.payload);
-  yield put({ type: SAVE_DELETED_EVENT, payload: effect.payload });
-  yield put(SAVE_ADDED_NOTIFICATION({ message: "رویداد با موفقیت حذف شد" }));
-  yield put(OPEN_NOTIFICATION());
-  yield delay(10000);
-  yield put(CLOSE_NOTIFICATION());
+  try {
+    yield call(removeEvent, effect.payload);
+    yield put({ type: SAVE_DELETED_EVENT, payload: effect.payload });
+    yield notificationCaller("رویداد با موفقیت حذف شد");
+  } catch (err: any) {
+    yield notificationCaller(err);
+  }
 }
 
 deleteEvent.type = "DELETE_EVENT";

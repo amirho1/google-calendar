@@ -1,11 +1,4 @@
-import {
-  call,
-  delay,
-  Effect,
-  put,
-  takeEvery,
-  takeLatest,
-} from "redux-saga/effects";
+import { call, Effect, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { Api } from "../../../hooks/useFetch";
 import {
   saveAddedCalendarAction,
@@ -13,11 +6,7 @@ import {
   SAVE_DELETED_CALENDAR,
   SAVE_UPDATED_CALENDAR,
 } from "../../reducers/calendars";
-import {
-  CLOSE_NOTIFICATION,
-  OPEN_NOTIFICATION,
-  SAVE_ADDED_NOTIFICATION,
-} from "../../reducers/notifications/notifications";
+import { notificationCaller } from "../events";
 
 export interface TaskI {
   dateFrom: string;
@@ -27,7 +16,7 @@ export interface TaskI {
 }
 
 export interface CalendarI {
-  id?: number;
+  _id?: string;
   description?: string;
   name: string;
   color: string;
@@ -40,12 +29,13 @@ async function createCalendar(body: CalendarI) {
 }
 
 export function* addCalendar(effect: Effect<string, CalendarI>) {
-  const newCalendar: CalendarI = yield call(createCalendar, effect.payload);
-  yield put(saveAddedCalendarAction(newCalendar));
-  yield put(SAVE_ADDED_NOTIFICATION({ message: "تقویم با موفقیت اضافی شد " }));
-  yield put(OPEN_NOTIFICATION());
-  yield delay(1000);
-  yield put(CLOSE_NOTIFICATION());
+  try {
+    const newCalendar: CalendarI = yield call(createCalendar, effect.payload);
+    yield put(saveAddedCalendarAction(newCalendar));
+    yield notificationCaller("تقویم با موفقیت اضافی شد ");
+  } catch (err: any) {
+    yield notificationCaller(err.message);
+  }
 }
 
 addCalendar.ac = (newCalendar: CalendarI) => ({
@@ -80,16 +70,17 @@ async function delCal(id: number) {
 }
 
 export function* deleteCalendar(effect: Effect<string, number>) {
-  yield call(delCal, effect.payload);
-  yield put(SAVE_DELETED_CALENDAR(effect.payload));
-  yield put(SAVE_ADDED_NOTIFICATION({ message: "تقویم با موفقیت حذف شد" }));
-  yield put(OPEN_NOTIFICATION());
-  yield delay(10000);
-  yield put(CLOSE_NOTIFICATION());
+  try {
+    yield call(delCal, effect.payload);
+    yield put(SAVE_DELETED_CALENDAR(effect.payload));
+    yield notificationCaller("تقویم با موفقیت حذف شد");
+  } catch (err: any) {
+    yield notificationCaller(err.message);
+  }
 }
 
 deleteCalendar.type = "DELETE_CALENDAR";
-deleteCalendar.ac = (id: number) => ({
+deleteCalendar.ac = (id: string) => ({
   type: deleteCalendar.type,
   payload: id,
 });
@@ -101,7 +92,7 @@ export function* watchDeletingCalendar() {
 async function asyncUpdateCalendar(payload: CalendarI) {
   const updatedCal = await Api({
     method: "PUT",
-    url: `/calendars/${payload.id}`,
+    url: `/calendars/${payload._id}`,
     data: payload,
   });
 
@@ -109,16 +100,23 @@ async function asyncUpdateCalendar(payload: CalendarI) {
 }
 
 export function* updateCalendar({ payload }: Effect<string, CalendarI>) {
-  yield call(asyncUpdateCalendar, payload);
-  yield put(SAVE_UPDATED_CALENDAR(payload));
+  try {
+    yield call(asyncUpdateCalendar, payload);
+    yield put(SAVE_UPDATED_CALENDAR(payload));
+    yield notificationCaller("تقویم با موفقیت ذخیره شد.");
+  } catch (err: any) {
+    yield notificationCaller(err.message);
+  }
 }
 
 updateCalendar.type = "UPDATE_CALENDAR";
-updateCalendar.ac = (updatedCal: CalendarI) => ({
-  type: updateCalendar.type,
-  payload: updatedCal,
-});
+updateCalendar.ac = (updatedCal: CalendarI) => {
+  return {
+    type: updateCalendar.type,
+    payload: updatedCal,
+  };
+};
 
 export function* watchingUpdatingCalendars() {
-  yield takeLatest(updateCalendar.type, updateCalendar);
+  yield takeEvery("UPDATE_CALENDAR", updateCalendar);
 }

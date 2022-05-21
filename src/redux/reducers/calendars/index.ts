@@ -46,15 +46,14 @@ const calendarsReducer = produce(
         break;
       }
       case SAVE_DELETED_CALENDAR.type: {
-        console.log("here");
         draftState.calendars = draftState.calendars.filter(
-          cal => cal.id !== payload
+          cal => cal._id !== payload
         );
         break;
       }
       case SAVE_UPDATED_CALENDAR.type: {
         draftState.calendars = draftState.calendars.map(cal =>
-          cal.id === payload.id ? payload : cal
+          cal._id === payload.id ? payload : cal
         );
         break;
       }

@@ -1,17 +1,17 @@
 import { ReduxStateI } from "../..";
 
 interface SelectEventByIdProps {
-  id: number;
+  id: string;
   timeStamp: number;
-  calName: string;
+  calId: string;
 }
 
 export const selectEventById =
-  ({ id, timeStamp, calName }: SelectEventByIdProps) =>
+  ({ id, timeStamp, calId }: SelectEventByIdProps) =>
   (state: ReduxStateI) => {
     return (
-      state.events.events[calName] &&
-      state.events.events[calName][timeStamp] &&
-      state.events.events[calName][timeStamp].find(event => event.id === id)
+      state.events.events[calId] &&
+      state.events.events[calId][timeStamp] &&
+      state.events.events[calId][timeStamp].find(event => event._id === id)
     );
   };

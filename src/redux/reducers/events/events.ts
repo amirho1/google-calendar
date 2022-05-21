@@ -3,13 +3,14 @@ import { StatusT } from "../calendars";
 import produce from "immer";
 
 export interface EventI {
-  id?: number;
+  _id?: string;
   startTime: number;
   endTime: number;
   title: string;
   description: string;
   color: string;
-  calId: number;
+  calId: string;
+  timeStamp: number;
 }
 
 export interface Events {
@@ -31,7 +32,7 @@ export const SAVE_EVENTS = "SAVE_EVENTS";
 export const SAVE_DELETED_EVENT = "SAVE_DELETED_EVENT";
 
 interface SAVE_UPDATED_EVENTPropsI {
-  calName: string;
+  calId: string;
   timeStamp: number;
   event: EventI;
 }
@@ -55,48 +56,49 @@ export interface ActionI<PayloadT = any> extends Action {
 const eventsReducer = produce(
   (draftState: EventsStateI = defaultValue, action: ActionI) => {
     const timeStamp: string = action?.payload?.timeStamp;
-    const calName: string = action?.payload?.calName;
+    const calId: string = action?.payload?.calId;
 
     switch (action.type) {
       case SAVE_EVENTS: {
         const events: EventI[] = action.payload.response || [];
-        if (!draftState.events[calName]) {
-          draftState.events[calName] = {};
-          draftState.events[calName][timeStamp] = events;
+        if (!draftState.events[calId]) {
+          draftState.events[calId] = {};
+          draftState.events[calId][timeStamp] = events;
           break;
         }
 
-        draftState.events[calName][timeStamp] = events;
+        draftState.events[calId][timeStamp] = events;
         break;
       }
 
       case SAVE_ADDED_EVENT: {
-        if (!draftState.events[calName]) {
-          draftState.events[calName] = {};
-          draftState.events[calName][timeStamp] = [action.payload.event];
+        if (!draftState.events[calId]) {
+          draftState.events[calId] = {};
+          draftState.events[calId][timeStamp] = [action.payload.event];
           break;
-        } else if (!draftState.events[calName][timeStamp]) {
-          draftState.events[calName][timeStamp] = [action.payload.event];
+        } else if (!draftState.events[calId][timeStamp]) {
+          draftState.events[calId][timeStamp] = [action.payload.event];
           break;
         }
-        draftState.events[calName][timeStamp].push(action.payload.event);
+        draftState.events[calId][timeStamp].push(action.payload.event);
         break;
       }
 
       case SAVE_DELETED_EVENT: {
-        draftState.events[calName][timeStamp] = draftState.events[calName][
+        draftState.events[calId][timeStamp] = draftState.events[calId][
           timeStamp
-        ].filter(event => event.id !== action.payload.id);
+        ].filter(event => event._id !== action.payload.id);
         break;
       }
       case SAVE_UPDATED_EVENT.type: {
-        if (calName && timeStamp)
-          draftState.events[calName][timeStamp] = draftState.events[calName][
+        if (calId && timeStamp)
+          draftState.events[calId][timeStamp] = draftState.events[calId][
             timeStamp
           ].map(event => {
-            if (event.id === action.payload.event.id) {
+            if (event._id === action.payload.event._id) {
               return action.payload.event;
             }
+
             return event;
           });
         break;
