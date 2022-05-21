@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaTimes } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { Tooltip } from "react-tippy";
+import Tippy from "@tippyjs/react";
 import { CalendarI, updateCalendar } from "../../../redux/sagas/calendars";
 import Checkbox from "../../Checkbox/Checkbox";
 import ColorForm from "../../ColorForm/ColorForm";
@@ -14,11 +14,11 @@ import styles from "./CalRow.module.scss";
 interface OptionsProps {
   item: IItem;
   calendar: CalendarI;
-  onCalendarDelete: (id: number, calName: string) => void;
+  onCalendarDelete: (id: string, calName: string) => void;
 }
 
 const CalRow: FC<OptionsProps> = ({
-  calendar: { id, color, name, selected, description },
+  calendar: { _id, color, name, selected, description },
   item,
   onCalendarDelete,
 }) => {
@@ -27,13 +27,17 @@ const CalRow: FC<OptionsProps> = ({
 
   const onColorChange = (color: string) => {
     dispatch(
-      updateCalendar.ac({ id, color: color, name, selected, description })
+      updateCalendar.ac({ _id, color: color, name, selected, description })
     );
   };
 
   const onCalendarSelectAndDeselect = useCallback(
     (newCalendar: CalendarI) => {
-      dispatch(updateCalendar.ac(newCalendar));
+      try {
+        dispatch(updateCalendar.ac(newCalendar));
+      } catch (err) {
+        console.error(err);
+      }
     },
     [dispatch]
   );
@@ -63,7 +67,7 @@ const CalRow: FC<OptionsProps> = ({
         color={color}
         onChange={() =>
           onCalendarSelectAndDeselect({
-            id,
+            _id,
             color,
             name,
             description,
@@ -72,17 +76,17 @@ const CalRow: FC<OptionsProps> = ({
         }
       />
 
-      <Tooltip title={item.tag as any}>
+      <Tippy content={item.tag as any}>
         <label htmlFor="" className={styles.myCalenders}>
           {item.tag}
         </label>
-      </Tooltip>
+      </Tippy>
       <div className={`${!colorFormDisplay ? styles.setting : ""} f-between`}>
         <HoverCircle
           backgroundColor="var(--dark)"
           className={styles.hoverColWhite}
           dataTip="حذف">
-          <div onClick={() => id && onCalendarDelete(id, item.tag as string)}>
+          <div onClick={() => _id && onCalendarDelete(_id, item.tag as string)}>
             <FaTimes />
           </div>
         </HoverCircle>
@@ -93,9 +97,9 @@ const CalRow: FC<OptionsProps> = ({
           width="25px"
           height="25px">
           <div className="f-center" onClick={changeColorFormDisplay}>
-            <Tooltip title="Click to view">
+            <Tippy content="Click to view">
               <BsThreeDotsVertical />
-            </Tooltip>
+            </Tippy>
           </div>
         </HoverCircle>
 

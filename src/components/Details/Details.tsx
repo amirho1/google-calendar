@@ -31,12 +31,12 @@ export interface DetailsProps {
 }
 
 const Details: FC<DetailsProps> = ({
-  event: { description, endTime, startTime, title, calId, id },
+  event: { description, endTime, startTime, title, calId, _id },
   date,
   closeDetails,
   timeStamp,
 }) => {
-  const calName = useSelector(selectCalendarById(calId || 0))?.name || "";
+  const calName = useSelector(selectCalendarById(calId || "0"))?.name || "";
   const dispatch = useDispatch();
 
   const cb = useCallback<CB>(
@@ -49,8 +49,8 @@ const Details: FC<DetailsProps> = ({
   );
 
   const removeEvent = useCallback(() => {
-    if (calName && id) dispatch(deleteEvent.ac({ calName, timeStamp, id }));
-  }, [calName, dispatch, id, timeStamp]);
+    if (calName && _id) dispatch(deleteEvent.ac({ calId, timeStamp, id: _id }));
+  }, [calName, _id, dispatch, calId, timeStamp]);
 
   const tools = useMemo<IItem[]>(
     () => [
@@ -85,7 +85,7 @@ const Details: FC<DetailsProps> = ({
         cb: cb,
       },
     ],
-    [cb, closeDetails]
+    [cb, closeDetails, removeEvent]
   );
 
   const weekDay = useMemo(

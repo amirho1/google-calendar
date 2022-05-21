@@ -5,7 +5,7 @@ import { CalendarI } from "../../redux/sagas/calendars";
 import styles from "./CalList.module.scss";
 
 interface CalListProps {
-  onCalChange: (calName: number) => void;
+  onCalChange: (calId: string) => void;
 }
 
 const CalList: FC<CalListProps> = ({ onCalChange }) => {
@@ -18,7 +18,7 @@ const CalList: FC<CalListProps> = ({ onCalChange }) => {
       {calendars.map((cal, index) => (
         <div
           key={index}
-          onClick={() => onCalChange(cal.id as any)}
+          onClick={() => onCalChange(cal._id as any)}
           className={`${styles.btn} hoverBGGray`}>
           {cal.name}
         </div>

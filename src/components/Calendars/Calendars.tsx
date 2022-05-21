@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { FaPlus, FaTimes } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { RiArrowDownSLine, RiArrowUpSLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
@@ -14,20 +14,15 @@ import {
   CalendarI,
   deleteCalendar,
   getCalendars,
-  updateCalendar,
 } from "../../redux/sagas/calendars";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import ULLinks, { CB, IItem } from "../ULLinks/ULLinks";
 import styles from "./Calendars.module.scss";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import Modal from "../Modal/Modal";
 import { centerOFScreen } from "../Day/Day";
 import Confirmation from "../Confirmation/Confirmation";
 import { FadeContext } from "../../App";
-import { Tooltip } from "react-tippy";
-import Checkbox from "../Checkbox/Checkbox";
-import ColorForm from "../ColorForm/ColorForm";
 import CalRow from "./CalRow/CalRow";
 
 interface CalendarsProps {}
@@ -37,14 +32,14 @@ const Calendars: FC<CalendarsProps> = () => {
 
   const [confirm, setConfirm] = useState({
     display: false,
-    id: 0,
+    id: "",
     calName: "",
   });
   const [calendars] = useSelector<ReduxStateI, [CalendarI[]]>(state => [
     state.calendars.calendars,
   ]);
   const onCalendarDelete = useCallback(
-    (id: number, calName: string) => {
+    (id: string, calName: string) => {
       openFade();
       setConfirm({ id, display: true, calName });
     },
@@ -83,7 +78,7 @@ const Calendars: FC<CalendarsProps> = () => {
   );
 
   const childCb = useCallback(
-    (calendar: CalendarI, index: number, id: number): CB => {
+    (calendar: CalendarI, index: number, id: string): CB => {
       return item => (
         <CalRow
           item={item}
@@ -99,7 +94,7 @@ const Calendars: FC<CalendarsProps> = () => {
     () =>
       calendars.map((calendar, index) => ({
         tag: calendar.name,
-        cb: childCb(calendar, index, calendar?.id || 0),
+        cb: childCb(calendar, index, calendar?._id || "0"),
       })),
     [calendars, childCb]
   );

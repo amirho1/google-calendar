@@ -34,7 +34,6 @@ import styles from "./Day.module.scss";
 import { useImmerReducer } from "use-immer";
 import Plus from "../Plus/Plus";
 import { FadeContext, SidebarContext } from "../../App";
-import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
 import Event from "../Event/Event";
 import NewEvent from "../NewEvent/NewEvent";
 
@@ -75,7 +74,7 @@ const eventFormDefaultValue = {
   eventStartTime: 0,
   eventEndTime: 0,
   color: "blue",
-  calId: 1,
+  calId: "",
 };
 
 export interface EventFormI {
@@ -86,7 +85,7 @@ export interface EventFormI {
   eventStartTime: number;
   eventEndTime: number;
   color: string;
-  calId: number;
+  calId: string;
   x: number;
   y: number;
 }
@@ -113,7 +112,7 @@ export interface EventFormStateI {
   eventStartTime: number;
   eventEndTime: number;
   color: string;
-  calId: number;
+  calId: string;
   x: number;
   y: number;
 }
@@ -132,9 +131,10 @@ const Day: FC<DayProps> = () => {
     description: "",
     startTime: 0,
     endTime: 0,
-    calId: 0,
+    calId: "",
     color: "",
-    id: 0,
+    _id: "",
+    timeStamp: 0,
   });
 
   const calendars = useSelector<ReduxStateI, CalendarI[]>(
@@ -173,28 +173,25 @@ const Day: FC<DayProps> = () => {
       x: 0,
       y: 0,
       display: false,
-      id: 0,
-      calId: 0,
+      id: "",
+      calId: "",
     }
   );
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
   const timeStamp = useMemo(() => date.valueOf(), [date]);
-
   const events = useSelector<ReduxStateI, EventI[]>(state => {
     const calendars = state.calendars.calendars.filter(cal => cal.selected);
-
-    const result: EventI[] = calendars.reduce(
-      (prev: any, next) =>
-        prev.concat(
-          state.events &&
-            state.events.events[next.name] &&
-            state.events.events[next.name][timeStamp]
-            ? state.events.events[next.name][timeStamp]
-            : []
-        ),
-      []
-    );
+    const result: EventI[] = calendars.reduce((prev: EventI[], next) => {
+      return prev.concat(
+        state.events &&
+          next._id &&
+          state.events.events[next._id] &&
+          state.events.events[next._id][timeStamp]
+          ? state.events.events[next._id][timeStamp]
+          : []
+      );
+    }, []);
 
     return result;
   });
@@ -216,7 +213,7 @@ const Day: FC<DayProps> = () => {
     eventStartTime: 0,
     eventEndTime: 0,
     color: "blue",
-    calId: 1,
+    calId: "",
   });
 
   useEffect(() => {
@@ -324,9 +321,12 @@ const Day: FC<DayProps> = () => {
   // fetch events
   useEffect(() => {
     calendars.forEach(calendar => {
-      if (calendar?.selected) {
+      if (calendar?.selected && calendar._id) {
         dispatch(
-          getEvents.ac({ timeStamp: `${timeStamp}`, calName: calendar.name })
+          getEvents.ac({
+            timeStamp: `${timeStamp}`,
+            calId: calendar._id,
+          })
         );
       }
     });
@@ -340,8 +340,6 @@ const Day: FC<DayProps> = () => {
     setEventForm(current => ({ ...current, title: newDescription }));
   }, []);
 
-  const calName = useSelector(selectCalendarById(eventForm.calId))?.name;
-
   const handleAddingEvent = useCallback(() => {
     const event: EventI = {
       description: convertToHTML(eventForm.description.getCurrentContent()),
@@ -350,9 +348,10 @@ const Day: FC<DayProps> = () => {
       title: eventForm.title,
       color: eventForm.color,
       calId: eventForm.calId,
+      timeStamp: timeStamp,
     };
 
-    dispatch(addEvent.ac({ body: event, calName: calName || "", timeStamp }));
+    dispatch(addEvent.ac({ body: event, calId: eventForm.calId, timeStamp }));
     setEventForm(current => ({
       ...current,
       display: false,
@@ -362,7 +361,6 @@ const Day: FC<DayProps> = () => {
       eventStartTime: 0,
     }));
   }, [
-    calName,
     dispatch,
     eventForm.calId,
     eventForm.color,
@@ -390,8 +388,8 @@ const Day: FC<DayProps> = () => {
   const onEventRightClick = useCallback(
     (
       e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      id: number,
-      calId: number
+      id: string,
+      calId: string
     ) => {
       e.stopPropagation();
       dispatchContextMenuStates({
@@ -474,12 +472,11 @@ const Day: FC<DayProps> = () => {
     setEventForm(current => ({ ...current, display: true }));
   }, []);
 
-  const onCalChange = useCallback((calId: number) => {
+  const onCalChange = useCallback((calId: string) => {
     setEventForm(current => ({ ...current, calId }));
   }, []);
 
   const onColorChange = useCallback<OnColorChangeT>(color => {
-    console.log(color);
     setEventForm(current => ({ ...current, color }));
   }, []);
 

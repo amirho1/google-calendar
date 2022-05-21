@@ -14,10 +14,10 @@ describe("<ContextMenu />", () => {
       "ContextMenu",
       <ContextMenu
         closeContextMenu={() => {}}
-        id={0}
+        id={""}
         timeStamp={0}
         color={""}
-        calId={0}
+        calId={""}
       />
     ));
   });

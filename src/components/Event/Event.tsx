@@ -19,8 +19,8 @@ interface EventProps {
   onBottomBorderMouseUp: () => void;
   onEventRightClick: (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    id: number,
-    calId: number
+    id: string,
+    calId: string
   ) => void;
   timeStamp: number;
   setIsMoved: (value: React.SetStateAction<boolean>) => void;
@@ -33,7 +33,7 @@ interface EventProps {
       eventStartTime: number;
       eventEndTime: number;
       color: string;
-      calId: number;
+      calId: string;
       x: number;
       y: number;
     }>
@@ -42,7 +42,7 @@ interface EventProps {
 }
 
 const Event: FC<EventProps> = ({
-  event: { calId, color, description, endTime, startTime, title, id },
+  event: { calId, color, description, endTime, startTime, title, _id },
   onEventBottomMouseDownSetIsMouseDownTrue,
   onEventClick,
   onBottomBorderMouseUp,
@@ -89,12 +89,12 @@ const Event: FC<EventProps> = ({
             e.stopPropagation();
 
             const didEventMoved = updatedEvent?.startTime !== event?.startTime;
-            if (event.id && calName && updatedEvent && didEventMoved) {
+            if (event._id && calName && updatedEvent && didEventMoved) {
               dispatch(
                 updateEvent.ac({
                   body: updatedEvent,
-                  id: event.id,
-                  calName,
+                  id: event._id,
+                  calId,
                   timeStamp,
                 })
               );
@@ -113,13 +113,13 @@ const Event: FC<EventProps> = ({
           document.addEventListener("mousemove", onMouseMove as any);
         }
       },
-    [calName, dispatch, setEventForm, setIsMoved, timeStamp]
+    [calId, calName, dispatch, setEventForm, setIsMoved, timeStamp]
   );
 
   const onResize = useCallback<OnResizeT>(
     height => {
       const didHeightChanged = height !== endTime;
-      if (didHeightChanged && id && height && calName) {
+      if (didHeightChanged && _id && height && calName) {
         const event = {
           calId,
           color,
@@ -127,19 +127,20 @@ const Event: FC<EventProps> = ({
           endTime: height,
           startTime,
           title,
-          id,
+          _id,
+          timeStamp,
         };
-        dispatch(updateEvent.ac({ body: event, calName, id, timeStamp }));
+        dispatch(updateEvent.ac({ body: event, calId, id: _id, timeStamp }));
       }
     },
     [
+      _id,
       calId,
       calName,
       color,
       description,
       dispatch,
       endTime,
-      id,
       startTime,
       timeStamp,
       title,
@@ -170,8 +171,9 @@ const Event: FC<EventProps> = ({
           endTime,
           startTime,
           title,
-          id,
+          _id,
           display: true,
+          timeStamp,
         });
       }}
       onBottomBorderMouseUpOuter={onBottomBorderMouseUp}
@@ -180,11 +182,12 @@ const Event: FC<EventProps> = ({
         endTime,
         description,
         startTime,
-        id,
+        _id,
         color,
         calId,
+        timeStamp,
       })}
-      onRightClick={e => onEventRightClick(e, id || 0, calId)}>
+      onRightClick={e => onEventRightClick(e, _id || "", calId)}>
       <>
         <Task title={title} endTime={endTime} startTime={startTime} />
       </>

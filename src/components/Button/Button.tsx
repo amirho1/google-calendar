@@ -1,5 +1,5 @@
 import React, { forwardRef, HTMLAttributes } from "react";
-import { Tooltip } from "react-tippy";
+import Tippy from "@tippyjs/react";
 import { PrimitivesT } from "../Table/Table";
 import styles from "./Button.module.scss";
 
@@ -10,8 +10,9 @@ interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const { dataTip, ...rest } = { ...props };
-  return (
-    <Tooltip title={dataTip}>
+
+  if (!dataTip)
+    return (
       <button
         ref={ref}
         {...rest}
@@ -19,7 +20,18 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         data-testid="Button">
         {props.children}
       </button>
-    </Tooltip>
+    );
+
+  return (
+    <Tippy content={dataTip}>
+      <button
+        ref={ref}
+        {...rest}
+        className={`${styles.Button} ${props.className}`}
+        data-testid="Button">
+        {props.children}
+      </button>
+    </Tippy>
   );
 });
 

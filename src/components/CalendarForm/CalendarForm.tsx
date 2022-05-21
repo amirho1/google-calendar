@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Tooltip } from "react-tippy";
 import { addCalendar } from "../../redux/sagas/calendars";
 import Button from "../Button/Button";
 import Input from "../Input/Input";
@@ -30,7 +29,6 @@ const CalendarForm: FC<CalendarFormProps> = () => {
   const onSubmit = useCallback<React.FormEventHandler<HTMLFormElement>>(
     e => {
       e.preventDefault();
-
       if (!name)
         return setError({ state: true, message: "نام تقویم نا معتبر است" });
 
@@ -56,7 +54,6 @@ const CalendarForm: FC<CalendarFormProps> = () => {
           onChange={onNameChange}
           backgroundColor={error.state ? "var(--danger)" : undefined}
         />
-
         <Input
           tag="توضیحات"
           value={description}

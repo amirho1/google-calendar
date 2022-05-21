@@ -19,8 +19,8 @@ import Color from "../../Color/Color";
 import { EventFormContext, OnColorChangeT } from "../../Day/Day";
 
 interface CalProps {
-  calId: number;
-  onCalChange: (id: number) => void;
+  calId: string;
+  onCalChange: (id: string) => void;
   onColorChange: OnColorChangeT;
 }
 
@@ -63,7 +63,7 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
 
   const calendar = useSelector<ReduxStateI, CalendarI | undefined>(state =>
     state.calendars.calendars.find(c => {
-      return (c.id as any) === calId;
+      return (c._id as any) === calId;
     })
   );
 

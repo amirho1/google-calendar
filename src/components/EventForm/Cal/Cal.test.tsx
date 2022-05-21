@@ -12,7 +12,7 @@ describe("<Cal />", () => {
   beforeEach(() => {
     ({ element, query } = before(
       "Cal",
-      <Cal calId={0} onCalChange={() => {}} onColorChange={() => {}} />
+      <Cal calId={"0"} onCalChange={() => {}} onColorChange={() => {}} />
     ));
   });
 

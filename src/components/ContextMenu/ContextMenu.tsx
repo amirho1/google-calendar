@@ -2,15 +2,14 @@ import React, { FC, MouseEventHandler, useCallback, useEffect } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { selectEventById } from "../../redux/reducers/events/selectors";
-import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
 import { deleteEvent, updateEvent } from "../../redux/sagas/events";
 import Button from "../Button/Button";
 import ColorForm from "../ColorForm/ColorForm";
 import styles from "./ContextMenu.module.scss";
 
 interface ContextMenuProps {
-  id: number;
-  calId: number;
+  id: string;
+  calId: string;
   timeStamp: number;
   closeContextMenu: () => void;
   color: string;
@@ -24,16 +23,15 @@ const ContextMenu: FC<ContextMenuProps> = ({
   calId,
 }) => {
   const dispatch = useDispatch();
-  const calName = useSelector(selectCalendarById(calId))?.name || "";
-  const event = useSelector(selectEventById({ id, calName, timeStamp }));
+  const event = useSelector(selectEventById({ id, calId, timeStamp }));
 
   const onDeleteClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
     e => {
       e.stopPropagation();
-      dispatch(deleteEvent.ac({ id, calName, timeStamp }));
+      dispatch(deleteEvent.ac({ id, calId, timeStamp }));
       closeContextMenu();
     },
-    [calName, closeContextMenu, dispatch, id, timeStamp]
+    [calId, closeContextMenu, dispatch, id, timeStamp]
   );
 
   useEffect(() => {
@@ -47,15 +45,12 @@ const ContextMenu: FC<ContextMenuProps> = ({
   const changeEventColor = useCallback(
     (color: string) => {
       const eventCopy = event && { ...event };
-
       if (eventCopy) {
         eventCopy.color = color;
-        dispatch(
-          updateEvent.ac({ id: id, body: eventCopy, calName, timeStamp })
-        );
+        dispatch(updateEvent.ac({ id: id, body: eventCopy, calId, timeStamp }));
       }
     },
-    [calName, dispatch, event, id, timeStamp]
+    [calId, dispatch, event, id, timeStamp]
   );
 
   return (
@@ -75,7 +70,7 @@ const ContextMenu: FC<ContextMenuProps> = ({
       <ColorForm
         color={color}
         onColorChange={changeEventColor}
-        closeColorForm={() => {}}
+        closeColorForm={closeContextMenu}
       />
     </div>
   );
