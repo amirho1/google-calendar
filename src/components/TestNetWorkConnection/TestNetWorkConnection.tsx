@@ -14,7 +14,6 @@ const TestNetWorkConnection: FC<TestNetWorkConnectionProps> = () => {
   useEffect(() => {
     const intId = setInterval(() => {
       if (!window.navigator.onLine && online) {
-        console.log(online);
         setOnline(false);
         setInitialMessage(true);
 
