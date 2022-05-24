@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
-import useEnter from "../../hooks/useEnter";
 import useFetch from "../../hooks/useFetch";
 import EmailValidator from "email-validator";
 import { preventDefault } from "../../utils/helpers";
@@ -124,8 +123,6 @@ const Register: FC<RegisterProps> = () => {
     fetch,
     navigate,
   ]);
-
-  useEnter(registerUser);
 
   const getIsEmailUnique = useCallback(
     email => {

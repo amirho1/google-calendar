@@ -261,3 +261,7 @@ export const delay = (time: number) =>
 export const isSameDate = (date: Moment, secondDate: Moment) => {
   return secondDate.format("YYYY/MM/DD") === date.format("YYYY/MM/DD");
 };
+
+export const preventDefault: React.FormEventHandler<HTMLDivElement> = e => {
+  e.preventDefault();
+};
