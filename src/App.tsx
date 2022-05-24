@@ -22,6 +22,7 @@ import routes, { RouteI } from "./pages/routes";
 import FOF from "./components/FOF/FOF";
 import TestNetWorkConnection from "./components/TestNetWorkConnection/TestNetWorkConnection";
 import Login from "./components/Login/Login";
+import Register from "./components/Register/Register";
 
 // it has some problems with types
 export const FadeContext = createContext({
@@ -74,11 +75,6 @@ function App() {
         },
       ],
     },
-
-    {
-      name: "*",
-      component: <FOF />,
-    },
   ];
 
   const closeNotification = useCallback(() => {
@@ -100,7 +96,7 @@ function App() {
         <div className={`${styles.App}`} data-testid="App">
           <Routes>
             <Route path="/login" element={<Login />} />
-
+            <Route path="register" element={<Register />} />
             <Route
               path="/"
               element={
