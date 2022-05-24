@@ -5,15 +5,15 @@
 
 .input {
   border-radius: 5px;
-  border: 2px solid var(--text-gray);
+  border: 1px solid gray;
   outline: none;
-  padding: 1em;
+  padding: 0.5em;
   width: 100%;
 
   &:focus {
     outline: none;
     border-color: var(--blue);
-    & + label {
+    & + .labelTop {
       color: var(--blue);
     }
   }
@@ -21,10 +21,23 @@
 
 .label {
   position: absolute;
-  top: -1em;
-  background-color: white;
-  padding: 0.5em;
+  padding: 0.2em;
   text-align: center;
   right: 1em;
+  top: 0.4em;
   border-radius: 4px;
+  transition: all linear 0.1s;
+}
+.labelTop {
+  top: -1em;
+  background-color: white;
+  font-size: 0.9rem;
+}
+
+.errorBorder {
+  border-color: var(--danger);
+}
+
+.errorColor {
+  color: var(--danger);
 }
