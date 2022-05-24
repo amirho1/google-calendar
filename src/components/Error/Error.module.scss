@@ -1,0 +1,14 @@
+.Error {
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+
+  & * {
+    font-size: 0.9rem;
+  }
+}
+
+.icon {
+  background: var(-danger);
+  text-align: initial;
+}
