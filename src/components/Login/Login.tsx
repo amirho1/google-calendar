@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { Api } from "../../hooks/useFetch";
@@ -6,6 +7,7 @@ import Button from "../Button/Button";
 import Logo from "../Logo/Logo";
 import styles from "./Login.module.scss";
 import { useNavigate } from "react-router";
+import Error from "../Error/Error";
 
 interface LoginProps {}
 
@@ -56,6 +58,7 @@ const Login: FC<LoginProps> = () => {
           label="ایمیل"
           onChange={onEmailChange}
           value={email}
+          error={!!error}
           require={true}
         />
         <AuthInp
@@ -65,27 +68,29 @@ const Login: FC<LoginProps> = () => {
           value={password}
           require={true}
           onChange={onPasswordChange}
+          error={!!error}
+        />
+        <Error
+          message={error ? "ایمیل یا پسورد وارد شده اشتباه است ." : null}
         />
 
         <a className={`link ${styles.disabled}`}>
           ایمیلتان را فراموش کرده‌اید؟
         </a>
 
-        {error && (
-          <p className={`mt-3 ${styles.error} text-danger`}>
-            ایمیل یا پسورد وارد شده اشتباه است .
-          </p>
-        )}
-
         <p className={styles.NotYourPC}>
           رایانه شما نیست؟ برای ورود به سیستم، از «پنجره خصوصی» استفاده کنید.
         </p>
 
         <div className="f-between mt-3">
-          <Button className={styles.btn}>بعدی</Button>
-          <Link to="register">
-            <Button className="link">ایجاد حساب</Button>
+          <Link to="/register">
+            <Button type="button" className="linkBtn">
+              ایجاد حساب
+            </Button>
           </Link>
+          <Button type="submit" className="blueBtn">
+            ورود
+          </Button>
         </div>
       </form>
     </div>

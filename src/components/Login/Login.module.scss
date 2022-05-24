@@ -36,11 +36,8 @@
   text-align: initial;
 }
 
-.btn {
-  background-color: var(--blue);
-  color: white;
-}
-
 .error {
-  text-align: initial;
+  & * {
+    text-align: initial;
+  }
 }

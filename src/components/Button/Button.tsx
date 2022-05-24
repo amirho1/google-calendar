@@ -6,15 +6,17 @@ import styles from "./Button.module.scss";
 interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
   children: JSX.Element | PrimitivesT;
   dataTip?: string;
+  type?: "button" | "submit" | "reset" | undefined;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
-  const { dataTip, ...rest } = { ...props };
+  const { dataTip, type = "button", ...rest } = { ...props };
 
   if (!dataTip)
     return (
       <button
         ref={ref}
+        type={type}
         {...rest}
         className={`${styles.Button} ${props.className}`}
         data-testid="Button">
@@ -25,6 +27,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   return (
     <Tippy content={dataTip}>
       <button
+        type={type}
         ref={ref}
         {...rest}
         className={`${styles.Button} ${props.className}`}

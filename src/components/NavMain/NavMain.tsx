@@ -115,6 +115,7 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
         children={"امروز"}
         dataTip={`${monthName} ${year}`}
         onClick={today}
+        type="button"
       />
 
       <DateD
@@ -128,6 +129,7 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
       />
 
       <Button
+        type="button"
         ref={pageStyleBtnRef}
         onClick={onPageStyleBtnClick}
         children={
