@@ -47,7 +47,7 @@ function ULLinks({
   childClassName,
 }: Props) {
   if (!listOfItems || !listOfItems.length) {
-    const error = new Error("Property listOfItems is empty");
+    // const error = new Error("Property listOfItems is empty");
     // console.warn(`${ULLinks.name} ${error}`);
 
     return <ul className={ulClassName} data-testid={testID}></ul>;

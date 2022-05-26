@@ -6,6 +6,7 @@ export const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   calendars: { type: [String], default: [] },
+  image: String,
 });
 
 const User = model("User", userSchema);
@@ -15,6 +16,7 @@ export const joiValidate = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().required(),
   calendars: Joi.array().items(Joi.string()),
+  image: Joi.string(),
 });
 
 export default User;
