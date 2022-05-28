@@ -1,4 +1,5 @@
 import moment, { Moment } from "moment-jalaali";
+import { EventHandler } from "react";
 
 export interface CatchI<T = any> {
   [prop: string]: T;
@@ -264,4 +265,8 @@ export const isSameDate = (date: Moment, secondDate: Moment) => {
 
 export const preventDefault: React.FormEventHandler<HTMLDivElement> = e => {
   e.preventDefault();
+};
+
+export const stopPropagation = (e: any) => {
+  e.stopPropagation();
 };

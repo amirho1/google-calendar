@@ -1,0 +1,56 @@
+.AcInfo {
+  width: 300px;
+  background-color: white;
+  text-align: center;
+  cursor: initial;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.imgWrapper {
+  width: 80px;
+  height: 80px;
+  position: relative;
+}
+
+.iconWrapper {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  box-shadow: 1px 1px 1px 1px #3335;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  background-color: white;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--blue);
+  }
+}
+
+.icon {
+  font-size: 1.3rem;
+}
+
+.info {
+  flex-direction: column;
+  border-bottom: 1px solid var(--gray);
+  padding: 1em;
+}
+
+.email {
+  opacity: 0.8;
+}
+
+.button {
+  background-color: white;
+}
+
+.exitBtnWrapper {
+  padding: 2em;
+}

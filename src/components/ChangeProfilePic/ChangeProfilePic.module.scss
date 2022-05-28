@@ -1,0 +1,60 @@
+.ChangeProfilePic {
+  background-color: var(--dark);
+  cursor: initial;
+  height: 100%;
+  padding: 2em;
+  border-radius: 10px;
+  color: white;
+}
+
+.close {
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--dark);
+  }
+}
+
+.title {
+  margin-right: 1em;
+}
+
+.hr {
+  border-color: var(--text-gray);
+}
+
+.imageWrapper {
+  width: 268px;
+  height: 268px;
+  margin: 1em auto;
+}
+
+.btnWrapper {
+  margin-top: 3em;
+}
+
+.btn {
+  background-color: transparent;
+  color: var(--text-blue);
+  border-color: var(--text-blue);
+  width: 130px;
+}
+
+.defaultImg {
+  cursor: pointer;
+}
+
+.full {
+  width: 100%;
+}
+
+.img {
+  cursor: pointer;
+  display: block;
+  margin: 0.5em auto;
+  width: 268px;
+  height: 268px;
+  border-radius: 50%;
+}

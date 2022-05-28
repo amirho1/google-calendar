@@ -14,5 +14,21 @@ module.exports = {
         process: "process/browser",
       }),
     ],
+    devServer: {
+      proxy: {
+        "http://localhost:3000": "http://localhost:3001",
+        "/api": "http://localhost:3001",
+
+        secure: false,
+      },
+    },
+  },
+  devServer: {
+    proxy: {
+      "http://localhost:3000": "http://localhost:3001",
+      "/api": "http://localhost:3001",
+
+      secure: false,
+    },
   },
 };

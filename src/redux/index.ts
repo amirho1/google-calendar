@@ -7,6 +7,7 @@ import eventsReducer, { EventsStateI } from "./reducers/events/events";
 import notificationsReducer, {
   NotificationStateI,
 } from "./reducers/notifications/notifications";
+import userReducer, { UserStateI } from "./reducers/user/user";
 
 export interface InitialValueI {
   status: "loading" | "success" | "error" | "idle";
@@ -17,6 +18,7 @@ export interface ReduxStateI {
   calendars: CalendarsStateI;
   events: EventsStateI;
   notifications: NotificationStateI;
+  user: UserStateI;
 }
 
 const sagaMiddleware = createSagaMiddleware();
@@ -26,6 +28,7 @@ const combinedReducers = combineReducers({
   calendars: calendarsReducer,
   events: eventsReducer,
   notifications: notificationsReducer,
+  user: userReducer,
 });
 
 const store = createStore(combinedReducers, applyMiddleware(sagaMiddleware));

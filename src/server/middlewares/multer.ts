@@ -1,13 +1,18 @@
 import multer from "multer";
-import { extname, join } from "path";
+import { join } from "path";
+import User from "../db/user";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, join(__dirname, "..", "uploads"));
+    cb(null, join(__dirname, "../", "uploads"));
   },
 
   filename(req, file, cb) {
-    cb(null, `${Date.now()}.${file.mimetype}`);
+    User.findOne({ _id: req.session.userId })
+      .then(response => response.data)
+      .then(user => {
+        cb(null, `${Date.now()}-${user.name}.${file.mimetype.split("/")[1]}`);
+      });
   },
 });
 

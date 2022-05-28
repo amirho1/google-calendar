@@ -24,6 +24,7 @@ import DateD from "../DateD/DateD";
 import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
 import Modal from "../Modal/Modal";
 import ULLinks, { IItem } from "../ULLinks/ULLinks";
+import UserImage from "../UserImage/UserImage";
 import styles from "./NavMain.module.scss";
 
 interface NavMainProps {
@@ -151,6 +152,8 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
           </div>
         }
       />
+
+      <UserImage />
     </div>
   );
 };
