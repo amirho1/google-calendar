@@ -8,6 +8,7 @@ import session from "express-session";
 import connectToDB from "./db/index";
 import MongoStore from "connect-mongo";
 import routes from "./routes";
+import cors from "cors";
 
 const app = express();
 
@@ -18,9 +19,14 @@ const sessionStorage = new MongoStore({
   mongoUrl: "mongodb://127.0.0.1:27017/test",
   collectionName: "session",
 });
-console.log();
 
-// if (process.env.NODE_ENV === "development") app.use(cors());
+if (process.env.NODE_ENV === "development")
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
