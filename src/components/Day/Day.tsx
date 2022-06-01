@@ -216,6 +216,11 @@ const Day: FC<DayProps> = () => {
     calId: "",
   });
 
+  // if there is any calendar set the first one to the eventForm.calId
+  useEffect(() => {
+    setEventForm(current => ({ ...current, calId: calendars[0]?._id || "" }));
+  }, [calendars]);
+
   useEffect(() => {
     const id = setInterval(
       () => setTimeLineMinutes(convertHoursToMinutes(moment())),
@@ -223,7 +228,7 @@ const Day: FC<DayProps> = () => {
     );
 
     return () => clearInterval(id);
-  });
+  }, []);
 
   const onStartTimeChange = useCallback(
     (startTime: number) =>
