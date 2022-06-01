@@ -1,16 +1,16 @@
 import { Router } from "express";
-import User from "../db/user";
+import User, { joiValidate } from "../db/user";
 import bcrypt from "bcrypt";
 
 const router = Router();
 
 router.post("/", async (req, res) => {
   try {
+    const { error } = joiValidate.validate(req.body);
     if (!req.body) return res.status(400).send("bad Request.");
-    else if (!req.body.name || !req.body.email || !req.body.password)
-      return res.status(400).send("bad Request");
+    else if (error) return res.status(400).send("bad Request");
 
-    req.body.password = bcrypt.hash(req.body.password, 12);
+    req.body.password = await bcrypt.hash(req.body.password, 12);
 
     await User.create(req.body);
     res.send("/");

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import User from "../db/user";
+import bcrypt from "bcrypt";
 
 const router = Router();
 
@@ -11,7 +12,9 @@ router.post("/", async (req, res) => {
 
   if (!user) return res.status(404).send(`email or password is wrong`);
 
-  if (user.password !== req.body.password)
+  const isPasswordSame = await bcrypt.compare(req.body.password, user.password);
+
+  if (!isPasswordSame)
     return res.status(400).send(`email or password is wrong`);
 
   req.session.userId = user._id;
