@@ -60,7 +60,11 @@ const CalendarForm: FC<CalendarFormProps> = () => {
           type="textarea"
           onChange={onDescriptionChange}
         />
-        <Button children="ساخت تقویم" className="bgBlue colWhite" />
+        <Button
+          children="ساخت تقویم"
+          className="bgBlue colWhite"
+          type="submit"
+        />
       </form>
     </div>
   );
