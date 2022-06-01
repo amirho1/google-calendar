@@ -8,11 +8,9 @@ const storage = multer.diskStorage({
   },
 
   filename(req, file, cb) {
-    User.findOne({ _id: req.session.userId })
-      .then(response => response.data)
-      .then(user => {
-        cb(null, `${Date.now()}-${user.name}.${file.mimetype.split("/")[1]}`);
-      });
+    User.findOne({ _id: req.session.userId }).then(user => {
+      cb(null, `${Date.now()}-${user.name}.${file.mimetype.split("/")[1]}`);
+    });
   },
 });
 

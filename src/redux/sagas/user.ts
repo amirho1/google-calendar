@@ -7,7 +7,7 @@ import {
   UserI,
 } from "../reducers/user/user";
 import { notificationCaller } from "./events";
-import { Buffer } from "buffer";
+import { binaryToDataURL } from "../../utils/helpers";
 
 async function asyncGetUser() {
   const response = await Api({ method: "GET", url: "/whoAmI" });
@@ -70,10 +70,18 @@ export function* watchUploadingImage() {
 }
 
 async function asyncGetImage(imageName: string) {
-  const response = await Api({ method: "GET", url: `/images/${imageName}` });
-  const base64 = Buffer.from(response.data, "binary").toString("base64");
-  console.log(response.data);
-  return `data:image/jpeg/png/jpg/svg;base64, ${base64}`;
+  try {
+    const response = await Api({
+      method: "GET",
+      url: `/images/${imageName}`,
+      responseType: "arraybuffer",
+    });
+    const dataURL = await binaryToDataURL(response.data);
+
+    return dataURL;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 export function* getImage(effect: Effect<string, string>) {

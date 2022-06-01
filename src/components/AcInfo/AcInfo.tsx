@@ -15,7 +15,7 @@ interface AcInfoProps {
 }
 
 const AcInfo: FC<AcInfoProps> = ({ onIconClick }) => {
-  const { name, image, lastName, email } = useSelector<ReduxStateI, UserI>(
+  const { name, lastName, email } = useSelector<ReduxStateI, UserI>(
     state => state.user.user
   );
   const { fetch } = useFetch({
@@ -23,7 +23,9 @@ const AcInfo: FC<AcInfoProps> = ({ onIconClick }) => {
     url: "/logout",
     firstFetch: false,
   });
-
+  const image = useSelector<ReduxStateI, string | undefined>(
+    state => state.user.profileImage
+  );
   const navigate = useNavigate();
 
   const logout = useCallback(

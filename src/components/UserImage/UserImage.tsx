@@ -1,5 +1,4 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { AiOutlineConsoleSql } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import { UserStateI } from "../../redux/reducers/user/user";
@@ -58,7 +57,6 @@ const UserImage: FC<UserImageProps> = () => {
     user.image && dispatch(getImage.ac(user.image));
   }, [dispatch, user.image]);
 
-  console.log(image);
   return (
     <div
       className={styles.UserImage}
@@ -67,9 +65,13 @@ const UserImage: FC<UserImageProps> = () => {
       tabIndex={1}
       onMouseDown={stopPropagation}>
       {image ? (
-        <img src={image} alt="profile" className={styles.image} />
+        <img
+          src={image}
+          alt="profile"
+          className={`${styles.image} ${styles.img}`}
+        />
       ) : (
-        <DefaultImg name={user?.name} />
+        <DefaultImg name={user?.name} className={styles.img} />
       )}
 
       <Modal

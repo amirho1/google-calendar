@@ -7,31 +7,31 @@ import { upload } from "../middlewares/multer";
 
 const router = Router();
 
-router.put(
-  "/",
-  isLoggedIn,
-  upload.single("image"),
-  async ({ file, session }, res) => {
-    try {
-      console.log(file);
-      if (!file)
-        return res.status(400).send("bad request there isn't any image.");
+const uploading = upload.single("image");
 
+router.put("/", isLoggedIn, (req, res) => {
+  try {
+    uploading(req, res, async err => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send(err);
+      }
+      if (!req.file)
+        return res.status(400).send("bad request there isn't any image.");
       const user = await User.findOneAndUpdate(
-        { _id: session.userId },
-        { image: file?.filename }
+        { _id: req.session.userId },
+        { image: req.file?.filename }
       );
 
-      unlinkSync(join(__dirname, "..", "uploads", file.filename));
-      (user as any).image = file?.filename;
+      if (user.image) unlinkSync(join(__dirname, "..", "uploads", user.image));
 
-      console.log("hello world");
+      (user as any).image = req.file?.filename;
+
       res.send(user);
-    } catch (err) {
-      console.log(err);
-      res.status(500).send(err);
-    }
+    });
+  } catch (err) {
+    res.status(500).send(err);
   }
-);
+});
 
 export default router;

@@ -7,7 +7,7 @@ const router = Router();
 router.get("/:image", ({ params: { image } }, res) => {
   try {
     const fileAddress = join(__dirname, "..", "uploads", image);
-    if (!image) res.status(400).send("image name was empty.");
+    if (!image) return res.status(400).send("image name was empty.");
     if (!existsSync(fileAddress))
       return res.status(400).send("bad request file didn't exist.");
 

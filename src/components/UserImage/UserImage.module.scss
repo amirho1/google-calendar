@@ -6,12 +6,17 @@
   cursor: pointer;
 
   &:hover {
-    border: 3px solid gray;
+    .img {
+      outline: none;
+      border: 3px solid gray;
+    }
   }
 
   &:focus {
-    outline: none;
-    border: 3px solid gray;
+    .img {
+      outline: none;
+      border: 3px solid gray;
+    }
   }
 }
 
@@ -26,7 +31,9 @@
   font-size: 1.2rem;
 
   &:hover {
-    border: 3px solid gray;
+    & > .img {
+      border: 3px solid gray;
+    }
   }
 }
 

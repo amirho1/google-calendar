@@ -21,7 +21,8 @@ const NewEvent: FC<NewEventProps> = ({ eventForm, onNewEventResize }) => {
       width={`${100}%`}
       display={eventForm.display}
       height={`${eventForm.eventEndTime}px`}
-      onResize={onNewEventResize}>
+      onResize={onNewEventResize}
+      onMouseDown={(e, ref) => {}}>
       <Task
         startTime={eventForm.eventStartTime}
         endTime={eventForm.eventEndTime}

@@ -1,6 +1,5 @@
 import moment, { Moment } from "moment-jalaali";
-import { EventHandler } from "react";
-
+import { Buffer } from "buffer";
 export interface CatchI<T = any> {
   [prop: string]: T;
 }
@@ -270,3 +269,26 @@ export const preventDefault: React.FormEventHandler<HTMLDivElement> = e => {
 export const stopPropagation = (e: any) => {
   e.stopPropagation();
 };
+
+export function fileToDataURL(image: File) {
+  return new Promise<string | ArrayBuffer | null>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
+
+export function binaryToDataURL(binary: string | WithImplicitCoercion<string>) {
+  return new Promise<string>((resolve, reject) => {
+    try {
+      resolve(
+        ` data:image/jpeg;base64, ${Buffer.from(binary, "binary").toString(
+          "base64"
+        )}`
+      );
+    } catch (err) {
+      reject(err);
+    }
+  });
+}

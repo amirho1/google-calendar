@@ -53,9 +53,9 @@ const ChangeProfilePic: FC<ChangeProfilePicProps> = ({ close }) => {
       setNewPick(e.currentTarget.files[0]);
     }
   }, []);
+
   const handleUploadImage = useCallback(() => {
     if (newPic) {
-      console.log("here");
       dispatch(uploadImage.ac(newPic));
     }
   }, [dispatch, newPic]);
