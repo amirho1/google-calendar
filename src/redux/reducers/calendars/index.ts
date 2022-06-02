@@ -53,7 +53,7 @@ const calendarsReducer = produce(
       }
       case SAVE_UPDATED_CALENDAR.type: {
         draftState.calendars = draftState.calendars.map(cal =>
-          cal._id === payload.id ? payload : cal
+          cal._id === payload._id ? payload : cal
         );
         break;
       }
