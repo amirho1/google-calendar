@@ -65,13 +65,13 @@ const CalRow: FC<OptionsProps> = ({
       <Checkbox
         value={selected}
         color={color}
-        onChange={() =>
+        onChange={e =>
           onCalendarSelectAndDeselect({
             _id,
             color,
             name,
             description,
-            selected: !selected,
+            selected: e,
           })
         }
       />
