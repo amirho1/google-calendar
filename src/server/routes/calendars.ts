@@ -1,5 +1,6 @@
 import express from "express";
 import { Calendar, joiValidation as calValidation } from "../db/calendarDB";
+import { Event } from "../db/event";
 import User from "../db/user";
 import isLoggedIn from "../middlewares/isLoggedIn";
 
@@ -49,7 +50,13 @@ router.delete("/:id", isLoggedIn, ({ params: { id } }, res) => {
   if (!id) return res.status(400).send("bad request");
   Calendar.deleteOne({ _id: id })
     .then(() => {
-      res.end();
+      Event.deleteMany({ calId: id })
+        .then(() => {
+          res.end();
+        })
+        .catch(err => {
+          res.status(500).send(err);
+        });
     })
     .catch(err => {
       res.status(500).send(err);
