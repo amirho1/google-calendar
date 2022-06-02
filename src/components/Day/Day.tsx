@@ -222,13 +222,15 @@ const Day: FC<DayProps> = () => {
   }, [calendars]);
 
   useEffect(() => {
-    const id = setInterval(
-      () => setTimeLineMinutes(convertHoursToMinutes(moment())),
-      1000
-    );
+    if (date.format("YYYY/MM/DD") === moment().format("YYYY/MM/DD")) {
+      const id = setInterval(
+        () => setTimeLineMinutes(convertHoursToMinutes(moment())),
+        1000
+      );
 
-    return () => clearInterval(id);
-  }, []);
+      return () => clearInterval(id);
+    }
+  }, [date]);
 
   const onStartTimeChange = useCallback(
     (startTime: number) =>
