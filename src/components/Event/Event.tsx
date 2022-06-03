@@ -1,11 +1,10 @@
-import { EditorState } from "draft-js";
 import React, { FC, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EventI } from "../../redux/reducers/events/events";
 import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
 import { updateEvent } from "../../redux/sagas/events";
 import { roundSpecific } from "../../utils/helpers";
-import { EventDetailsI } from "../Day/Day";
+import { EventDetailsI, EventFormI } from "../Day/Day";
 import Modal, { onEventMouseDownT, OnResizeT } from "../Modal/Modal";
 import Task from "../Task/Task";
 
@@ -24,20 +23,7 @@ interface EventProps {
   ) => void;
   timeStamp: number;
   setIsMoved: (value: React.SetStateAction<boolean>) => void;
-  setEventForm: React.Dispatch<
-    React.SetStateAction<{
-      title: string;
-      description: EditorState;
-      date: moment.Moment;
-      display: boolean;
-      eventStartTime: number;
-      eventEndTime: number;
-      color: string;
-      calId: string;
-      x: number;
-      y: number;
-    }>
-  >;
+  setEventForm: React.Dispatch<React.SetStateAction<EventFormI>>;
   onBottomBorderMouseMove: () => void;
 }
 

@@ -65,7 +65,7 @@ function drawCalendarLines(num: number) {
   return lines;
 }
 
-const eventFormDefaultValue = {
+const eventFormDefaultValue: EventFormI = {
   ...centerOFScreen(),
   title: "",
   description: EditorState.createEmpty(),
@@ -75,6 +75,7 @@ const eventFormDefaultValue = {
   eventEndTime: 0,
   color: "blue",
   calId: "",
+  hidden: false,
 };
 
 export interface EventFormI {
@@ -88,6 +89,7 @@ export interface EventFormI {
   calId: string;
   x: number;
   y: number;
+  hidden: boolean;
 }
 
 export const EventFormContext = createContext<{
@@ -214,6 +216,7 @@ const Day: FC<DayProps> = () => {
     eventEndTime: 0,
     color: "blue",
     calId: "",
+    hidden: false,
   });
 
   // if there is any calendar set the first one to the eventForm.calId
@@ -493,6 +496,17 @@ const Day: FC<DayProps> = () => {
     height && setEventForm(current => ({ ...current, eventEndTime: height }));
   }, []);
 
+  const onNewEventMove = useCallback((startTime: number) => {
+    setEventForm(current => ({ ...current, eventStartTime: startTime }));
+  }, []);
+
+  const onNewEventMouseDown = useCallback(() => {
+    setEventForm(current => ({ ...current, hidden: true }));
+  }, []);
+
+  const onNewEventMouseUp = useCallback(() => {
+    setEventForm(current => ({ ...current, hidden: false }));
+  }, []);
   return (
     <EventFormContext.Provider value={{ eventForm, setEventForm }}>
       <div className={styles.Day} data-testid="Day">
@@ -541,7 +555,7 @@ const Day: FC<DayProps> = () => {
 
         {/* Event form */}
         <Modal
-          display={eventForm.display}
+          display={eventForm.hidden ? false : eventForm.display}
           getRef={getRef}
           zIndex={210}
           height="fit-content"
@@ -619,6 +633,9 @@ const Day: FC<DayProps> = () => {
             <NewEvent
               eventForm={eventForm}
               onNewEventResize={onNewEventResize}
+              onNewEventMove={onNewEventMove}
+              onNewEventMouseDown={onNewEventMouseDown}
+              onNewEventMouseUp={onNewEventMouseUp}
             />
 
             {/* Event */}
