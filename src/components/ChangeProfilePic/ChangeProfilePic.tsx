@@ -57,8 +57,10 @@ const ChangeProfilePic: FC<ChangeProfilePicProps> = ({ close }) => {
   const handleUploadImage = useCallback(() => {
     if (newPic) {
       dispatch(uploadImage.ac(newPic));
+      close();
+      closeFade();
     }
-  }, [dispatch, newPic]);
+  }, [close, closeFade, dispatch, newPic]);
 
   return (
     <div
