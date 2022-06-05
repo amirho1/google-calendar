@@ -27,7 +27,7 @@ router.put("/", isLoggedIn, (req, res) => {
 
       (user as any).image = req.file?.filename;
 
-      res.send(user);
+      res.send(user.image);
     });
   } catch (err) {
     res.status(500).send(err);
