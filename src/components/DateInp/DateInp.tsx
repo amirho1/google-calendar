@@ -75,6 +75,8 @@ const DateInp: FC<DateInpProps> = ({
     e => {
       if (isEditMode) e.stopPropagation();
       setCalendarDisplay(current => !current);
+      setStartTimeListDisplay(false);
+      setEndTimeListDisplay(false);
     },
     [isEditMode]
   );
@@ -83,6 +85,8 @@ const DateInp: FC<DateInpProps> = ({
     e => {
       if (isEditMode) e.stopPropagation();
       setStartTimeListDisplay(current => !current);
+      setEndTimeListDisplay(false);
+      setCalendarDisplay(false);
     },
     [isEditMode]
   );
@@ -102,6 +106,8 @@ const DateInp: FC<DateInpProps> = ({
     e => {
       if (isEditMode) e.stopPropagation();
       setEndTimeListDisplay(current => !current);
+      setStartTimeListDisplay(false);
+      setCalendarDisplay(false);
     },
     [isEditMode]
   );
@@ -180,12 +186,11 @@ const DateInp: FC<DateInpProps> = ({
       <div
         className={`${styles.edits} ${
           isEditMode ? styles.openEdits : ""
-        } owl-mtop owl-mright`}
+        } owl-mtop `}
         style={{ display: !isEditMode ? "none" : "block" }}>
         <input type="checkbox" name="" id="all-day" />
-        <label htmlFor="all-day">تمام روز</label>
+        <label htmlFor="all-day mr-1">تمام روز </label>
 
-        <Button className={`${styles.btn} hoverBGGray`}>منطقه زمانی</Button>
         <Button className={`${styles.repeat} ${styles.btn} hoverBGGray`}>
           تکرار نمی شود
         </Button>
