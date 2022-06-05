@@ -26,14 +26,14 @@ const MonthChanger: FC<MonthChangerPropsI> = ({
     <div
       className={`${styles.MonthChanger} ${className} f-center`}
       data-testid="MonthChanger">
-      <HoverCircle width="30px" height="30px" dataTip={dataTipNext}>
-        <div onClick={onCLickNext} data-testid="next">
+      <HoverCircle width="30px" height="30px" dataTip={datTipPrevious}>
+        <div onClick={onClickPrevious} data-testid="next">
           <AiOutlineRight id="btn-next" className="hover-circle" />
         </div>
       </HoverCircle>
 
-      <HoverCircle width="30px" height="30px" dataTip={datTipPrevious}>
-        <div onClick={onClickPrevious} data-testid={"previous"}>
+      <HoverCircle width="30px" height="30px" dataTip={dataTipNext}>
+        <div onClick={onCLickNext} data-testid={"previous"}>
           <AiOutlineLeft id="btn-previous" />
         </div>
       </HoverCircle>
