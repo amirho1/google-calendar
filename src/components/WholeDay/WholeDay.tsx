@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useMemo, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { EventI } from "../../redux/reducers/events/events";
+import { stopPropagation } from "../../utils/helpers";
 import { EventDetailsI, EventFormI } from "../Day/Day";
 import Event from "../Event/Event";
 import HoverCircle from "../HoverCircle/HoverCircle";
@@ -80,7 +81,10 @@ const WholeDay: FC<WholeDayProps> = ({
       <div
         key={3}
         className={`hoverBGGray ${styles.moreEventSign} pointer`}
-        onClick={() => setIsOpen(true)}>
+        onClick={e => {
+          stopPropagation(e);
+          setIsOpen(true);
+        }}>
         {events.length - 2} مورد دیگر
       </div>
     );
@@ -109,12 +113,13 @@ const WholeDay: FC<WholeDayProps> = ({
       data-testid="WholeDay">
       {mappedEvents()}
       {children}
-      {events.length && events.length > 3 ? (
+      {events.length > 3 ? (
         <>
           <HoverCircle
             width="30px"
             height="30px"
             className={`${styles.chevron} ${!isOpen ? "" : "d-none"}`}
+            onClick={stopPropagation}
             dataTip="بزرگ کردن بخش کل روز">
             <div onClick={openWholeDay}>
               <FaChevronDown />
@@ -124,6 +129,7 @@ const WholeDay: FC<WholeDayProps> = ({
             width="30px"
             height="30px"
             className={`${styles.chevron} ${isOpen ? "" : "d-none"}`}
+            onClick={stopPropagation}
             dataTip="کوچک کردن بخش کل روز">
             <div onClick={closeWholeDay}>
               <FaChevronUp />

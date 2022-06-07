@@ -563,10 +563,10 @@ const Day: FC<DayProps> = () => {
       ...current,
       wholeDayDisplay: true,
       display: false,
-      eventEndTime: 30,
       eventStartTime: 0,
+      timestampEnd: date.valueOf(),
     }));
-  }, []);
+  }, [date]);
 
   return (
     <EventFormContext.Provider value={{ eventForm, setEventForm }}>
