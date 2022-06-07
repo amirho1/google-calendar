@@ -23,7 +23,13 @@ router.post("/", isLoggedIn, async ({ body }, res) => {
     const { error } = eventValidate.validate(body);
     if (error) return res.status(400).send(`Bad request ${error.message}.`);
 
-    const event = await Event.create(body);
+    const event = body.timeStampEnd
+      ? await Event.create({
+          ...body,
+          startTime: undefined,
+          endTime: undefined,
+        })
+      : await Event.create({ ...body });
 
     res.send(event);
   } catch (err: any) {
