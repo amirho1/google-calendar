@@ -9,7 +9,7 @@ import watchAddingEvents, {
   watchingDeletingEvent,
   watchingUpdatingEvent,
 } from "./events";
-import {
+import watchDeletingImage, {
   watchGettingImage,
   watchGettingUser,
   watchUploadingImage,
@@ -27,6 +27,7 @@ const sagas: any[] = [
   watchGettingUser(),
   watchUploadingImage(),
   watchGettingImage(),
+  watchDeletingImage(),
 ];
 
 export default function* rootSaga() {

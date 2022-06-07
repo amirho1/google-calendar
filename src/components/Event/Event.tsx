@@ -10,25 +10,30 @@ import Task from "../Task/Task";
 
 interface EventProps {
   event: EventI;
-  onEventClick: (
+  onEventClick?: (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     { description, endTime, startTime, title }: EventDetailsI
   ) => void;
-  onEventBottomMouseDownSetIsMouseDownTrue: () => void;
-  onBottomBorderMouseUp: () => void;
-  onEventRightClick: (
+  onEventBottomMouseDownSetIsMouseDownTrue?: () => void;
+  onBottomBorderMouseUp?: () => void;
+  onEventRightClick?: (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     id: string,
     calId: string
   ) => void;
   timeStamp: number;
-  setIsMoved: (value: React.SetStateAction<boolean>) => void;
-  setEventForm: React.Dispatch<React.SetStateAction<EventFormI>>;
-  onBottomBorderMouseMove: () => void;
+  setIsMoved?: (value: React.SetStateAction<boolean>) => void;
+  setEventForm?: React.Dispatch<React.SetStateAction<EventFormI>>;
+  onBottomBorderMouseMove?: () => void;
+  position?: "absolute" | "relative" | "fixed";
+  move?: boolean;
+  WholeDay?: boolean;
 }
 
 const Event: FC<EventProps> = ({
-  event: { calId, color, description, endTime, startTime, title, _id },
+  event: { calId, color, description, endTime, startTime, _id, title },
+  WholeDay,
+  move = true,
   onEventBottomMouseDownSetIsMouseDownTrue,
   onEventClick,
   onBottomBorderMouseUp,
@@ -37,6 +42,7 @@ const Event: FC<EventProps> = ({
   timeStamp,
   setIsMoved,
   onBottomBorderMouseMove,
+  position,
 }) => {
   const dispatch = useDispatch();
   const calName = useSelector(selectCalendarById(calId))?.name;
@@ -44,11 +50,14 @@ const Event: FC<EventProps> = ({
   const onEventMouseDown = useCallback(
     (event: EventI): onEventMouseDownT =>
       (e, ref) => {
+        if (!move) return;
+
         e.preventDefault();
         e.stopPropagation();
 
-        setIsMoved(false);
-        setEventForm(current => ({ ...current, calId: event.calId }));
+        setIsMoved && setIsMoved(false);
+        setEventForm &&
+          setEventForm(current => ({ ...current, calId: event.calId }));
         if (ref.current && e.button === 0) {
           let mouseDownY = e.clientY;
           ref.current.style.zIndex = "200";
@@ -58,7 +67,7 @@ const Event: FC<EventProps> = ({
           const onMouseMove = (
             e: React.MouseEvent<HTMLDivElement, MouseEvent>
           ) => {
-            setIsMoved(true);
+            setIsMoved && setIsMoved(true);
             ref.current && (ref.current.style.cursor = "move");
             const dy = e.clientY - mouseDownY;
             const plus = currentY + dy;
@@ -99,7 +108,7 @@ const Event: FC<EventProps> = ({
           document.addEventListener("mousemove", onMouseMove as any);
         }
       },
-    [calId, calName, dispatch, setEventForm, setIsMoved, timeStamp]
+    [calId, calName, dispatch, move, setEventForm, setIsMoved, timeStamp]
   );
 
   const onResize = useCallback<OnResizeT>(
@@ -141,26 +150,28 @@ const Event: FC<EventProps> = ({
       backgroundColor={color}
       x={0}
       y={startTime}
-      resizeAble={true}
+      resizeAble={position === "relative" ? false : true}
       width={`${100}%`}
       display={true}
-      height={`${endTime}px`}
+      position={position}
+      height={`${position !== "relative" ? endTime : 30}px`}
       onResize={onResize}
       onBottomBorderMouseMove={onBottomBorderMouseMove}
       onBottomBorderMouseDownOuter={onEventBottomMouseDownSetIsMouseDownTrue}
       onClick={e => {
         e.stopPropagation();
-        onEventClick(e, {
-          calId,
-          color,
-          description,
-          endTime,
-          startTime,
-          title,
-          _id,
-          display: true,
-          timeStamp,
-        });
+        onEventClick &&
+          onEventClick(e, {
+            calId,
+            color,
+            description,
+            endTime,
+            startTime,
+            title,
+            _id,
+            display: true,
+            timeStamp,
+          });
       }}
       onBottomBorderMouseUpOuter={onBottomBorderMouseUp}
       onMouseDown={onEventMouseDown({
@@ -173,10 +184,15 @@ const Event: FC<EventProps> = ({
         calId,
         timeStamp,
       })}
-      onRightClick={e => onEventRightClick(e, _id || "", calId)}>
-      <>
-        <Task title={title} endTime={endTime} startTime={startTime} />
-      </>
+      onRightClick={e =>
+        onEventRightClick && onEventRightClick(e, _id || "", calId)
+      }>
+      <Task
+        title={title}
+        endTime={endTime}
+        startTime={startTime}
+        wholeDay={WholeDay}
+      />
     </Modal>
   );
 };

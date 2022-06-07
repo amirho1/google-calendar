@@ -1,6 +1,7 @@
 import { call, Effect, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { Api } from "../../hooks/useFetch";
 import {
+  DELETE_IMAGE,
   saveUser,
   SAVE_PROFILE_IMAGE,
   SAVE_UPLOADED_IMAGE,
@@ -101,4 +102,27 @@ getImage.ac = (imageName: string) => ({
 
 export function* watchGettingImage() {
   yield takeLatest(getImage.type, getImage);
+}
+
+async function asyncDeleteImage() {
+  await Api({ method: "put", url: "/removeImage" });
+}
+
+export function* deleteImage(effect: Effect<string>) {
+  try {
+    yield call(asyncDeleteImage);
+    yield put(DELETE_IMAGE());
+    yield notificationCaller("عکس موفقیت آمیزی حذف شد");
+  } catch (err: any) {
+    yield notificationCaller(err.message);
+  }
+}
+
+deleteImage.type = "deleteImage";
+deleteImage.ac = () => ({
+  type: deleteImage.type,
+});
+
+export default function* watchDeletingImage() {
+  yield takeLatest(deleteImage.type, deleteImage);
 }

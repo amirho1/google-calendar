@@ -79,6 +79,7 @@ const UserImage: FC<UserImageProps> = () => {
         height="fit-content"
         display={acInfoDisplay}
         boxShadow={true}
+        zIndex={200}
         x={0}
         y={100}>
         <AcInfo onIconClick={changeChangePicDisplay} />
@@ -93,7 +94,7 @@ const UserImage: FC<UserImageProps> = () => {
         right="0"
         bottom="0"
         className={styles.changeDisplayModal}
-        zIndex={200}
+        zIndex={250}
         borderRadios="10px"
         position="fixed">
         <ChangeProfilePic close={closeChangePic} />

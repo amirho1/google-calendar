@@ -8,6 +8,7 @@ import images from "./images";
 import whoAmI from "./whoAmI";
 import logout from "./logout";
 import uploadImage from "./uploadImage";
+import removeImage from "./removeImage";
 
 export default function routes(app: Express) {
   app.use("/calendars", calendar);
@@ -19,4 +20,5 @@ export default function routes(app: Express) {
   app.use("/whoami", whoAmI);
   app.use("/logout", logout);
   app.use("/uploadImage", uploadImage);
+  app.use("/removeImage", removeImage);
 }

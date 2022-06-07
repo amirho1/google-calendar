@@ -27,14 +27,14 @@ const ColorForm: FC<ColorFormProps> = ({
 
   const colors = useMemo<ColorI[]>(
     () => [
-      { color: "blue", dataTip: "آبی" },
-      { color: "red", dataTip: "قرمز" },
-      { color: "yellow", dataTip: "زرد" },
-      { color: "orange", dataTip: "نارنجی" },
-      { color: "purple", dataTip: "بنفش" },
-      { color: "pink", dataTip: "صورتی" },
-      { color: "green", dataTip: "سبز" },
-      { color: "lightblue", dataTip: "آبی کم رنگ" },
+      { color: "#0000ff", dataTip: "آبی" },
+      { color: "#ff0000", dataTip: "قرمز" },
+      { color: "#ffff00", dataTip: "زرد" },
+      { color: "#ffa500", dataTip: "نارنجی" },
+      { color: "#800080", dataTip: "بنفش" },
+      { color: "#ffc0cb", dataTip: "صورتی" },
+      { color: "#008000", dataTip: "سبز" },
+      { color: "#add8e6", dataTip: "آبی کم رنگ" },
       { color: "#616161", dataTip: "سرب" },
     ],
     []

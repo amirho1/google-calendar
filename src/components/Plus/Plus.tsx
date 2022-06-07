@@ -25,11 +25,11 @@ const Plus: FC<PlusProps> = props => {
   return (
     <div
       {...rest}
-      className={`${styles.Plus} f-between ${props.className} ${
-        disable && styles.disable
-      }`}
+      className={`${styles.Plus} ${fullSize ? "f-between" : "f-center"} ${
+        props.className
+      } ${disable && styles.disable}`}
       data-testid="Plus"
-      style={{ width: fullSize ? "145px" : "50px" }}
+      style={{ width: fullSize ? "145px" : "55px" }}
       onClick={click}>
       <FaPlus className={styles.FaPlus} />
 

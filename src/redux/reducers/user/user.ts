@@ -45,6 +45,10 @@ export const SAVE_PROFILE_IMAGE = (image: string) => ({
 });
 SAVE_PROFILE_IMAGE.type = "SAVE_PROFILE_IMAGE";
 
+export const DELETE_IMAGE = () => ({ type: DELETE_IMAGE.type });
+
+DELETE_IMAGE.type = "DELETE_IMAGE";
+
 const userReducer = produce(
   (draft: UserStateI, action: { type: string; payload: UserI | string }) => {
     switch (action.type) {
@@ -59,6 +63,11 @@ const userReducer = produce(
       case SAVE_PROFILE_IMAGE.type:
         if (typeof action.payload === "string")
           draft.profileImage = action.payload;
+        break;
+      case DELETE_IMAGE.type:
+        console.log("here, 2050");
+        draft.user.image = "";
+        draft.profileImage = undefined;
         break;
       default:
         return draft;

@@ -11,7 +11,7 @@ import Button from "../Button/Button";
 import { BsPencil } from "react-icons/bs";
 import { MdCameraEnhance } from "react-icons/md";
 import useKeyDown from "../../hooks/useKeyDown";
-import { uploadImage } from "../../redux/sagas/user";
+import { deleteImage, uploadImage } from "../../redux/sagas/user";
 
 interface ChangeProfilePicProps {
   close: () => void;
@@ -25,6 +25,7 @@ const ChangeProfilePic: FC<ChangeProfilePicProps> = ({ close }) => {
     user: { name, lastName },
     profileImage: image,
   } = useSelector<ReduxStateI, UserStateI>(state => state.user);
+  const [isRemovingImg, setIsRemovingImg] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -61,6 +62,16 @@ const ChangeProfilePic: FC<ChangeProfilePicProps> = ({ close }) => {
       closeFade();
     }
   }, [close, closeFade, dispatch, newPic]);
+
+  const changeIsRemovingImg = useCallback(() => {
+    setIsRemovingImg(current => !current);
+  }, []);
+
+  const deleteImg = useCallback(() => {
+    dispatch(deleteImage.ac());
+    close();
+    closeFade();
+  }, [close, closeFade, dispatch]);
 
   return (
     <div
@@ -99,38 +110,53 @@ const ChangeProfilePic: FC<ChangeProfilePicProps> = ({ close }) => {
           <DefaultImg name={name} className={styles.defaultImg} />
         </div>
       )}
-
-      <div className={`${styles.btnWrapper} f-between`}>
-        {image && !newPic ? (
-          <>
-            <Button className={styles.btn}>
-              <span>
-                حذف <FaTrash />
-              </span>
-            </Button>
-            <Button className={styles.btn} onClick={openUploadFile}>
-              <span>
-                تغییر <BsPencil />
-              </span>
-            </Button>
-          </>
-        ) : newPic ? (
-          <Button
-            className={`${styles.btn} ${styles.full}`}
-            onClick={handleUploadImage}>
-            ذخیره
-          </Button>
-        ) : (
-          <Button
-            className={`${styles.btn} ${styles.full}`}
-            onClick={openUploadFile}>
+      {!isRemovingImg ? (
+        <div className={`${styles.btnWrapper} f-between`}>
+          {image && !newPic ? (
             <>
-              <span>اضافه کردن عکس حساب کاربری</span>
-              <MdCameraEnhance />
+              <Button className={styles.btn} onClick={changeIsRemovingImg}>
+                <span>
+                  حذف <FaTrash />
+                </span>
+              </Button>
+              <Button className={styles.btn} onClick={openUploadFile}>
+                <span>
+                  تغییر <BsPencil />
+                </span>
+              </Button>
             </>
-          </Button>
-        )}
-      </div>
+          ) : newPic ? (
+            <Button
+              className={`${styles.btn} ${styles.full}`}
+              onClick={handleUploadImage}>
+              ذخیره
+            </Button>
+          ) : (
+            <Button
+              className={`${styles.btn} ${styles.full}`}
+              onClick={openUploadFile}>
+              <>
+                <span>اضافه کردن عکس حساب کاربری</span>
+                <MdCameraEnhance />
+              </>
+            </Button>
+          )}
+        </div>
+      ) : (
+        <>
+          <p>بعد از حذف کردن عکس دیگر قادر به بازگشت آن نیستید.</p>
+
+          <div className={`${styles.btnWrapper} f-between`}>
+            <Button className={styles.btn} onClick={deleteImg}>
+              <span>حذف</span>
+            </Button>
+
+            <Button className={styles.btn} onClick={changeIsRemovingImg}>
+              <span>انصراف</span>
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
