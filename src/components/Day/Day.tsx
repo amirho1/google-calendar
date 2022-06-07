@@ -731,26 +731,27 @@ const Day: FC<DayProps> = () => {
               onNewEventMouseUp={onNewEventMouseUp}
             />
 
-            {/* Event */}
-            {events
-              .filter(event => !event.timeStampEnd)
-              .map((event, index) => (
-                <Event
-                  key={index}
-                  event={event}
-                  timeStamp={timeStamp}
-                  onBottomBorderMouseUp={onBottomBorderMouseUp}
-                  onBottomBorderMouseMove={onBottomBorderMouseMove}
-                  onEventBottomMouseDownSetIsMouseDownTrue={
-                    onEventBottomMouseDownSetIsMouseDownTrue
-                  }
-                  onEventClick={onEventClick}
-                  onEventRightClick={onEventRightClick}
-                  setEventForm={setEventForm}
-                  setIsMoved={setIsMoved}
-                />
-              ))}
-
+            <div className={styles.EventsWrapper}>
+              {/* Event */}
+              {events
+                .filter(event => !event.timeStampEnd)
+                .map((event, index) => (
+                  <Event
+                    key={index}
+                    event={event}
+                    timeStamp={timeStamp}
+                    onBottomBorderMouseUp={onBottomBorderMouseUp}
+                    onBottomBorderMouseMove={onBottomBorderMouseMove}
+                    onEventBottomMouseDownSetIsMouseDownTrue={
+                      onEventBottomMouseDownSetIsMouseDownTrue
+                    }
+                    onEventClick={onEventClick}
+                    onEventRightClick={onEventRightClick}
+                    setEventForm={setEventForm}
+                    setIsMoved={setIsMoved}
+                  />
+                ))}
+            </div>
             <Line
               vertical={true}
               height="100%"
