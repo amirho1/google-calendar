@@ -1,15 +1,17 @@
 import React, { FC, useCallback } from "react";
 import { roundSpecific } from "../../utils/helpers";
-import { EventFormStateI } from "../Day/Day";
+import { EventFormI } from "../Day/Day";
 import Modal, { onEventMouseDownT } from "../Modal/Modal";
 import Task from "../Task/Task";
 
 interface NewEventProps {
-  eventForm: EventFormStateI;
+  eventForm: EventFormI;
   onNewEventResize: (height: number | undefined) => void;
   onNewEventMove: (startTime: number) => void;
   onNewEventMouseDown?: (e: MouseEvent) => void;
   onNewEventMouseUp?: (e: MouseEvent) => void;
+  position?: "fixed" | "relative" | "absolute";
+  wholeDay?: boolean;
 }
 
 const NewEvent: FC<NewEventProps> = ({
@@ -18,6 +20,8 @@ const NewEvent: FC<NewEventProps> = ({
   onNewEventMove,
   onNewEventMouseDown,
   onNewEventMouseUp,
+  position,
+  wholeDay,
 }) => {
   const onNewEventMouseDownCustom = useCallback<onEventMouseDownT>(
     (e, ref) => {
@@ -72,12 +76,14 @@ const NewEvent: FC<NewEventProps> = ({
       x={0}
       y={eventForm.eventStartTime}
       resizeAble={true}
+      position={position}
       width={`${100}%`}
-      display={eventForm.display}
+      display={!wholeDay ? eventForm.display : eventForm.wholeDayDisplay}
       height={`${eventForm.eventEndTime}px`}
       onResize={onNewEventResize}
       onMouseDown={onNewEventMouseDownCustom}>
       <Task
+        wholeDay={wholeDay}
         startTime={eventForm.eventStartTime}
         endTime={eventForm.eventEndTime}
       />

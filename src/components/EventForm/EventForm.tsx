@@ -32,6 +32,8 @@ interface EventFormProps {
   calId: string;
   onCalChange: (id: string) => void;
   onColorChange: OnColorChangeT;
+  timestampEnd?: number;
+  onTimeStampChange: (timestampEnd: number) => void;
 }
 
 const EventForm: FC<EventFormProps> = ({
@@ -49,6 +51,8 @@ const EventForm: FC<EventFormProps> = ({
   calId,
   onCalChange,
   onColorChange,
+  timestampEnd,
+  onTimeStampChange,
 }) => {
   const eventStartT = useMemo(
     () => convertMinutesToHours(eventStartTime),
@@ -105,8 +109,11 @@ const EventForm: FC<EventFormProps> = ({
             eventStartTime={eventStartT}
             onStartTimeChange={onStartTimeChange}
             onEndTimeChang={onEndTimeChang}
+            timestampEnd={timestampEnd}
+            onTimeStampChange={onTimeStampChange}
           />
         </Row>
+
         <Row>
           <Button className="bg-white colBlue hoverBGGray border-none">
             یافتن بازه زمانی

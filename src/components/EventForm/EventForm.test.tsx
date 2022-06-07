@@ -15,6 +15,7 @@ describe("<EventForm />", () => {
     ({ element, query } = before(
       "EventForm",
       <EventForm
+        onTimeStampChange={() => {}}
         onColorChange={() => {}}
         onCalChange={() => {}}
         handleAddingEvent={() => {}}

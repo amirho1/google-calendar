@@ -36,6 +36,7 @@ import Plus from "../Plus/Plus";
 import { FadeContext, SidebarContext } from "../../App";
 import Event from "../Event/Event";
 import NewEvent from "../NewEvent/NewEvent";
+import WholeDay from "../WholeDay/WholeDay";
 
 interface DayProps {}
 
@@ -76,6 +77,7 @@ const eventFormDefaultValue: EventFormI = {
   color: "blue",
   calId: "",
   hidden: false,
+  wholeDayDisplay: false,
 };
 
 export interface EventFormI {
@@ -90,6 +92,8 @@ export interface EventFormI {
   x: number;
   y: number;
   hidden: boolean;
+  timestampEnd?: number;
+  wholeDayDisplay: boolean;
 }
 
 export const EventFormContext = createContext<{
@@ -137,6 +141,7 @@ const Day: FC<DayProps> = () => {
     color: "",
     _id: "",
     timeStamp: 0,
+    timeStampEnd: undefined,
   });
 
   const calendars = useSelector<ReduxStateI, CalendarI[]>(
@@ -182,20 +187,41 @@ const Day: FC<DayProps> = () => {
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
   const timeStamp = useMemo(() => date.valueOf(), [date]);
-  const events = useSelector<ReduxStateI, EventI[]>(state => {
-    const calendars = state.calendars.calendars.filter(cal => cal.selected);
-    const result: EventI[] = calendars.reduce((prev: EventI[], next) => {
-      return prev.concat(
-        state.events &&
-          next._id &&
-          state.events.events[next._id] &&
-          state.events.events[next._id][timeStamp]
-          ? state.events.events[next._id][timeStamp]
-          : []
-      );
-    }, []);
 
-    return result;
+  const [events, wholeDayEvents] = useSelector<
+    ReduxStateI,
+    [EventI[], EventI[]]
+  >(state => {
+    const calendars = state.calendars.calendars.filter(cal => cal.selected);
+    const normEvent: EventI[] = calendars.reduce((prev: EventI[], next) => {
+      return prev
+        .concat(
+          state.events &&
+            next._id &&
+            state.events.events[next._id] &&
+            state.events.events[next._id][timeStamp]
+            ? state.events.events[next._id][timeStamp]
+            : []
+        )
+        .filter(e => !e.timeStampEnd);
+    }, []);
+    const wholeDayEvents: EventI[] = calendars.reduce(
+      (prev: EventI[], next) => {
+        return prev
+          .concat(
+            state.events &&
+              next._id &&
+              state.events.events[next._id] &&
+              state.events.events[next._id][timeStamp]
+              ? state.events.events[next._id][timeStamp]
+              : []
+          )
+          .filter(e => e.timeStampEnd);
+      },
+      []
+    );
+
+    return [normEvent, wholeDayEvents];
   });
 
   const day = useMemo(() => date.format("jDD"), [date]);
@@ -217,6 +243,7 @@ const Day: FC<DayProps> = () => {
     color: "blue",
     calId: "",
     hidden: false,
+    wholeDayDisplay: false,
   });
 
   // if there is any calendar set the first one to the eventForm.calId
@@ -273,6 +300,7 @@ const Day: FC<DayProps> = () => {
     },
     [eventForm.display, date]
   );
+
   const onClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {
       if (e.button === 2 && isMouseDown && !isMoved) return;
@@ -280,6 +308,7 @@ const Day: FC<DayProps> = () => {
         return {
           ...current,
           display: !current?.display,
+          wholeDayDisplay: false,
           calName: calendars[0]?.name,
         };
       });
@@ -325,7 +354,11 @@ const Day: FC<DayProps> = () => {
   );
 
   const closeModalEventForm = useCallback(() => {
-    setEventForm(current => ({ ...current, display: false }));
+    setEventForm(current => ({
+      ...current,
+      display: false,
+      wholeDayDisplay: false,
+    }));
   }, []);
 
   // fetch events
@@ -359,12 +392,14 @@ const Day: FC<DayProps> = () => {
       color: eventForm.color,
       calId: eventForm.calId,
       timeStamp: timeStamp,
+      timeStampEnd: eventForm.timestampEnd || undefined,
     };
 
     dispatch(addEvent.ac({ body: event, calId: eventForm.calId, timeStamp }));
     setEventForm(current => ({
       ...current,
       display: false,
+      wholeDayDisplay: false,
       eventEndTime: 0,
       description: EditorState.createEmpty(),
       title: "",
@@ -377,6 +412,7 @@ const Day: FC<DayProps> = () => {
     eventForm.description,
     eventForm.eventEndTime,
     eventForm.eventStartTime,
+    eventForm.timestampEnd,
     eventForm.title,
     timeStamp,
   ]);
@@ -451,8 +487,13 @@ const Day: FC<DayProps> = () => {
       type: "contextMenuDisplay",
       payload: { display: false },
     });
-    setEventForm(current => ({ ...current, display: false }));
+    setEventForm(current => ({
+      ...current,
+      display: false,
+      wholeDayDisplay: false,
+    }));
     setDetails(current => ({ ...current, display: false }));
+
     closeFade();
   }, [closeFade, dispatchContextMenuStates]);
 
@@ -476,10 +517,15 @@ const Day: FC<DayProps> = () => {
     () => setDetails(current => ({ ...current, display: false })),
     []
   );
+
   const { display: sideBarDisplay } = useContext(SidebarContext);
 
   const onPlusClickOpenEventForm = useCallback(() => {
-    setEventForm(current => ({ ...current, display: true }));
+    setEventForm(current => ({
+      ...current,
+      display: true,
+      wholeDayDisplay: false,
+    }));
   }, []);
 
   const onCalChange = useCallback((calId: string) => {
@@ -507,6 +553,21 @@ const Day: FC<DayProps> = () => {
   const onNewEventMouseUp = useCallback(() => {
     setEventForm(current => ({ ...current, hidden: false }));
   }, []);
+
+  const onTimeStampChange = useCallback((timestampEnd: number) => {
+    setEventForm(current => ({ ...current, timestampEnd }));
+  }, []);
+
+  const onInfoClick = useCallback(() => {
+    setEventForm(current => ({
+      ...current,
+      wholeDayDisplay: true,
+      display: false,
+      eventEndTime: 30,
+      eventStartTime: 0,
+    }));
+  }, []);
+
   return (
     <EventFormContext.Provider value={{ eventForm, setEventForm }}>
       <div className={styles.Day} data-testid="Day">
@@ -555,7 +616,13 @@ const Day: FC<DayProps> = () => {
 
         {/* Event form */}
         <Modal
-          display={eventForm.hidden ? false : eventForm.display}
+          display={
+            eventForm.hidden
+              ? false
+              : eventForm.display || eventForm.wholeDayDisplay
+              ? true
+              : false
+          }
           getRef={getRef}
           zIndex={210}
           height="fit-content"
@@ -578,6 +645,8 @@ const Day: FC<DayProps> = () => {
             description={eventForm.description}
             onDescriptionChange={onDescriptionChange}
             onTitleChange={onTitleChange}
+            onTimeStampChange={onTimeStampChange}
+            timestampEnd={eventForm.timestampEnd}
           />
         </Modal>
 
@@ -588,23 +657,47 @@ const Day: FC<DayProps> = () => {
               ? "2px solid var(--gray)"
               : undefined,
           }}>
-          <div className={styles.Info} data-testid="Info">
-            <span className={styles.Weekday}>{weekday}</span>
-            <HoverCircle
-              hover={false}
-              background={isCurrentDate}
-              backgroundColor={"var(--blue)"}
-              width="50px"
-              height="50px"
-              className={`pointer`}>
-              <div
-                className={`${styles.date}`}
-                style={{
-                  color: !isCurrentDate ? "var(--text-secondary)" : undefined,
-                }}>
-                {day}
-              </div>
-            </HoverCircle>
+          <div className={styles.Info} data-testid="Info" onClick={onInfoClick}>
+            <div className={styles.DayDetailWrapper}>
+              <span className={styles.Weekday}>{weekday}</span>
+              <HoverCircle
+                hover={false}
+                background={isCurrentDate}
+                backgroundColor={"var(--blue)"}
+                width="50px"
+                height="50px"
+                className={`pointer`}>
+                <div
+                  className={`${styles.date}`}
+                  style={{
+                    color: !isCurrentDate ? "var(--text-secondary)" : undefined,
+                  }}>
+                  {day}
+                </div>
+              </HoverCircle>
+            </div>
+            <WholeDay
+              events={wholeDayEvents}
+              timeStamp={timeStamp}
+              onBottomBorderMouseMove={onBottomBorderMouseMove}
+              onBottomBorderMouseUp={onBottomBorderMouseUp}
+              onEventBottomMouseDownSetIsMouseDownTrue={
+                onEventBottomMouseDownSetIsMouseDownTrue
+              }
+              onEventClick={onEventClick}
+              onEventRightClick={onEventRightClick}
+              setEventForm={setEventForm}
+              setIsMoved={setIsMoved}>
+              <NewEvent
+                position="relative"
+                wholeDay={true}
+                eventForm={eventForm}
+                onNewEventResize={onNewEventResize}
+                onNewEventMove={onNewEventMove}
+                onNewEventMouseDown={onNewEventMouseDown}
+                onNewEventMouseUp={onNewEventMouseUp}
+              />
+            </WholeDay>
           </div>
         </div>
         <main
@@ -639,22 +732,24 @@ const Day: FC<DayProps> = () => {
             />
 
             {/* Event */}
-            {events.map((event, index) => (
-              <Event
-                key={index}
-                event={event}
-                timeStamp={timeStamp}
-                onBottomBorderMouseUp={onBottomBorderMouseUp}
-                onBottomBorderMouseMove={onBottomBorderMouseMove}
-                onEventBottomMouseDownSetIsMouseDownTrue={
-                  onEventBottomMouseDownSetIsMouseDownTrue
-                }
-                onEventClick={onEventClick}
-                onEventRightClick={onEventRightClick}
-                setEventForm={setEventForm}
-                setIsMoved={setIsMoved}
-              />
-            ))}
+            {events
+              .filter(event => !event.timeStampEnd)
+              .map((event, index) => (
+                <Event
+                  key={index}
+                  event={event}
+                  timeStamp={timeStamp}
+                  onBottomBorderMouseUp={onBottomBorderMouseUp}
+                  onBottomBorderMouseMove={onBottomBorderMouseMove}
+                  onEventBottomMouseDownSetIsMouseDownTrue={
+                    onEventBottomMouseDownSetIsMouseDownTrue
+                  }
+                  onEventClick={onEventClick}
+                  onEventRightClick={onEventRightClick}
+                  setEventForm={setEventForm}
+                  setIsMoved={setIsMoved}
+                />
+              ))}
 
             <Line
               vertical={true}

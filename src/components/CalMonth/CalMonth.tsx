@@ -22,6 +22,7 @@ interface CalMonthProps {
   height?: string;
   className?: string;
   onDateChange: (newDate: Moment) => void;
+  customDate?: Moment;
 }
 
 const CalMonth: FC<CalMonthProps> = ({
@@ -29,6 +30,7 @@ const CalMonth: FC<CalMonthProps> = ({
   height = "100%",
   className,
   onDateChange,
+  customDate,
 }) => {
   const {
     year: currentYear,
@@ -37,7 +39,8 @@ const CalMonth: FC<CalMonthProps> = ({
     day: currentDay,
   } = dateHelper();
 
-  const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
+  let date = useSelector<ReduxStateI, Moment>(state => state.date.date);
+  if (customDate) date = customDate;
   date.locale("fa");
 
   const [days, setDays] = useState(calculateDaysOrder(date));

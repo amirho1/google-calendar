@@ -16,6 +16,7 @@ import EndTimeList from "../EndTimeList/EndTimeList";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxStateI } from "../../redux";
 import { setDate } from "../../redux/reducers/date/actions";
+import Checkbox from "../Checkbox/Checkbox";
 
 interface DateInpProps {
   eventStartTime: string;
@@ -23,6 +24,8 @@ interface DateInpProps {
   eventEndTime: string;
   onStartTimeChange: (startTime: number) => void;
   onEndTimeChang: (endTime: number) => void;
+  onTimeStampChange: (timeStampEnd: number) => void;
+  timestampEnd?: number;
 }
 
 const DateInp: FC<DateInpProps> = ({
@@ -31,11 +34,16 @@ const DateInp: FC<DateInpProps> = ({
   eventEndTime,
   onStartTimeChange,
   onEndTimeChang,
+  onTimeStampChange,
+  timestampEnd,
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [calendarDisplay, setCalendarDisplay] = useState(false);
   const [startTimeListDisplay, setStartTimeListDisplay] = useState(false);
   const [endTimeListDisplay, setEndTimeListDisplay] = useState(false);
+  const [timeStampEndDisplay, setTimeStampEndDisplay] = useState(false);
+  const [wholeDay, setWholeDay] = useState(false);
+
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
 
   const weekday = useMemo(
@@ -49,6 +57,21 @@ const DateInp: FC<DateInpProps> = ({
   const monthName = useMemo(
     () => convertFinglishMonthToPersian(date.format("jMMMM")),
     [date]
+  );
+
+  const monthNameEnd = useMemo(
+    () => convertFinglishMonthToPersian(moment(timestampEnd).format("jMMMM")),
+    [timestampEnd]
+  );
+
+  const dayEnd = useMemo(() => moment(timestampEnd).jDate(), [timestampEnd]);
+
+  const weekdayEnd = useMemo(
+    () =>
+      convertEnglishWeekdaysToPersian(
+        moment(timestampEnd).format("dddd").toLowerCase() as any
+      ),
+    [timestampEnd]
   );
 
   // change the to editable
@@ -77,6 +100,7 @@ const DateInp: FC<DateInpProps> = ({
       setCalendarDisplay(current => !current);
       setStartTimeListDisplay(false);
       setEndTimeListDisplay(false);
+      setTimeStampEndDisplay(false);
     },
     [isEditMode]
   );
@@ -110,6 +134,18 @@ const DateInp: FC<DateInpProps> = ({
       setCalendarDisplay(false);
     },
     [isEditMode]
+  );
+
+  const changeTimeStampEndDisplay = useCallback(() => {
+    setTimeStampEndDisplay(current => !current);
+    setCalendarDisplay(false);
+  }, []);
+
+  const onTimeStampEndDateChange = useCallback(
+    (date: Moment) => {
+      onTimeStampChange(date.valueOf());
+    },
+    [onTimeStampChange]
   );
 
   return (
@@ -149,6 +185,21 @@ const DateInp: FC<DateInpProps> = ({
             onEndTimeChang={onEndTimeChang}
           />
         </Modal>
+
+        <Modal
+          display={timeStampEndDisplay}
+          height="270px"
+          width="250px"
+          position="absolute"
+          x={30}
+          y={30}>
+          <CalMonth
+            className={styles.calendar}
+            onDateChange={onTimeStampEndDateChange}
+            customDate={moment(timestampEnd)}
+          />
+        </Modal>
+
         <Input
           value={`${weekday}, ${day} ${monthName}`}
           onChange={() => {}}
@@ -158,25 +209,43 @@ const DateInp: FC<DateInpProps> = ({
           inpWrapperClassName={`hoverBGGray ${styles.inputs} ${styles.widthBig}`}
           backgroundColor="transparent"
         />
-        <Input
-          value={convertAMPMtoPersia(eventStartTime)}
-          onChange={() => {}}
-          tag="eventStartTime"
-          small={true}
-          onClick={changeStartTimeLIstDisplay}
-          inpWrapperClassName={`hoverBGGray ${styles.inputs} ${styles.widthSmall}`}
-          backgroundColor="transparent"
-        />
-        -
-        <Input
-          value={`${convertAMPMtoPersia(eventEndTime)}`}
-          onChange={() => {}}
-          tag="eventEndTime"
-          small={true}
-          onClick={changeEndTimeListDisplay}
-          inpWrapperClassName={`hoverBGGray ${styles.inputs} ${styles.widthSmall}`}
-          backgroundColor="transparent"
-        />
+        {!wholeDay && (
+          <>
+            <Input
+              value={convertAMPMtoPersia(eventStartTime)}
+              onChange={() => {}}
+              tag="eventStartTime"
+              small={true}
+              onClick={changeStartTimeLIstDisplay}
+              inpWrapperClassName={`hoverBGGray ${styles.inputs} ${styles.widthSmall}`}
+              backgroundColor="transparent"
+            />{" "}
+            -{" "}
+            <Input
+              value={`${convertAMPMtoPersia(eventEndTime)}`}
+              onChange={() => {}}
+              tag="eventEndTime"
+              small={true}
+              onClick={changeEndTimeListDisplay}
+              inpWrapperClassName={`hoverBGGray ${styles.inputs} ${styles.widthSmall}`}
+              backgroundColor="transparent"
+            />
+          </>
+        )}
+        {wholeDay && (
+          <>
+            -
+            <Input
+              value={`${weekdayEnd}, ${dayEnd} ${monthNameEnd}`}
+              onChange={() => {}}
+              tag="timeStampEnd"
+              small={true}
+              onClick={changeTimeStampEndDisplay}
+              backgroundColor="transparent"
+              inpWrapperClassName={`hoverBGGray ${styles.inputs} ${styles.widthBig}`}
+            />
+          </>
+        )}
       </div>
 
       <div className={`${isEditMode ? "d-none" : ""} text-gray`}>
@@ -188,8 +257,12 @@ const DateInp: FC<DateInpProps> = ({
           isEditMode ? styles.openEdits : ""
         } owl-mtop `}
         style={{ display: !isEditMode ? "none" : "block" }}>
-        <input type="checkbox" name="" id="all-day" />
-        <label htmlFor="all-day mr-1">تمام روز </label>
+        <div className="f-right">
+          <Checkbox color="var(--blue)" onChange={setWholeDay} />
+          <label htmlFor="all-day mr-1" className={styles.checkboxLabel}>
+            تمام روز{" "}
+          </label>
+        </div>
 
         <Button className={`${styles.repeat} ${styles.btn} hoverBGGray`}>
           تکرار نمی شود

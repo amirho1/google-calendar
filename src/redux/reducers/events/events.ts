@@ -11,6 +11,7 @@ export interface EventI {
   color: string;
   calId: string;
   timeStamp: number;
+  timeStampEnd?: number | undefined;
 }
 
 export interface Events {

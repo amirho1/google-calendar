@@ -6,9 +6,10 @@ interface CheckboxProps {
   value?: boolean;
   color: string;
   onChange: (value: boolean) => void;
+  className?: string;
 }
 
-const Checkbox: FC<CheckboxProps> = ({ color, value, onChange }) => {
+const Checkbox: FC<CheckboxProps> = ({ color, value, onChange, className }) => {
   const [select, setSelect] = useState(!!value);
 
   const onClick = useCallback(() => {
@@ -18,7 +19,7 @@ const Checkbox: FC<CheckboxProps> = ({ color, value, onChange }) => {
 
   return (
     <div
-      className={`${styles.Checkbox} f-center`}
+      className={`${styles.Checkbox} f-center ${className}`}
       data-testid="Checkbox"
       style={{
         backgroundColor: select ? color : "white",

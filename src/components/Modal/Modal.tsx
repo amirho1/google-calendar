@@ -12,10 +12,10 @@ interface ModalProps {
   x?: number;
   y?: number;
   boxShadow?: boolean;
-  resizeAble?: true;
+  resizeAble?: boolean;
   backgroundColor?: string;
   zIndex?: number;
-  position?: "absolute" | "fixed";
+  position?: "absolute" | "fixed" | "relative";
   getRef?: (ref: React.RefObject<HTMLDivElement>) => any;
   onMouseDown?: onEventMouseDownT;
   onMouseUp?: React.MouseEventHandler<HTMLDivElement>;
@@ -154,7 +154,12 @@ const Modal: FC<ModalProps> = ({
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
       };
-    }, [onBottomBorderMouseDownOuter, onBottomBorderMouseUpOuter, onResize]);
+    }, [
+      onBottomBorderMouseDownOuter,
+      onBottomBorderMouseMove,
+      onBottomBorderMouseUpOuter,
+      onResize,
+    ]);
 
   const onBodyMouseDon = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     e => {

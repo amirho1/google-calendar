@@ -13,6 +13,7 @@ describe("<DateInp />", () => {
     ({ element, query } = before(
       "DateInp",
       <DateInp
+        onTimeStampChange={() => {}}
         onEndTimeChang={() => {}}
         onStartTimeChange={() => {}}
         eventEndTime={"0"}
