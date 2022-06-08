@@ -5,6 +5,7 @@ import {
   convertEnglishWeekdaysToPersian,
   convertFinglishMonthToPersian,
   convertHoursToMinutes,
+  stopPropagation,
 } from "../../utils/helpers";
 import Button from "../Button/Button";
 import CalMonth from "../CalMonth/CalMonth";
@@ -83,6 +84,7 @@ const DateInp: FC<DateInpProps> = ({
     setCalendarDisplay(false);
     setStartTimeListDisplay(false);
     setEndTimeListDisplay(false);
+    setTimeStampEndDisplay(false);
   }, []);
 
   useEffect(() => {
@@ -136,7 +138,8 @@ const DateInp: FC<DateInpProps> = ({
     [isEditMode]
   );
 
-  const changeTimeStampEndDisplay = useCallback(() => {
+  const changeTimeStampEndDisplay = useCallback(e => {
+    stopPropagation(e);
     setTimeStampEndDisplay(current => !current);
     setCalendarDisplay(false);
   }, []);
@@ -147,6 +150,13 @@ const DateInp: FC<DateInpProps> = ({
     },
     [onTimeStampChange]
   );
+
+  useEffect(() => {
+    document.addEventListener("click", closeModals);
+    return () => {
+      document.removeEventListener("click", closeModals);
+    };
+  }, [closeModals]);
 
   return (
     <div

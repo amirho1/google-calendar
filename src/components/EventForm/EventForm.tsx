@@ -72,7 +72,10 @@ const EventForm: FC<EventFormProps> = ({
     <div
       className={styles.EventForm}
       data-testid="EventForm"
-      onMouseDown={e => e.stopPropagation()}>
+      onMouseDown={e => e.stopPropagation()}
+      onClick={() => {
+        console.log("helloWorld");
+      }}>
       <div
         className={`${styles.header} f-between `}
         onMouseDown={onHeaderMouseDown}>

@@ -183,7 +183,6 @@ const Modal: FC<ModalProps> = ({
         onRightClick && onRightClick(e);
       }}
       onClick={e => {
-        e.stopPropagation();
         onClick && onClick(e);
       }}>
       {children}

@@ -47,6 +47,7 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
 
   const closeModals = useCallback(() => {
     setCalListDisplay(false);
+    setColorFormDisplay(false);
   }, []);
 
   useEffect(() => {
@@ -57,8 +58,10 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
     };
   }, [closeModals]);
 
-  const onCalNameClick = useCallback(() => {
+  const onCalNameClick = useCallback(e => {
+    e.stopPropagation();
     setCalListDisplay(current => !current);
+    setColorFormDisplay(false);
   }, []);
 
   const calendar = useSelector<ReduxStateI, CalendarI | undefined>(state =>
@@ -69,6 +72,7 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
 
   const changeColorFormDisplay = useCallback(() => {
     setColorFormDisplay(current => !current);
+    setCalListDisplay(false);
   }, []);
 
   const closeColorForm = useCallback(() => {
@@ -77,7 +81,11 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
 
   useEffect(() => {
     if (calendar?.color) onColorChange(calendar?.color);
-  }, [calendar?.color, onColorChange]);
+    document.addEventListener("click", closeModals);
+    return () => {
+      document.removeEventListener("click", closeModals);
+    };
+  }, [calendar?.color, closeModals, onColorChange]);
 
   return (
     <div
@@ -118,7 +126,10 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
           </Modal>
 
           <Button
-            onClick={() => changeColorFormDisplay()}
+            onClick={e => {
+              e.stopPropagation();
+              changeColorFormDisplay();
+            }}
             className={`${styles.btn} ${colorBtnConditionalClassNames} f-between m-right2`}>
             <>
               <Color color={eventForm.color} onColorChange={onColorChange} />
