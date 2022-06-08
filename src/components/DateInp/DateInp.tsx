@@ -158,6 +158,11 @@ const DateInp: FC<DateInpProps> = ({
     };
   }, [closeModals]);
 
+  useEffect(() => {
+    if (!wholeDay) onTimeStampChange(0);
+    else onTimeStampChange(date.valueOf());
+  }, [date, onTimeStampChange, wholeDay]);
+
   return (
     <div
       style={{ overflow: isEditMode ? "visible" : undefined }}
