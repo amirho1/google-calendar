@@ -718,12 +718,12 @@ const Day: FC<DayProps> = () => {
               onClickCreateEvent(e);
               onClick(e);
             }}>
-            {moment().startOf("day").valueOf() ===
-            date.startOf("day").valueOf() ? (
-              <TimeLine y={timeLineMinutes} color="red" />
-            ) : null}
-
             <div className={styles.EventsWrapper}>
+              {moment().startOf("day").valueOf() ===
+              date.startOf("day").valueOf() ? (
+                <TimeLine y={timeLineMinutes} color="red" />
+              ) : null}
+
               <NewEvent
                 eventForm={eventForm}
                 onNewEventResize={onNewEventResize}

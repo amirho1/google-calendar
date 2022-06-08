@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { RoutesContext } from "../../App";
+import useKeyDown from "../../hooks/useKeyDown";
 import { ReduxStateI } from "../../redux";
 import {
   decreaseDay,
@@ -135,6 +136,9 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
         onClick={onPageStyleBtnClick}
         children={
           <div className="f-center p-relative ">
+            {useKeyDown(e => {
+              if (e.key === "Escape") setPageListStyleDisplay(false);
+            })}
             {location === "day" ? "روز" : "هفته"} <RiArrowDownSFill />
             <Modal
               x={-90}

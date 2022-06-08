@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { FadeContext } from "../../App";
 import useFetch from "../../hooks/useFetch";
+import useKeyDown from "../../hooks/useKeyDown";
 import { ReduxStateI } from "../../redux";
 import { UserI } from "../../redux/reducers/user/user";
 import Button from "../Button/Button";
@@ -12,9 +13,10 @@ import styles from "./AcInfo.module.scss";
 
 interface AcInfoProps {
   onIconClick: () => void;
+  closeOrOpenAcInfoModal: () => void;
 }
 
-const AcInfo: FC<AcInfoProps> = ({ onIconClick }) => {
+const AcInfo: FC<AcInfoProps> = ({ onIconClick, closeOrOpenAcInfoModal }) => {
   const { name, lastName, email } = useSelector<ReduxStateI, UserI>(
     state => state.user.user
   );
@@ -39,6 +41,10 @@ const AcInfo: FC<AcInfoProps> = ({ onIconClick }) => {
   );
 
   const { openFade } = useContext(FadeContext);
+
+  useKeyDown(e => {
+    if (e.key === "Escape") closeOrOpenAcInfoModal();
+  });
 
   return (
     <div className={styles.AcInfo} data-testid="AcInfo">

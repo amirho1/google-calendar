@@ -10,6 +10,7 @@ import HoverCircle from "../../HoverCircle/HoverCircle";
 import Modal from "../../Modal/Modal";
 import { IItem } from "../../ULLinks/ULLinks";
 import styles from "./CalRow.module.scss";
+import useKeyDown from "../../../hooks/useKeyDown";
 
 interface OptionsProps {
   item: IItem;
@@ -57,6 +58,10 @@ const CalRow: FC<OptionsProps> = ({
       document.removeEventListener("mousedown", closeColorForm);
     };
   }, [closeColorForm]);
+
+  useKeyDown(e => {
+    if (e.key === "Escape") closeColorForm();
+  });
 
   return (
     <div

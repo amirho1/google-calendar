@@ -82,7 +82,10 @@ const UserImage: FC<UserImageProps> = () => {
         zIndex={200}
         x={0}
         y={100}>
-        <AcInfo onIconClick={changeChangePicDisplay} />
+        <AcInfo
+          onIconClick={changeChangePicDisplay}
+          closeOrOpenAcInfoModal={closeOrOpenAcInfoModal}
+        />
       </Modal>
 
       <Modal

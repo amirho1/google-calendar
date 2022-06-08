@@ -22,6 +22,7 @@ import { EventI } from "../../redux/reducers/events/events";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
 import { deleteEvent } from "../../redux/sagas/events";
+import useKeyDown from "../../hooks/useKeyDown";
 
 export interface DetailsProps {
   event: EventI;
@@ -51,6 +52,10 @@ const Details: FC<DetailsProps> = ({
   const removeEvent = useCallback(() => {
     if (calName && _id) dispatch(deleteEvent.ac({ calId, timeStamp, id: _id }));
   }, [calName, _id, dispatch, calId, timeStamp]);
+
+  useKeyDown(e => {
+    if (e.key === "Escape") closeDetails();
+  });
 
   const tools = useMemo<IItem[]>(
     () => [

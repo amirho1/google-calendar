@@ -18,6 +18,10 @@ interface ChangeProfilePicProps {
 }
 
 const ChangeProfilePic: FC<ChangeProfilePicProps> = ({ close }) => {
+  useKeyDown(e => {
+    if (e.key === "Escape") close();
+  });
+
   const [newPic, setNewPick] = useState<undefined | File>();
   const dispatch = useDispatch();
   const { closeFade } = useContext(FadeContext);
@@ -25,6 +29,7 @@ const ChangeProfilePic: FC<ChangeProfilePicProps> = ({ close }) => {
     user: { name, lastName },
     profileImage: image,
   } = useSelector<ReduxStateI, UserStateI>(state => state.user);
+
   const [isRemovingImg, setIsRemovingImg] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);

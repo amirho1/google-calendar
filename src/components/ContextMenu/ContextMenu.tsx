@@ -1,6 +1,7 @@
 import React, { FC, MouseEventHandler, useCallback, useEffect } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import useKeyDown from "../../hooks/useKeyDown";
 import { selectEventById } from "../../redux/reducers/events/selectors";
 import { deleteEvent, updateEvent } from "../../redux/sagas/events";
 import Button from "../Button/Button";
@@ -52,6 +53,10 @@ const ContextMenu: FC<ContextMenuProps> = ({
     },
     [calId, dispatch, event, id, timeStamp]
   );
+
+  useKeyDown(e => {
+    if (e.key === "Escape") closeContextMenu();
+  });
 
   return (
     <div

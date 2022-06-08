@@ -16,6 +16,7 @@ import { convertMinutesToHours } from "../../utils/helpers";
 import { EditorState } from "draft-js";
 import Cal from "./Cal/Cal";
 import { OnColorChangeT } from "../Day/Day";
+import useKeyDown from "../../hooks/useKeyDown";
 
 interface EventFormProps {
   onHeaderMouseDown: React.MouseEventHandler<HTMLDivElement>;
@@ -68,14 +69,17 @@ const EventForm: FC<EventFormProps> = ({
     [eventEndTime, eventStartTime]
   );
 
+  useKeyDown(e => {
+    console.log(e.key);
+    if (e.key === "Escape") setModalDisplay();
+    else if (e.key === "Enter") handleAddingEvent();
+  });
+
   return (
     <div
       className={styles.EventForm}
       data-testid="EventForm"
-      onMouseDown={e => e.stopPropagation()}
-      onClick={() => {
-        console.log("helloWorld");
-      }}>
+      onMouseDown={e => e.stopPropagation()}>
       <div
         className={`${styles.header} f-between `}
         onMouseDown={onHeaderMouseDown}>
