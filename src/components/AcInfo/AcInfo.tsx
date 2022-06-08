@@ -7,6 +7,7 @@ import useFetch from "../../hooks/useFetch";
 import useKeyDown from "../../hooks/useKeyDown";
 import { ReduxStateI } from "../../redux";
 import { UserI } from "../../redux/reducers/user/user";
+import { stopPropagation } from "../../utils/helpers";
 import Button from "../Button/Button";
 import DefaultImg from "../DefaultImg/DefaultImg";
 import styles from "./AcInfo.module.scss";
@@ -25,18 +26,18 @@ const AcInfo: FC<AcInfoProps> = ({ onIconClick, closeOrOpenAcInfoModal }) => {
     url: "/logout",
     firstFetch: false,
   });
+
   const image = useSelector<ReduxStateI, string | undefined>(
     state => state.user.profileImage
   );
+
   const navigate = useNavigate();
 
   const logout = useCallback(
     () =>
-      fetch()
-        .catch(() => {
-          navigate("/login");
-        })
-        .catch(console.error),
+      fetch().catch(() => {
+        navigate("/login");
+      }),
     [fetch, navigate]
   );
 
@@ -53,7 +54,12 @@ const AcInfo: FC<AcInfoProps> = ({ onIconClick, closeOrOpenAcInfoModal }) => {
           {!image ? (
             <DefaultImg name={name} />
           ) : (
-            <img className={styles.img} src={image} alt="" />
+            <img
+              className={styles.img}
+              src={image}
+              alt=""
+              onClick={stopPropagation}
+            />
           )}
           <button
             className={`${styles.iconWrapper} f-center simple-btn`}
