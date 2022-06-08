@@ -22,12 +22,10 @@ router.post("/", async (req, res) => {
 router.get("/isEmailUnique/:email", async ({ params: { email } }, res) => {
   try {
     if (!email) return res.status(400).send("Bad request.");
-    console.log("here");
     const user = await User.findOne({ email });
     if (user) res.send(false);
     else res.send(true);
   } catch (err: any) {
-    console.log(err);
     res.status(500).send(err?.message);
   }
 });

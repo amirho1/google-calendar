@@ -65,7 +65,6 @@ const userReducer = produce(
           draft.profileImage = action.payload;
         break;
       case DELETE_IMAGE.type:
-        console.log("here, 2050");
         draft.user.image = "";
         draft.profileImage = undefined;
         break;

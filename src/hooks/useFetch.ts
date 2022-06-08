@@ -78,7 +78,7 @@ export default function useFetch({
           });
       });
     },
-    [body, cookies.token, headers, method, url]
+    [body, cookies.token, headers, method, responseType, url]
   );
 
   useEffect(() => {
