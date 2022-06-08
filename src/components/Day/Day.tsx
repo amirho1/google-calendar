@@ -723,15 +723,15 @@ const Day: FC<DayProps> = () => {
               <TimeLine y={timeLineMinutes} color="red" />
             ) : null}
 
-            <NewEvent
-              eventForm={eventForm}
-              onNewEventResize={onNewEventResize}
-              onNewEventMove={onNewEventMove}
-              onNewEventMouseDown={onNewEventMouseDown}
-              onNewEventMouseUp={onNewEventMouseUp}
-            />
-
             <div className={styles.EventsWrapper}>
+              <NewEvent
+                eventForm={eventForm}
+                onNewEventResize={onNewEventResize}
+                onNewEventMove={onNewEventMove}
+                onNewEventMouseDown={onNewEventMouseDown}
+                onNewEventMouseUp={onNewEventMouseUp}
+              />
+
               {/* Event */}
               {events
                 .filter(event => !event.timeStampEnd)
