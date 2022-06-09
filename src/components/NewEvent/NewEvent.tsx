@@ -71,6 +71,7 @@ const NewEvent: FC<NewEventProps> = ({
     <Modal
       className="pointer"
       boxShadow={false}
+      borderRadios="8px"
       data-testid="Task"
       backgroundColor={eventForm.color}
       x={0}
