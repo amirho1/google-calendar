@@ -2,9 +2,10 @@ import React, { FC, useCallback, useRef, useState } from "react";
 import styles from "./Input.module.scss";
 
 interface InputProps {
-  value: string;
+  value?: string;
   tag: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   type?: "input" | "textarea";
   small?: boolean;
   backgroundColor?: string;
@@ -12,7 +13,9 @@ interface InputProps {
   inpWrapperClassName?: string;
   inputClassName?: string;
   labelClassName?: string;
+  bottomBorderClassName?: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
+  defaultValue?: string;
 }
 
 const Input: FC<InputProps> = ({
@@ -21,12 +24,15 @@ const Input: FC<InputProps> = ({
   value = "",
   type = "input",
   small = false,
-  backgroundColor = "var(--gray)",
+  defaultValue,
+  backgroundColor = "var(--hover)",
   fixedBorder = false,
   inpWrapperClassName,
   inputClassName,
   labelClassName,
+  bottomBorderClassName,
   onClick,
+  onBlur,
 }) => {
   const refInput = useRef<HTMLInputElement>(null);
   const refTextArea = useRef<HTMLTextAreaElement>(null);
@@ -40,9 +46,16 @@ const Input: FC<InputProps> = ({
   const onFocus = useCallback(() => {
     setFocus(true);
   }, []);
-  const onBlur = useCallback(() => {
-    setFocus(false);
-  }, []);
+
+  const onBlurDo = useCallback<
+    React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>
+  >(
+    e => {
+      setFocus(false);
+      onBlur && onBlur(e);
+    },
+    [onBlur]
+  );
 
   return (
     <div
@@ -68,28 +81,30 @@ const Input: FC<InputProps> = ({
       {type === "input" ? (
         <input
           id={tag}
-          value={value}
+          value={defaultValue ? undefined : value}
+          defaultValue={defaultValue}
           onChange={onChange}
           className={`${styles.input} ${inputClassName}`}
           ref={refInput}
           onFocus={onFocus}
-          onBlur={onBlur}
+          onBlur={onBlurDo}
           placeholder={small ? tag : undefined}
         />
       ) : (
         <textarea
           id={tag}
-          value={value}
+          value={defaultValue ? undefined : value}
+          defaultValue={defaultValue}
           onChange={onChange}
           className={`${styles.input} ${styles.textarea}  ${inputClassName}`}
           ref={refTextArea}
           placeholder={small ? tag : undefined}
           onFocus={onFocus}
-          onBlur={onBlur}
+          onBlur={onBlurDo}
         />
       )}
 
-      <div className={styles.bottomBorder}></div>
+      <div className={`${styles.bottomBorder} ${bottomBorderClassName}`}></div>
     </div>
   );
 };

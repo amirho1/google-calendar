@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import ULLinks, { CB, IItem } from "../ULLinks/ULLinks";
 import styles from "./Details.module.scss";
 import {
@@ -23,6 +23,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCalendarById } from "../../redux/sagas/calendars/selectors";
 import { deleteEvent } from "../../redux/sagas/events";
 import useKeyDown from "../../hooks/useKeyDown";
+import Modal from "../Modal/Modal";
+import { Link } from "react-router-dom";
 
 export interface DetailsProps {
   event: EventI;
@@ -32,13 +34,15 @@ export interface DetailsProps {
 }
 
 const Details: FC<DetailsProps> = ({
-  event: { description, endTime, startTime, title, calId, _id },
+  event,
   date,
   closeDetails,
   timeStamp,
 }) => {
+  const { description, endTime, startTime, title, calId, _id } = event;
   const calName = useSelector(selectCalendarById(calId || "0"))?.name || "";
   const dispatch = useDispatch();
+  const [toolsDisplay, setToolsDisplay] = useState(false);
 
   const cb = useCallback<CB>(
     item => (
@@ -57,11 +61,42 @@ const Details: FC<DetailsProps> = ({
     if (e.key === "Escape") closeDetails();
   });
 
+  const changeToolsDisplay = useCallback(e => {
+    stopPropagation(e);
+    setToolsDisplay(current => !current);
+  }, []);
+
+  const closeToolsDisplay = useCallback(() => {
+    setToolsDisplay(false);
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("click", closeToolsDisplay);
+    return () => {
+      document.removeEventListener("click", closeToolsDisplay);
+    };
+  }, [closeToolsDisplay]);
+
+  const optionsListOfItems = useMemo<IItem[]>(
+    () => [
+      {
+        tag: "چاپ",
+        cb: item => <div>{item.tag}</div>,
+      },
+      { tag: "تکثیر" },
+    ],
+    []
+  );
+
   const tools = useMemo<IItem[]>(
     () => [
       {
         tag: "ویرایش رویداد",
-        cb: cb,
+        cb: item => (
+          <HoverCircle className="pointer" dataTip={item.tag as any}>
+            <Link to={`updateOrCreate/${event._id}`}>{item.icon}</Link>
+          </HoverCircle>
+        ),
         icon: <BsPencil />,
       },
       {
@@ -76,7 +111,27 @@ const Details: FC<DetailsProps> = ({
       {
         tag: "گزینه ها",
         icon: <BsThreeDotsVertical />,
-        cb: cb,
+        cb: item => (
+          <HoverCircle className="pointer" dataTip={item.tag as any}>
+            <div className={styles.tools} onClick={changeToolsDisplay}>
+              {item.icon}
+
+              <Modal
+                width="150px"
+                height="fit-content"
+                right="0"
+                y={5}
+                display={toolsDisplay}
+                onClick={stopPropagation}>
+                <ULLinks
+                  listOfItems={optionsListOfItems}
+                  ulClassName={styles.optionUl}
+                  liClassName="list-item"
+                />
+              </Modal>
+            </div>
+          </HoverCircle>
+        ),
       },
 
       {
@@ -90,7 +145,15 @@ const Details: FC<DetailsProps> = ({
         cb: cb,
       },
     ],
-    [cb, closeDetails, removeEvent]
+    [
+      cb,
+      changeToolsDisplay,
+      closeDetails,
+      event._id,
+      optionsListOfItems,
+      removeEvent,
+      toolsDisplay,
+    ]
   );
 
   const weekDay = useMemo(
@@ -117,14 +180,17 @@ const Details: FC<DetailsProps> = ({
   const stopPropagation: React.MouseEventHandler<HTMLDivElement> = e => {
     e.stopPropagation();
   };
+
   return (
     <div
       className={styles.Details}
       data-testid="Details"
-      onClick={stopPropagation}
       onMouseDown={stopPropagation}>
       <div className={`${styles.header}`}>
-        <ULLinks listOfItems={tools} ulClassName="f-between" />
+        <ULLinks
+          listOfItems={tools}
+          ulClassName={`f-between ${styles.ulClassName}`}
+        />
       </div>
       <div className={styles.body}>
         <Row icon={<BsSquareFill className={styles.icon} />}>

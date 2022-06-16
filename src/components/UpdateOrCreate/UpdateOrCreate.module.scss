@@ -1,0 +1,38 @@
+.UpdateOrCreate {
+  display: flex;
+
+  height: 100vh;
+}
+
+.details {
+  flex-grow: 1;
+  padding: 1em;
+}
+
+.actions {
+  flex-grow: 1;
+  padding: 1em;
+}
+
+.inpWrapper {
+  background-color: transparent !important;
+}
+
+.inpLabel {
+  display: none;
+}
+
+.input {
+  font-size: 2rem;
+}
+
+.faTimes {
+  font-size: 2.5rem;
+}
+
+.close {
+}
+
+.dates {
+  margin-top: 2em;
+}

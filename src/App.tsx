@@ -23,6 +23,7 @@ import FOF from "./components/FOF/FOF";
 import TestNetWorkConnection from "./components/TestNetWorkConnection/TestNetWorkConnection";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
+import UpdateOrCreate from "./components/UpdateOrCreate/UpdateOrCreate";
 
 // it has some problems with types
 export const FadeContext = createContext({
@@ -40,6 +41,10 @@ function App() {
   const dispatch = useDispatch();
   useTitle("تقویم فارسی گوگل");
   const [sideBarDisplay, setSideBarDisplay] = useState(true);
+
+  const timeStamp = useSelector<ReduxStateI, number>(state =>
+    state.date.date.valueOf()
+  );
 
   const closeSideBar = useCallback(() => {
     setSideBarDisplay(previous => !previous);
@@ -111,6 +116,10 @@ function App() {
               {routes(routesList)}
             </Route>
 
+            <Route
+              path="updateOrCreate/:eventId"
+              element={<UpdateOrCreate timeStamp={timeStamp} />}
+            />
             <Route path="*" element={<FOF />} />
           </Routes>
 
