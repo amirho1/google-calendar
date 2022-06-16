@@ -19,7 +19,7 @@ const HoverCircle: FC<HoverCircleProps> = ({
   hover = true,
   children,
   background,
-  backgroundColor = "var(--gray)",
+  backgroundColor = "var(--hover)",
   className,
   width,
   height,

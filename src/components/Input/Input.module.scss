@@ -1,7 +1,7 @@
 .InputWrapper {
   position: relative;
   min-height: 44px;
-  background-color: var(--gray);
+  background-color: var(--hover);
   padding: 0.5em;
   border-radius: 3px;
 }
@@ -46,7 +46,7 @@
   right: 0;
   left: 0;
   margin: auto;
-  bottom: 0;
+  bottom: -2px;
   transition: width linear 0.3s;
 }
 

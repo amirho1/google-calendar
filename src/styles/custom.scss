@@ -125,7 +125,7 @@
 
 .hoverBGGray {
   &:hover {
-    background-color: var(--gray);
+    background-color: var(--hover);
   }
 }
 
@@ -206,4 +206,12 @@
 .checkboxLabel {
   margin-right: 1em;
   display: block;
+}
+
+.list-item {
+  padding: 0.5em 1.5em;
+
+  &:hover {
+    background-color: var(--gray);
+  }
 }

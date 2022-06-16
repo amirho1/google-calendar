@@ -585,7 +585,7 @@ const Day: FC<DayProps> = () => {
           x={centerOFScreen().x}
           y={centerOFScreen().y}
           position="fixed"
-          zIndex={200}
+          zIndex={250}
           width="448px"
           height="fit-content">
           <Details
