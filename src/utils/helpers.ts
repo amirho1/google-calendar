@@ -292,3 +292,6 @@ export function binaryToDataURL(binary: string | WithImplicitCoercion<string>) {
     }
   });
 }
+
+export const persianDigits2English = (str: string) =>
+  str.replace(/[۰-۹]/g, d => `${"۰۱۲۳۴۵۶۷۸۹".indexOf(d)}`);

@@ -3,6 +3,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import useKeyDown from "../../hooks/useKeyDown";
 import {
   convertFinglishMonthToPersian,
+  persianDigits2English,
   persianMonthsName,
   stopPropagation,
 } from "../../utils/helpers";
@@ -90,7 +91,9 @@ const DateInput: FC<DateInputProps> = ({ timeStamp, onChange }) => {
     <div className={styles.DateInput}>
       <Input
         onBlur={() => onInputBlur(value)}
-        onChange={e => onInputChange(e.currentTarget.value)}
+        onChange={e =>
+          onInputChange(persianDigits2English(e.currentTarget.value))
+        }
         onClick={e => {
           stopPropagation(e);
           changeCalDisplay();
