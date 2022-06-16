@@ -2,7 +2,7 @@ import moment, { Moment } from "moment-jalaali";
 import React, {
   FC,
   useCallback,
-  useContext,
+  // useContext,
   useMemo,
   useRef,
   useState,
@@ -11,7 +11,7 @@ import { RiArrowDownSFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
-import { RoutesContext } from "../../App";
+// import { RoutesContext } from "../../App";
 import useKeyDown from "../../hooks/useKeyDown";
 import { ReduxStateI } from "../../redux";
 import {
@@ -38,13 +38,13 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
 
   const location = useLocation().pathname.split("/")[1];
 
-  const { routes } = useContext(RoutesContext);
+  // const { routes } = useContext(RoutesContext);
   const mappedPageStyleList = useMemo<IItem[]>(
     () => [
       {
         tag: "روز",
         cb: value => (
-          <Link to={routes["/"]?.nest?.day?.path || ""} className={styles.Link}>
+          <Link to="/" className={styles.Link}>
             {value.tag}
           </Link>
         ),
@@ -52,15 +52,13 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
       {
         tag: "هفته",
         cb: value => (
-          <Link
-            to={routes["/"]?.nest?.week?.path || ""}
-            className={styles.Link}>
+          <Link to="week" className={styles.Link}>
             {value.tag}
           </Link>
         ),
       },
     ],
-    [routes]
+    []
   );
 
   const date = useSelector<ReduxStateI, Moment>(state => state.date.date);
@@ -102,7 +100,6 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
   const today = useCallback(() => {
     dispatch(setDate(moment()));
   }, [dispatch]);
-
   return (
     <div className={`${styles.right} f-around`} data-testid="NavMain">
       <HamburgerMenu
@@ -139,7 +136,7 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
             {useKeyDown(e => {
               if (e.key === "Escape") setPageListStyleDisplay(false);
             })}
-            {location === "day" ? "روز" : "هفته"} <RiArrowDownSFill />
+            {location === "" ? "روز" : "هفته"} <RiArrowDownSFill />
             <Modal
               x={-90}
               y={40}
@@ -149,8 +146,7 @@ const NavMain: FC<NavMainProps> = ({ closeSideBar }) => {
               width={`200px`}>
               <ULLinks
                 listOfItems={mappedPageStyleList}
-                ulClassName={styles.ul}
-                aClassName={styles.anchor}
+                liClassName="list-item"
               />
             </Modal>
           </div>
