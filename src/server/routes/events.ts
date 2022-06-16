@@ -18,6 +18,20 @@ router.get(
   }
 );
 
+router.get("/:eventId", isLoggedIn, async ({ params: { eventId } }, res) => {
+  try {
+    if (!eventId)
+      return res.status(400).send("Event Id shouldn't be undefined.");
+    const event = await Event.findById(eventId);
+    if (!event)
+      return res.status(404).send(`Event with id: ${eventId} doesn't exist.`);
+
+    res.send(event);
+  } catch (err: any) {
+    res.status(500).send(err.message);
+  }
+});
+
 router.post("/", isLoggedIn, async ({ body }, res) => {
   try {
     const { error } = eventValidate.validate(body);
