@@ -70,7 +70,6 @@ const EventForm: FC<EventFormProps> = ({
   );
 
   useKeyDown(e => {
-    console.log(e.key);
     if (e.key === "Escape") setModalDisplay();
     else if (e.key === "Enter") handleAddingEvent();
   });
