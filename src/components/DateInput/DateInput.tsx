@@ -15,12 +15,13 @@ import styles from "./DateInput.module.scss";
 interface DateInputProps {
   timeStamp: number;
   onChange: (timeStamp: number) => void;
+  label: string;
 }
 
 export const dateInputRegex =
   /([0-2][0-9]|3[0-1]|[1-9])\s(فروردین|اردیبهشت|خرداد|تیر|مرداد|شهریور|مهر|آبان|آذر|دی|بهمن|اسفند)\s1[3-9][0-9]{2}/;
 
-const DateInput: FC<DateInputProps> = ({ timeStamp, onChange }) => {
+const DateInput: FC<DateInputProps> = ({ timeStamp, onChange, label }) => {
   const [calDisplay, setCalDisplay] = useState(false);
   const date = useMemo(() => moment(timeStamp), [timeStamp]);
   const [day, setDay] = useState(date.jDate());
@@ -98,7 +99,7 @@ const DateInput: FC<DateInputProps> = ({ timeStamp, onChange }) => {
           stopPropagation(e);
           changeCalDisplay();
         }}
-        tag={"تاریخ شروع رویداد"}
+        tag={label}
         small={true}
         value={value}
         inpWrapperClassName={styles.input}

@@ -187,7 +187,10 @@ const DateInp: FC<DateInpProps> = ({
           height="220px"
           x={120}
           y={40}>
-          <StartTimeList date={date} onStartTimeChange={onStartTimeChange} />
+          <StartTimeList
+            onStartTimeChange={onStartTimeChange}
+            selected={convertHoursToMinutes(moment(eventStartTime, "HH:mm A"))}
+          />
         </Modal>
         <Modal
           display={endTimeListDisplay}

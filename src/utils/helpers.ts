@@ -246,9 +246,7 @@ export function indexOfFirstDayOfMonthInWeek(date: Moment) {
 }
 
 export function convertAMPMtoPersia(hour: string) {
-  return hour.split(" ")[1] === "AM"
-    ? hour.replace("AM", "قب")
-    : hour.replace("PM", "بع");
+  return hour.replace("AM", "قب").replace("PM", "بع");
 }
 
 export function convertMinutesToHours(minutes: number) {
@@ -295,3 +293,6 @@ export function binaryToDataURL(binary: string | WithImplicitCoercion<string>) {
 
 export const persianDigits2English = (str: string) =>
   str.replace(/[۰-۹]/g, d => `${"۰۱۲۳۴۵۶۷۸۹".indexOf(d)}`);
+
+export const convertPersianAMPMToEnglish = (str: string) =>
+  str.replace(/قب/, "AM").replace(/بع/, "PM");

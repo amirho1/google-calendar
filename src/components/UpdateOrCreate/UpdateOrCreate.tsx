@@ -9,6 +9,7 @@ import DateInput from "../DateInput/DateInput";
 import Row from "../EventForm/Row/Row";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Input from "../Input/Input";
+import TimeInput from "../TimeInput/TimeInput";
 import styles from "./UpdateOrCreate.module.scss";
 
 interface UpdateOrCreateProps {
@@ -99,7 +100,9 @@ const UpdateOrCreate: FC<UpdateOrCreateProps> = ({ timeStamp }) => {
     [timeStamp]
   );
 
-  const onStartTimeChange = useCallback(() => {}, []);
+  const onStartTimeChange = useCallback((startTime: number) => {
+    setEvent(current => ({ ...current, startTime }));
+  }, []);
 
   const onTimeStampChange = useCallback(() => {}, []);
 
@@ -129,10 +132,17 @@ const UpdateOrCreate: FC<UpdateOrCreateProps> = ({ timeStamp }) => {
                 key="1"
               />
 
-              <div className={styles.dates}>
+              <div className={`${styles.dates} owl-mright`}>
                 <DateInput
                   timeStamp={event.timeStamp}
+                  label="تاریخ شروع"
                   onChange={onStartDateChange}
+                />
+                <TimeInput
+                  time={event.startTime}
+                  type="start"
+                  label="زمان شروع"
+                  onChange={onStartTimeChange}
                 />
               </div>
             </>

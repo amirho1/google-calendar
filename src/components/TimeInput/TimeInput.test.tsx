@@ -1,19 +1,16 @@
-// templates/component/HourListFrom.js
+// templates/component/TimeInput.js
 
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
-import StartTimeList from "./StartTimeList";
+import TimeInput from "./TimeInput";
 import { before, Query } from "../../utils/testHelper";
 
-describe("<StartTimeList />", () => {
+describe("<TimeInput />", () => {
   let query: Query;
   let element: HTMLElement;
 
   beforeEach(() => {
-    ({ element, query } = before(
-      "StartTimeList",
-      <StartTimeList onStartTimeChange={() => {}} selected={0} />
-    ));
+    // ({ element, query } = before("TimeInput", <TimeInput />));
   });
 
   it("should mount", () => {

@@ -1,33 +1,42 @@
-import { Moment } from "moment-jalaali";
-import React, { FC, useCallback, useMemo } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef } from "react";
 import {
   convertAMPMtoPersia,
   convertMinutesToHours,
+  stopPropagation,
 } from "../../utils/helpers";
 import ULLinks, { CB, IItem } from "../ULLinks/ULLinks";
 import styles from "./StartTimeList.module.scss";
 
 interface StartTimeListProps {
   onStartTimeChange: (startTime: number) => void;
-  date: Moment;
+  selected: number;
 }
 
 const minuteInADay = 24 * 60 - 15;
 
-const StartTimeList: FC<StartTimeListProps> = ({ onStartTimeChange, date }) => {
+const StartTimeList: FC<StartTimeListProps> = ({
+  onStartTimeChange,
+  selected,
+}) => {
+  const selectedRef = useRef<HTMLDivElement>(null);
+
   const cb = useCallback<CB>(
     item => (
       <div
-        className={`hoverBGGray ${styles.hour}`}
+        className={`hoverBGGray ${styles.hour} ${
+          selected === item.tag ? styles.selected : ""
+        }`}
         onClick={() =>
           typeof item.tag === "number" ? onStartTimeChange(item.tag) : null
-        }>
+        }
+        id={`${selected}`}
+        ref={selected === item.tag ? selectedRef : undefined}>
         {typeof item.tag === "number"
           ? convertAMPMtoPersia(convertMinutesToHours(item.tag))
           : item.tag}
       </div>
     ),
-    [onStartTimeChange]
+    [onStartTimeChange, selected]
   );
 
   const times = useMemo<IItem[]>(() => {
@@ -44,12 +53,16 @@ const StartTimeList: FC<StartTimeListProps> = ({ onStartTimeChange, date }) => {
     }
     return listItem;
   }, [cb]);
-
+  useEffect(() => {
+    if (selectedRef.current) selectedRef.current.scrollIntoView();
+  }, []);
   return (
-    <ULLinks
-      listOfItems={times}
-      ulClassName={`${styles.StartTimeList} owl-mtop`}
-    />
+    <>
+      <ULLinks
+        listOfItems={times}
+        ulClassName={`${styles.StartTimeList} owl-mtop`}
+      />
+    </>
   );
 };
 
