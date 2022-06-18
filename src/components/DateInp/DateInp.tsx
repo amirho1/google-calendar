@@ -199,6 +199,7 @@ const DateInp: FC<DateInpProps> = ({
           x={70}
           y={40}>
           <EndTimeList
+            endTime={convertHoursToMinutes(moment(eventEndTime, "HH:mm A"))}
             startTime={convertHoursToMinutes(moment(eventStartTime, "HH:mm A"))}
             onEndTimeChang={onEndTimeChang}
           />

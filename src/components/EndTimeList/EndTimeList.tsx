@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef } from "react";
 import {
   convertAMPMtoPersia,
   convertMinutesToHours,
@@ -9,23 +9,39 @@ import styles from "./EndTimeList.module.scss";
 interface EndTimeListProps {
   startTime: number;
   onEndTimeChang: (endTime: number) => void;
+  endTime: number;
 }
 
-const EndTimeList: FC<EndTimeListProps> = ({ startTime, onEndTimeChang }) => {
+const EndTimeList: FC<EndTimeListProps> = ({
+  startTime,
+  onEndTimeChang,
+  endTime,
+}) => {
+  const selected = useMemo(() => startTime + endTime, [endTime, startTime]);
+  const selectedRef = useRef<HTMLDivElement>(null);
+
   const cb: CB = useCallback(
     item => (
       <div
-        className={`${styles.hour} hoverBGGray`}
+        className={`${styles.hour} hoverBGGray ${
+          selected === item.tag ? styles.selected : ""
+        }`}
         onClick={() =>
           typeof item.tag === "number" ? onEndTimeChang(item.tag) : 0
-        }>
+        }
+        ref={selected === item.tag ? selectedRef : undefined}>
         {convertAMPMtoPersia(
           convertMinutesToHours(typeof item.tag === "number" ? item.tag : 0)
         )}
       </div>
     ),
-    [onEndTimeChang]
+    [onEndTimeChang, selected]
   );
+
+  useEffect(() => {
+    selectedRef.current?.scrollIntoView();
+  }, []);
+
   const listItems = useMemo(() => {
     const output: IItem[] = [];
     let quarter = 15;

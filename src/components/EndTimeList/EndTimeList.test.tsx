@@ -12,7 +12,7 @@ describe("<EndTimeList />", () => {
   beforeEach(() => {
     ({ element, query } = before(
       "EndTimeList",
-      <EndTimeList startTime={15} onEndTimeChang={() => {}} />
+      <EndTimeList endTime={0} startTime={15} onEndTimeChang={() => {}} />
     ));
   });
 
