@@ -5,7 +5,6 @@ import {
   convertAMPMtoPersia,
   convertHoursToMinutes,
   convertMinutesToHours,
-  convertPersianAMPMToEnglish,
   persianDigits2English,
   stopPropagation,
 } from "../../utils/helpers";
@@ -20,15 +19,26 @@ interface TimeInputProps {
   onChange: (newTime: number) => void;
   label: string;
   type: "end" | "start";
+  startTime?: number;
 }
 
 const inputRegex = /1?[0-2]:[0-3][0-9]\s(بع|قب)/;
 
-const TimeInput: FC<TimeInputProps> = ({ onChange, time, label, type }) => {
+const TimeInput: FC<TimeInputProps> = ({
+  onChange,
+  time,
+  label,
+  type,
+  startTime,
+}) => {
+  if (type === "end" && typeof startTime === "undefined")
+    throw new Error(
+      "while type is equal to end, startTime shouldn't be undefined!!"
+    );
+
   const [timesDisplay, setTimesDisplay] = useState(false);
-  const [value, setValue] = useState(
-    convertAMPMtoPersia(convertMinutesToHours(time))
-  );
+  const [value, setValue] = useState(convertMinutesToHours(time));
+
   const changeTimesDisplay = useCallback(e => {
     stopPropagation(e);
     setTimesDisplay(current => !current);
@@ -50,19 +60,15 @@ const TimeInput: FC<TimeInputProps> = ({ onChange, time, label, type }) => {
     if (e.key === "Escape") closeTimesDisplay();
   });
 
-  const onInputChange = useCallback<
-    React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
-  >(e => {
-    setValue(persianDigits2English(e.currentTarget.value));
+  const onInputChange = useCallback((value: string) => {
+    setValue(persianDigits2English(value));
   }, []);
 
   const onInputBlur = useCallback(() => {
     const isInputValid = inputRegex.test(value);
 
     if (isInputValid) {
-      const minute = convertHoursToMinutes(
-        moment(convertPersianAMPMToEnglish(value), "HH:mm A")
-      );
+      const minute = convertHoursToMinutes(moment(value, "HH:mm A"));
 
       onChange(minute);
     } else {
@@ -71,8 +77,8 @@ const TimeInput: FC<TimeInputProps> = ({ onChange, time, label, type }) => {
   }, [onChange, time, value]);
 
   useEffect(() => {
-    setValue(convertAMPMtoPersia(convertMinutesToHours(time)));
-  }, [time]);
+    setValue(convertMinutesToHours(time));
+  }, [startTime, time, type]);
 
   return (
     <div className={styles.TimeInput} data-testid="TimeInput">
@@ -81,16 +87,24 @@ const TimeInput: FC<TimeInputProps> = ({ onChange, time, label, type }) => {
         onClick={changeTimesDisplay}
         onBlur={onInputBlur}
         small={true}
-        onChange={onInputChange}
+        onChange={e => onInputChange(e.currentTarget.value)}
         inputClassName={styles.input}
-        value={value}
+        value={convertAMPMtoPersia(
+          convertMinutesToHours(
+            convertHoursToMinutes(moment(value, "HH:mm A")) + (startTime || 0)
+          )
+        )}
       />
 
       <Modal display={timesDisplay} width="180px" height="200px" x={-50} y={60}>
         {type === "start" ? (
           <StartTimeList onStartTimeChange={onChange} selected={time} />
         ) : (
-          <EndTimeList onEndTimeChang={() => {}} startTime={0} />
+          <EndTimeList
+            endTime={time}
+            onEndTimeChang={onChange}
+            startTime={startTime || 0}
+          />
         )}
       </Modal>
     </div>

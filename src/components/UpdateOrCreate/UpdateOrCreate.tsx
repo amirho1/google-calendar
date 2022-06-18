@@ -90,14 +90,10 @@ const UpdateOrCreate: FC<UpdateOrCreateProps> = ({ timeStamp }) => {
   );
 
   const onEndTimeChange = useCallback(
-    e => {
-      setEvent(current =>
-        !current
-          ? { ...defaultEvent, title: e.currentTarget.value, timeStamp }
-          : { ...current, title: e.currentTarget.value }
-      );
+    (endTime: number) => {
+      setEvent(current => ({ ...current, endTime: endTime - event.startTime }));
     },
-    [timeStamp]
+    [event.startTime]
   );
 
   const onStartTimeChange = useCallback((startTime: number) => {
@@ -131,7 +127,6 @@ const UpdateOrCreate: FC<UpdateOrCreateProps> = ({ timeStamp }) => {
                 onChange={e => onTitleChange(e.currentTarget.value)}
                 key="1"
               />
-
               <div className={`${styles.dates} owl-mright`}>
                 <DateInput
                   timeStamp={event.timeStamp}
@@ -143,6 +138,14 @@ const UpdateOrCreate: FC<UpdateOrCreateProps> = ({ timeStamp }) => {
                   type="start"
                   label="زمان شروع"
                   onChange={onStartTimeChange}
+                />
+                <span>تا</span>
+                <TimeInput
+                  time={event.endTime}
+                  type="end"
+                  label="زمان پایان"
+                  startTime={event.startTime}
+                  onChange={onEndTimeChange}
                 />
               </div>
             </>
