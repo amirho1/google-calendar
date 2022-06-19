@@ -38,3 +38,18 @@
   display: flex;
   align-items: center;
 }
+
+.checkboxWrapper {
+  margin-top: 1em;
+  display: flex;
+  width: 80px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dateActions {
+  margin-top: 1em;
+  display: flex;
+  justify-content: space-between;
+  width: 200px;
+}

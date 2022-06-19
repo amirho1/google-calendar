@@ -296,3 +296,7 @@ export const persianDigits2English = (str: string) =>
 
 export const convertPersianAMPMToEnglish = (str: string) =>
   str.replace(/قب/, "AM").replace(/بع/, "PM");
+
+// return null if condition is true else return the given value
+export const rnicTrue = (condition: boolean, value: any) =>
+  condition ? null : value;

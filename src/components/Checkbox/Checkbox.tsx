@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import styles from "./Checkbox.module.scss";
 import { TiTick } from "react-icons/ti";
 
@@ -16,6 +16,10 @@ const Checkbox: FC<CheckboxProps> = ({ color, value, onChange, className }) => {
     setSelect(current => !current);
     onChange(!select);
   }, [onChange, select]);
+
+  useEffect(() => {
+    setSelect(!!value);
+  }, [value]);
 
   return (
     <div

@@ -1,0 +1,14 @@
+.Repeat {
+  position: relative;
+}
+
+.list {
+  width: 200px;
+}
+
+.li {
+  padding: 1em;
+  &:hover {
+    background-color: var(--gray);
+  }
+}

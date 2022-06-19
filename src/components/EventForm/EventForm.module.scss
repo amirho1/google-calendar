@@ -32,7 +32,7 @@
   background-color: var(--blue);
   padding: 0.8em 2em;
   &:hover {
-    background-color: var(--light-blue);
+    box-shadow: 2px 2px 5px 5px;
   }
 }
 

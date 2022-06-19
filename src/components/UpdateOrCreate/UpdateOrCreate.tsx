@@ -1,14 +1,17 @@
-import moment from "moment-jalaali";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import React, { FC, useCallback, useEffect, useState } from "react";
+import { FaChevronDown, FaTimes } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router";
 import useFetch from "../../hooks/useFetch";
 import { EventI } from "../../redux/reducers/events/events";
-import { convertMinutesToHours } from "../../utils/helpers";
+import { rnicTrue } from "../../utils/helpers";
+import Button from "../Button/Button";
+import Checkbox from "../Checkbox/Checkbox";
 import DateInput from "../DateInput/DateInput";
 import Row from "../EventForm/Row/Row";
 import HoverCircle from "../HoverCircle/HoverCircle";
 import Input from "../Input/Input";
+import Modal from "../Modal/Modal";
+import Repeat from "../Repeat/Repeat";
 import TimeInput from "../TimeInput/TimeInput";
 import styles from "./UpdateOrCreate.module.scss";
 
@@ -37,7 +40,9 @@ interface TitleChildrenI {
 const UpdateOrCreate: FC<UpdateOrCreateProps> = ({ timeStamp }) => {
   const { eventId } = useParams();
   const navigate = useNavigate();
+  const [wholeDay, setWholeDay] = useState(false);
   const [event, setEvent] = useState<EventI>(defaultEvent);
+  const [repeatListDisplay, setRepeatListDisplay] = useState(false);
 
   const goBack = useCallback(() => {
     navigate(-1);
@@ -71,24 +76,6 @@ const UpdateOrCreate: FC<UpdateOrCreateProps> = ({ timeStamp }) => {
     fetch();
   }, [fetch]);
 
-  const eventCb = useCallback(() => {}, []);
-
-  const eventEndT = useMemo(
-    () =>
-      event
-        ? moment()
-            .startOf("day")
-            .add(event?.startTime + event?.endTime, "minutes")
-            .format("hh:mm A")
-        : "",
-    [event]
-  );
-
-  const eventStartT = useMemo(
-    () => (event ? convertMinutesToHours(event?.startTime) : ""),
-    [event]
-  );
-
   const onEndTimeChange = useCallback(
     (endTime: number) => {
       setEvent(current => ({ ...current, endTime: endTime - event.startTime }));
@@ -100,16 +87,16 @@ const UpdateOrCreate: FC<UpdateOrCreateProps> = ({ timeStamp }) => {
     setEvent(current => ({ ...current, startTime }));
   }, []);
 
-  const onTimeStampChange = useCallback(() => {}, []);
-
   const onTitleChange = useCallback((title: string) => {
     setEvent(current => ({ ...current, title: title }));
   }, []);
 
   const onStartDateChange = useCallback((timeStamp: number) => {
-    setEvent(current => {
-      return { ...current, timeStamp };
-    });
+    setEvent(current => ({ ...current, timeStamp }));
+  }, []);
+
+  const onTimeStampEndChange = useCallback((timeStampEnd: number) => {
+    setEvent(current => ({ ...current, timeStampEnd }));
   }, []);
 
   return (
@@ -129,26 +116,59 @@ const UpdateOrCreate: FC<UpdateOrCreateProps> = ({ timeStamp }) => {
                 onChange={e => onTitleChange(e.currentTarget.value)}
                 key="1"
               />
-              <div className={`${styles.dates} owl-mright`}>
-                <DateInput
-                  timeStamp={event.timeStamp}
-                  label="تاریخ شروع"
-                  onChange={onStartDateChange}
-                />
-                <TimeInput
-                  time={event.startTime}
-                  type="start"
-                  label="زمان شروع"
-                  onChange={onStartTimeChange}
-                />
-                <span>تا</span>
-                <TimeInput
-                  time={event.endTime}
-                  type="end"
-                  label="زمان پایان"
-                  startTime={event.startTime}
-                  onChange={onEndTimeChange}
-                />
+              <div>
+                <div className={`${styles.dates} owl-mright`}>
+                  <DateInput
+                    timeStamp={event.timeStamp}
+                    label="تاریخ شروع"
+                    onChange={onStartDateChange}
+                  />
+                  {rnicTrue(
+                    wholeDay,
+                    <TimeInput
+                      time={event.startTime}
+                      type="start"
+                      label="زمان شروع"
+                      onChange={onStartTimeChange}
+                    />
+                  )}
+                  <span>تا</span>
+                  {rnicTrue(
+                    wholeDay,
+                    <TimeInput
+                      time={event.endTime}
+                      type="end"
+                      label="زمان پایان"
+                      startTime={event.startTime}
+                      onChange={onEndTimeChange}
+                    />
+                  )}
+
+                  <DateInput
+                    timeStamp={event.timeStampEnd || event.timeStamp}
+                    label="تاریخ پایان"
+                    onChange={onTimeStampEndChange}
+                  />
+                </div>
+
+                <div className={styles.dateActions}>
+                  <div className={styles.checkboxWrapper}>
+                    <Checkbox
+                      color="var(--blue)"
+                      value={wholeDay}
+                      onChange={setWholeDay}
+                      className={`${styles.checkbox} pointer`}
+                    />
+                    <label
+                      htmlFor="all-day"
+                      className={`${styles.checkboxLabel} pointer`}
+                      onClick={() => setWholeDay(current => !current)}>
+                      تمام روز
+                    </label>
+                  </div>
+
+                  <Repeat />
+                </div>
               </div>
             </>
           }

@@ -277,8 +277,15 @@ const DateInp: FC<DateInpProps> = ({
         } owl-mtop `}
         style={{ display: !isEditMode ? "none" : "block" }}>
         <div className="f-right">
-          <Checkbox color="var(--blue)" onChange={setWholeDay} />
-          <label htmlFor="all-day mr-1" className={styles.checkboxLabel}>
+          <Checkbox
+            value={wholeDay}
+            color="var(--blue)"
+            onChange={setWholeDay}
+          />
+          <label
+            htmlFor="all-day"
+            className={`${styles.checkboxLabel} mr-1`}
+            onClick={() => setWholeDay(current => !current)}>
             تمام روز{" "}
           </label>
         </div>

@@ -142,7 +142,7 @@ const EventForm: FC<EventFormProps> = ({
         </Row>
 
         <div className={`${styles.btnWrapper} owl-mright`}>
-          <Button className={`${styles.btnMore} `}>گزینه های بیشتر</Button>
+          <Button className={`${styles.btnMore}`}>گزینه های بیشتر</Button>
           <Button
             className={`${styles.btnSave} colWhite`}
             onClick={handleAddingEvent}>
