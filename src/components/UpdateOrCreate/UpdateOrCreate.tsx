@@ -107,7 +107,9 @@ const UpdateOrCreate: FC<UpdateOrCreateProps> = ({ timeStamp }) => {
   }, []);
 
   const onStartDateChange = useCallback((timeStamp: number) => {
-    setEvent(current => ({ ...current, timeStamp }));
+    setEvent(current => {
+      return { ...current, timeStamp };
+    });
   }, []);
 
   return (

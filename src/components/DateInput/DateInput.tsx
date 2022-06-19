@@ -33,23 +33,25 @@ const DateInput: FC<DateInputProps> = ({ timeStamp, onChange, label }) => {
   const [year, setYear] = useState(date.jYear());
 
   const [value, setValue] = useState(`${day} ${monthName} ${year}`);
-
-  const onDateChange = useCallback(
-    (newDate: Moment) => onChange(newDate.valueOf()),
-    [onChange]
-  );
-
-  const changeCalDisplay = useCallback(() => {
-    setCalDisplay(current => !current);
-  }, []);
-
   const closeCalDisplay = useCallback(() => {
     setCalDisplay(false);
   }, []);
 
+  const onDateChange = useCallback(
+    (newDate: Moment) => {
+      onChange(newDate.valueOf());
+      closeCalDisplay();
+    },
+    [closeCalDisplay, onChange]
+  );
+
+  const openModal = useCallback(() => {
+    setCalDisplay(true);
+  }, []);
+
   useEffect(() => {
-    document.addEventListener("click", closeCalDisplay);
-    return () => document.removeEventListener("click", closeCalDisplay);
+    document.addEventListener("mousedown", closeCalDisplay);
+    return () => document.removeEventListener("mousedown", closeCalDisplay);
   }, [closeCalDisplay]);
 
   useEffect(() => {
@@ -58,22 +60,19 @@ const DateInput: FC<DateInputProps> = ({ timeStamp, onChange, label }) => {
     setMonthName(convertFinglishMonthToPersian(date.format("jMMMM")));
   }, [date, timeStamp]);
 
-  const onInputBlur = useCallback(
-    (value: string) => {
-      const isInputValid = dateInputRegex.test(value);
+  const onInputBlur = (value: string) => {
+    const isInputValid = dateInputRegex.test(value);
 
-      if (isInputValid) {
-        const [day, monthName, year] = value.split(" ");
+    if (isInputValid) {
+      const [day, monthName, year] = value.split(" ");
 
-        const month =
-          persianMonthsName.findIndex(month => monthName === month) + 1;
+      const month =
+        persianMonthsName.findIndex(month => monthName === month) + 1;
 
-        const date = moment(`${year}/${month}/${day}`, "jYYYY/jMM/jDD");
-        onChange(date.valueOf());
-      } else setValue(`${day} ${monthName} ${year}`);
-    },
-    [onChange, year, day, monthName]
-  );
+      const date = moment(`${year}/${month}/${day}`, "jYYYY/jMM/jDD");
+      onChange(date.valueOf());
+    } else setValue(`${day} ${monthName} ${year}`);
+  };
 
   const onInputChange = useCallback((value: string) => {
     setValue(value);
@@ -97,7 +96,7 @@ const DateInput: FC<DateInputProps> = ({ timeStamp, onChange, label }) => {
         }
         onClick={e => {
           stopPropagation(e);
-          changeCalDisplay();
+          openModal();
         }}
         tag={label}
         small={true}
@@ -108,12 +107,14 @@ const DateInput: FC<DateInputProps> = ({ timeStamp, onChange, label }) => {
 
       <Modal
         display={calDisplay}
+        onMouseDown={stopPropagation}
         height="fit-content"
         width="250px"
         position="absolute"
         x={-50}
         y={60}
-        className={styles.cal}>
+        className={styles.cal}
+        onClick={stopPropagation}>
         <CalMonth
           className={styles.calendar}
           onDateChange={onDateChange}

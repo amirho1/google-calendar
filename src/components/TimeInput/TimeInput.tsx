@@ -39,9 +39,8 @@ const TimeInput: FC<TimeInputProps> = ({
   const [timesDisplay, setTimesDisplay] = useState(false);
   const [value, setValue] = useState(convertMinutesToHours(time));
 
-  const changeTimesDisplay = useCallback(e => {
-    stopPropagation(e);
-    setTimesDisplay(current => !current);
+  const openModal = useCallback(e => {
+    setTimesDisplay(true);
   }, []);
 
   const closeTimesDisplay = useCallback(() => {
@@ -49,10 +48,10 @@ const TimeInput: FC<TimeInputProps> = ({
   }, []);
 
   useEffect(() => {
-    document.addEventListener("click", closeTimesDisplay);
+    document.addEventListener("mousedown", closeTimesDisplay);
 
     return () => {
-      document.removeEventListener("click", closeTimesDisplay);
+      document.removeEventListener("mousedown", closeTimesDisplay);
     };
   });
 
@@ -64,27 +63,43 @@ const TimeInput: FC<TimeInputProps> = ({
     setValue(persianDigits2English(value));
   }, []);
 
+  const onChangeInner = useCallback(
+    (minute: number) => {
+      console.log("here");
+      onChange(minute);
+      closeTimesDisplay();
+    },
+    [closeTimesDisplay, onChange]
+  );
+
   const onInputBlur = useCallback(() => {
     const isInputValid = inputRegex.test(value);
 
     if (isInputValid) {
       const minute = convertHoursToMinutes(moment(value, "HH:mm A"));
-
-      onChange(minute);
+      onChangeInner(minute);
     } else {
       setValue(convertAMPMtoPersia(convertMinutesToHours(time)));
     }
-  }, [onChange, time, value]);
+  }, [onChangeInner, time, value]);
 
   useEffect(() => {
     setValue(convertMinutesToHours(time));
   }, [startTime, time, type]);
 
+  const change = useCallback(
+    (num: number) => {
+      onChange(num);
+      closeTimesDisplay();
+    },
+    [closeTimesDisplay, onChange]
+  );
+
   return (
     <div className={styles.TimeInput} data-testid="TimeInput">
       <Input
         tag={label}
-        onClick={changeTimesDisplay}
+        onClick={openModal}
         onBlur={onInputBlur}
         small={true}
         onChange={e => onInputChange(e.currentTarget.value)}
@@ -96,13 +111,19 @@ const TimeInput: FC<TimeInputProps> = ({
         )}
       />
 
-      <Modal display={timesDisplay} width="180px" height="200px" x={-50} y={60}>
+      <Modal
+        display={timesDisplay}
+        width="180px"
+        height="200px"
+        x={-50}
+        y={60}
+        onMouseDown={stopPropagation}>
         {type === "start" ? (
-          <StartTimeList onStartTimeChange={onChange} selected={time} />
+          <StartTimeList onStartTimeChange={change} selected={time} />
         ) : (
           <EndTimeList
             endTime={time}
-            onEndTimeChang={onChange}
+            onEndTimeChang={change}
             startTime={startTime || 0}
           />
         )}
