@@ -24,7 +24,7 @@ router.get("/", isLoggedIn, async (req, res) => {
 router.post("/", isLoggedIn, async ({ body, session: { userId } }, res) => {
   const { error } = calValidation.validate(body);
 
-  if (!body || error) return res.status(400).send("bad request");
+  if (error) return res.status(400).send("bad request");
 
   const calendar = await Calendar.create(body);
 

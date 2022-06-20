@@ -14,5 +14,5 @@ export const joiValidation = Joi.object({
   name: Joi.string().required(),
   color: Joi.string(),
   selected: Joi.boolean(),
-  description: Joi.string(),
+  description: Joi.string().allow(""),
 });
