@@ -1,5 +1,5 @@
 import React, { FC, useCallback } from "react";
-import { roundSpecific } from "../../utils/helpers";
+import { roundSpecific, stopPropagation } from "../../utils/helpers";
 import { EventFormI } from "../Day/Day";
 import Modal, { onEventMouseDownT } from "../Modal/Modal";
 import Task from "../Task/Task";
@@ -39,7 +39,7 @@ const NewEvent: FC<NewEventProps> = ({
           ref.current && (ref.current.style.cursor = "move");
           const dy = e.clientY - mouseDownY;
           const plus = currentY + dy;
-          const endLimit = 1380;
+          const endLimit = 1440 - eventForm.eventEndTime;
           const y = plus < 0 ? 0 : plus >= endLimit ? endLimit : plus;
           roundedSpecific = roundSpecific(y, 15);
           if (ref.current) ref.current.style.top = `${roundedSpecific}px`;
@@ -64,9 +64,13 @@ const NewEvent: FC<NewEventProps> = ({
         document.addEventListener("mousemove", onMouseMove as any);
       }
     },
-    [onNewEventMouseDown, onNewEventMouseUp, onNewEventMove]
+    [
+      eventForm.eventEndTime,
+      onNewEventMouseDown,
+      onNewEventMouseUp,
+      onNewEventMove,
+    ]
   );
-
   return (
     <Modal
       className="pointer"
@@ -81,6 +85,7 @@ const NewEvent: FC<NewEventProps> = ({
       width={`${100}%`}
       display={!wholeDay ? eventForm.display : eventForm.wholeDayDisplay}
       height={`${eventForm.eventEndTime}px`}
+      onClick={stopPropagation}
       onResize={onNewEventResize}
       onMouseDown={onNewEventMouseDownCustom}>
       <Task
