@@ -25,6 +25,7 @@ import { deleteEvent } from "../../redux/sagas/events";
 import useKeyDown from "../../hooks/useKeyDown";
 import Modal from "../Modal/Modal";
 import { Link } from "react-router-dom";
+import usePdf from "../../hooks/usePdf";
 
 export interface DetailsProps {
   event: EventI;
@@ -77,15 +78,16 @@ const Details: FC<DetailsProps> = ({
     };
   }, [closeToolsDisplay]);
 
+  const { createAndSavePdf } = usePdf(event);
   const optionsListOfItems = useMemo<IItem[]>(
     () => [
       {
         tag: "چاپ",
-        cb: item => <div>{item.tag}</div>,
+        cb: item => <div onClick={createAndSavePdf}>{item.tag}</div>,
       },
       { tag: "تکثیر" },
     ],
-    []
+    [createAndSavePdf]
   );
 
   const tools = useMemo<IItem[]>(
@@ -201,9 +203,12 @@ const Details: FC<DetailsProps> = ({
             <span>{endT}</span>
           </>
         </Row>
+
         {description && description !== "<p></p>" ? (
           <Row icon={<GrTextAlignFull className={styles.icon} />}>
-            <p dangerouslySetInnerHTML={{ __html: description }}></p>
+            <p
+              className={styles.description}
+              dangerouslySetInnerHTML={{ __html: description }}></p>
           </Row>
         ) : null}
         <Row icon={<FaBell className={styles.icon} />}>

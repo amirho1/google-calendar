@@ -15,7 +15,8 @@ router.post("/", async (req, res) => {
     await User.create(req.body);
     res.send("/");
   } catch (err: any) {
-    res.status(500).end();
+    console.log(err);
+    res.status(500).send(err);
   }
 });
 
