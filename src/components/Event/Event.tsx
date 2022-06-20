@@ -71,7 +71,8 @@ const Event: FC<EventProps> = ({
             ref.current && (ref.current.style.cursor = "move");
             const dy = e.clientY - mouseDownY;
             const plus = currentY + dy;
-            const endLimit = 1380;
+            const endLimit = 1440 - endTime;
+            console.log(endLimit);
             const y = plus < 0 ? 0 : plus >= endLimit ? endLimit : plus;
             const roundedSpecific = roundSpecific(y, 15);
             updatedEvent = { ...event, startTime: roundedSpecific };
@@ -108,7 +109,16 @@ const Event: FC<EventProps> = ({
           document.addEventListener("mousemove", onMouseMove as any);
         }
       },
-    [calId, calName, dispatch, move, setEventForm, setIsMoved, timeStamp]
+    [
+      calId,
+      calName,
+      dispatch,
+      move,
+      setEventForm,
+      setIsMoved,
+      timeStamp,
+      endTime,
+    ]
   );
 
   const onResize = useCallback<OnResizeT>(
