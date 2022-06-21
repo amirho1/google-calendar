@@ -358,6 +358,7 @@ const Day: FC<DayProps> = () => {
       ...current,
       display: false,
       wholeDayDisplay: false,
+      timestampEnd: undefined,
     }));
   }, []);
 
@@ -404,18 +405,9 @@ const Day: FC<DayProps> = () => {
       description: EditorState.createEmpty(),
       title: "",
       eventStartTime: 0,
+      timestampEnd: undefined,
     }));
-  }, [
-    dispatch,
-    eventForm.calId,
-    eventForm.color,
-    eventForm.description,
-    eventForm.eventEndTime,
-    eventForm.eventStartTime,
-    eventForm.timestampEnd,
-    eventForm.title,
-    timeStamp,
-  ]);
+  }, [dispatch, timeStamp, eventForm]);
 
   const onEventBottomMouseDownSetIsMouseDownTrue = useCallback(() => {
     setIsMouseDown(true);
@@ -564,6 +556,7 @@ const Day: FC<DayProps> = () => {
       wholeDayDisplay: true,
       display: false,
       eventStartTime: 0,
+      eventEndTime: 15,
       timestampEnd: date.valueOf(),
     }));
   }, [date]);

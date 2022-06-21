@@ -159,9 +159,9 @@ const DateInp: FC<DateInpProps> = ({
   }, [closeModals]);
 
   useEffect(() => {
-    if (!wholeDay) onTimeStampChange(0);
+    if (!wholeDay && !timestampEnd) onTimeStampChange(0);
     else onTimeStampChange(date.valueOf());
-  }, [date, onTimeStampChange, wholeDay]);
+  }, [date, onTimeStampChange, timestampEnd, wholeDay]);
 
   return (
     <div
@@ -280,12 +280,20 @@ const DateInp: FC<DateInpProps> = ({
           <Checkbox
             value={wholeDay}
             color="var(--blue)"
-            onChange={setWholeDay}
+            onChange={value => {
+              if (!value) onTimeStampChange(0);
+              setWholeDay(value);
+            }}
           />
           <label
             htmlFor="all-day"
             className={`${styles.checkboxLabel} mr-1`}
-            onClick={() => setWholeDay(current => !current)}>
+            onClick={() =>
+              setWholeDay(current => {
+                if (!current) onTimeStampChange(0);
+                return !current;
+              })
+            }>
             تمام روز{" "}
           </label>
         </div>
