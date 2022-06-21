@@ -82,9 +82,9 @@ const EventForm: FC<EventFormProps> = ({
       <div
         className={`${styles.header} f-between `}
         onMouseDown={onHeaderMouseDown}>
-        <HoverCircle>
+        <HoverCircle onClick={() => setModalDisplay()}>
           <div>
-            <FaTimes onClick={() => setModalDisplay()} />
+            <FaTimes />
           </div>
         </HoverCircle>
         <HoverCircle>

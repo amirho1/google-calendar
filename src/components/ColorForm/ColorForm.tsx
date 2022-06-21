@@ -89,8 +89,9 @@ const ColorForm: FC<ColorFormProps> = ({
           className={`pointer`}
           background={true}
           backgroundColor="var(--gray)"
-          hover={false}>
-          <div onClick={openAndCloseColorInp}>
+          hover={false}
+          onClick={openAndCloseColorInp}>
+          <div>
             <FaPlus />
           </div>
         </HoverCircle>
