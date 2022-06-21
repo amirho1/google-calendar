@@ -72,7 +72,6 @@ const Event: FC<EventProps> = ({
             const dy = e.clientY - mouseDownY;
             const plus = currentY + dy;
             const endLimit = 1440 - endTime;
-            console.log(endLimit);
             const y = plus < 0 ? 0 : plus >= endLimit ? endLimit : plus;
             const roundedSpecific = roundSpecific(y, 15);
             updatedEvent = { ...event, startTime: roundedSpecific };

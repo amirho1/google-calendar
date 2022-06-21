@@ -15,7 +15,7 @@ export const eventSchema = new Schema({
 export const Event = model("Event", eventSchema);
 
 export const eventValidate = Joi.object({
-  title: Joi.string().empty(),
+  title: Joi.string().empty().allow(""),
   endTime: Joi.number(),
   startTime: Joi.number(),
   color: Joi.string().required(),
