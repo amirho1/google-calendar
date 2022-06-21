@@ -109,7 +109,7 @@ const CalMonth: FC<CalMonthProps> = ({
             moment(`${year}/${month}/${row[columnIndex]}`, "jYYYY/jMM/jDD")
           ) &&
           currentIndex >= firstDayOfMonthInWeek &&
-          currentIndex <= monthDaysCount + firstDayOfMonthInWeek;
+          currentIndex <= monthDaysCount + firstDayOfMonthInWeek - 1;
 
         const backgroundColor = isCurrentDay
           ? `var(--blue)`
