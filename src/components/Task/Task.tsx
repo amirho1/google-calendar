@@ -29,7 +29,6 @@ const Task: FC<TaskProps> = ({
         </span>{" "}
       </>
     ) : null}
-    <div className={styles.location}></div>
   </div>
 );
 

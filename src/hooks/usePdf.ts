@@ -60,8 +60,6 @@ export default function usePdf(event: EventI) {
     [event.title]
   );
 
-  console.log(description[0][0]);
-
   const createAndSavePdf = useCallback(() => {
     doc.setFillColor(104, 104, 104);
     doc.setFont("Vazir-Medium");
