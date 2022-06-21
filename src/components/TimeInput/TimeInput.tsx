@@ -31,11 +31,6 @@ const TimeInput: FC<TimeInputProps> = ({
   type,
   startTime,
 }) => {
-  if (type === "end" && typeof startTime === "undefined")
-    throw new Error(
-      "while type is equal to end, startTime shouldn't be undefined!!"
-    );
-
   const [timesDisplay, setTimesDisplay] = useState(false);
   const [value, setValue] = useState(convertMinutesToHours(time));
 
@@ -65,7 +60,6 @@ const TimeInput: FC<TimeInputProps> = ({
 
   const onChangeInner = useCallback(
     (minute: number) => {
-      console.log("here");
       onChange(minute);
       closeTimesDisplay();
     },
