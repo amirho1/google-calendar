@@ -1,3 +1,4 @@
+import Tippy from "@tippyjs/react";
 import React, { FC, useCallback, useContext } from "react";
 import { AiOutlineCamera } from "react-icons/ai";
 import { useSelector } from "react-redux";
@@ -48,7 +49,11 @@ const AcInfo: FC<AcInfoProps> = ({ onIconClick, closeOrOpenAcInfoModal }) => {
   });
 
   return (
-    <div className={styles.AcInfo} data-testid="AcInfo">
+    <div
+      className={styles.AcInfo}
+      data-testid="AcInfo"
+      onMouseDown={stopPropagation}
+      onClick={stopPropagation}>
       <div className={`${styles.info} f-center `}>
         <div className={`${styles.imgWrapper} f-center`}>
           {!image ? (
@@ -71,8 +76,14 @@ const AcInfo: FC<AcInfoProps> = ({ onIconClick, closeOrOpenAcInfoModal }) => {
           </button>
         </div>
 
-        <div>{`${name} ${lastName}`}</div>
-        <div className={styles.email}>{email}</div>
+        <Tippy content={`${name} ${lastName}`} delay={500}>
+          <div
+            className={`ellipsis ${styles.fullName}`}>{`${name} ${lastName}`}</div>
+        </Tippy>
+
+        <Tippy content={email} delay={500}>
+          <div className={`ellipsis ${styles.email}`}>{email}</div>
+        </Tippy>
       </div>
 
       <div className={styles.exitBtnWrapper}>

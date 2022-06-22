@@ -55,7 +55,7 @@ const Calendars: FC<CalendarsProps> = () => {
   const cb = useCallback<CB>(
     (value: IItem, _, index, setChildDisplay, childDisplay) => (
       <div
-        className={`${styles.row} f-between`}
+        className={`${styles.row} f-between pointer hoverBGGray`}
         onClick={() => setChildDisplay && setChildDisplay(current => !current)}>
         <span className={styles.tag}>{value.tag}</span>
 
@@ -70,7 +70,11 @@ const Calendars: FC<CalendarsProps> = () => {
               </Link>
             </HoverCircle>
           ) : null}
-          {childDisplay ? <RiArrowDownSLine /> : <RiArrowUpSLine />}{" "}
+          {childDisplay ? (
+            <RiArrowDownSLine className={styles.arrow} />
+          ) : (
+            <RiArrowUpSLine className={styles.arrow} />
+          )}{" "}
         </div>
       </div>
     ),

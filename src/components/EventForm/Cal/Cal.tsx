@@ -96,8 +96,8 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
         className={styles.mainRow}
         style={{ display: !isEditorMode ? "block" : "none" }}>
         <div className={`f-between ${styles.mainRow} `}>
-          <h2>{calendar?.name}</h2>{" "}
-          <Color color={calendar?.color || ""} onColorChange={onColorChange} />
+          <h2 className={`${styles.calendarName} ellipsis`}>{calendar?.name}</h2>{" "}
+          <Color color={calendar?.color || ""} className={styles.colorBesideCalName} onColorChange={onColorChange} />
         </div>
 
         <div className={styles.otherThings}>
@@ -110,7 +110,7 @@ const Cal: FC<CalProps> = ({ calId, onCalChange, onColorChange }) => {
         style={{ display: isEditorMode ? "block" : "none" }}>
         <div className={`${styles.editorRow} f-between p-relative`}>
           <Button
-            className="pointer"
+            className={`pointer ellipsis ${styles.calendarName}`}
             onMouseDown={e => e.stopPropagation()}
             onClick={onCalNameClick}>
             {calendar ? calendar?.name : null}

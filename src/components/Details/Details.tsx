@@ -194,10 +194,10 @@ const Details: FC<DetailsProps> = ({
           ulClassName={`f-between ${styles.ulClassName}`}
         />
       </div>
-      <div className={styles.body}>
+      <div className={`${styles.body} owl-mtop`}>
         <Row icon={<BsSquareFill className={styles.icon} />}>
           <>
-            <h2>{title || " (بدون عنوان)"}</h2>
+            <h1 className={styles.title}>{title || " (بدون عنوان)"}</h1>
             <span>{weekDay}</span> <span>{date.jDate()}</span>{" "}
             <span>{monthName}</span> , <span>{starT}</span> -{" "}
             <span>{endT}</span>

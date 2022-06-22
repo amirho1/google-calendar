@@ -19,7 +19,7 @@ const CalList: FC<CalListProps> = ({ onCalChange }) => {
         <div
           key={index}
           onClick={() => onCalChange(cal._id as any)}
-          className={`${styles.btn} hoverBGGray`}>
+          className={`${styles.btn} hoverBGGray ellipsis`}>
           {cal.name}
         </div>
       ))}

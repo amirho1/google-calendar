@@ -82,7 +82,17 @@ const CalRow: FC<OptionsProps> = ({
       />
 
       <Tippy content={item.tag as any}>
-        <label htmlFor="" className={styles.myCalenders}>
+        <label
+          className={`${styles.myCalenders} ellipsis`}
+          onClick={() => {
+            onCalendarSelectAndDeselect({
+              _id,
+              color,
+              name,
+              description,
+              selected: !selected,
+            });
+          }}>
           {item.tag}
         </label>
       </Tippy>
@@ -110,7 +120,7 @@ const CalRow: FC<OptionsProps> = ({
 
         <Modal
           width="200px"
-          zIndex={150}
+          zIndex={250}
           height="fix-content"
           display={colorFormDisplay}>
           <ColorForm

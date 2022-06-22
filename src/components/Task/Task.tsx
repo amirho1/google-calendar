@@ -18,16 +18,16 @@ const Task: FC<TaskProps> = ({
   endTime,
   wholeDay,
 }) => (
-  <div className={`${styles.Task} colWhite owl-mright `} data-testid="Task">
-    <span className={styles.title}>{title || "بدون عنوان"}</span>
+  <div className={`${styles.Task} ${ endTime <= 30 ? styles.flex  : "" } colWhite  `} data-testid="Task">
+    <p className={`${styles.title} ellipsis`}>{title || "بدون  عنوان"}</p>
 
-    {!wholeDay ? (
-      <>
+    {(!wholeDay && title.length <= 270)? (
+      <div>
         <span>{convertAMPMtoPersia(convertMinutesToHours(startTime))}</span>
         <span>
           {convertAMPMtoPersia(convertMinutesToHours(startTime + endTime))}
         </span>{" "}
-      </>
+      </div>
     ) : null}
   </div>
 );

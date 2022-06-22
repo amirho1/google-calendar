@@ -18,7 +18,8 @@
 
 .main {
   position: relative;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   height: fit-content;
 }
