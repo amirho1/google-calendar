@@ -1,4 +1,5 @@
 .Details {
+  padding: 1em;
 }
 
 .header {
@@ -37,4 +38,9 @@
   overflow: auto;
   max-height: 200px;
   font-size: 2rem;
+}
+
+.claName {
+  width: 100%;
+  padding-left: 1.5em;
 }

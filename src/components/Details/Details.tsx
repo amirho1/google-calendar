@@ -216,7 +216,7 @@ const Details: FC<DetailsProps> = ({
         </Row>
 
         <Row icon={<FaCalendar className={styles.icon} />}>
-          <>{calName}</>
+          <p className={`ellipsis ${styles.claName}`}>{calName}</p>
         </Row>
       </div>
     </div>

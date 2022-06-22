@@ -16,12 +16,24 @@ interface DateInputProps {
   timeStamp: number;
   onChange: (timeStamp: number) => void;
   label: string;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  wrapperClassName?: string;
+  inputBackgroundColor?: string;
+  closeModalEvent?: "click" | "mousedown";
 }
 
 export const dateInputRegex =
   /([0-2][0-9]|3[0-1]|[1-9])\s(فروردین|اردیبهشت|خرداد|تیر|مرداد|شهریور|مهر|آبان|آذر|دی|بهمن|اسفند)\s1[3-9][0-9]{2}/;
 
-const DateInput: FC<DateInputProps> = ({ timeStamp, onChange, label }) => {
+const DateInput: FC<DateInputProps> = ({
+  timeStamp,
+  onChange,
+  label,
+  onClick,
+  wrapperClassName,
+  inputBackgroundColor,
+  closeModalEvent = "mousedown",
+}) => {
   const [calDisplay, setCalDisplay] = useState(false);
   const date = useMemo(() => moment(timeStamp), [timeStamp]);
   const [day, setDay] = useState(date.jDate());
@@ -40,6 +52,7 @@ const DateInput: FC<DateInputProps> = ({ timeStamp, onChange, label }) => {
   const onDateChange = useCallback(
     (newDate: Moment) => {
       onChange(newDate.valueOf());
+
       closeCalDisplay();
     },
     [closeCalDisplay, onChange]
@@ -50,9 +63,9 @@ const DateInput: FC<DateInputProps> = ({ timeStamp, onChange, label }) => {
   }, []);
 
   useEffect(() => {
-    document.addEventListener("mousedown", closeCalDisplay);
-    return () => document.removeEventListener("mousedown", closeCalDisplay);
-  }, [closeCalDisplay]);
+    document.addEventListener(closeModalEvent, closeCalDisplay);
+    return () => document.removeEventListener(closeModalEvent, closeCalDisplay);
+  }, [closeCalDisplay, closeModalEvent]);
 
   useEffect(() => {
     setYear(date.jYear());
@@ -88,21 +101,23 @@ const DateInput: FC<DateInputProps> = ({ timeStamp, onChange, label }) => {
   });
 
   return (
-    <div className={styles.DateInput}>
+    <div className={`${styles.DateInput} `} onClick={onClick}>
       <Input
         onBlur={() => onInputBlur(value)}
         onChange={e =>
           onInputChange(persianDigits2English(e.currentTarget.value))
         }
-        onClick={e => {
-          stopPropagation(e);
-          openModal();
+        onClick={() => {
+          setTimeout(openModal);
         }}
         tag={label}
         small={true}
         value={value}
-        inpWrapperClassName={styles.input}
+        inpWrapperClassName={`${
+          !wrapperClassName ? styles.input : wrapperClassName
+        } `}
         inputClassName={styles.input}
+        backgroundColor={inputBackgroundColor}
       />
 
       <Modal

@@ -24,6 +24,7 @@ import { centerOFScreen } from "../Day/Day";
 import Confirmation from "../Confirmation/Confirmation";
 import { FadeContext } from "../../App";
 import CalRow from "./CalRow/CalRow";
+import useKeyDown from "../../hooks/useKeyDown";
 
 interface CalendarsProps {}
 
@@ -130,6 +131,11 @@ const Calendars: FC<CalendarsProps> = () => {
     setConfirm(current => ({ ...current, display: false }));
     dispatch(deleteCalendar.ac(confirm.id));
   }, [closeFade, confirm.id, dispatch]);
+
+  useKeyDown(({ key }) => {
+    if (key === "Escape")
+      setConfirm(current => ({ ...current, display: false }));
+  });
 
   return (
     <div className={styles.Calendars} data-testid="Calendars">

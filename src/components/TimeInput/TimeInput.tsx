@@ -20,6 +20,9 @@ interface TimeInputProps {
   label: string;
   type: "end" | "start";
   startTime?: number;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  backgroundColor?: string;
+  closeModalEvent?: "click" | "mousedown";
 }
 
 const inputRegex = /1?[0-2]:[0-3][0-9]\s(بع|قب)/;
@@ -30,25 +33,24 @@ const TimeInput: FC<TimeInputProps> = ({
   label,
   type,
   startTime,
+  onClick,
+  backgroundColor,
+  closeModalEvent = "mousedown",
 }) => {
   const [timesDisplay, setTimesDisplay] = useState(false);
   const [value, setValue] = useState(convertMinutesToHours(time));
 
-  const openModal = useCallback(e => {
-    setTimesDisplay(true);
-  }, []);
+  const openModal = useCallback(() => setTimesDisplay(true), []);
 
   const closeTimesDisplay = useCallback(() => {
     setTimesDisplay(false);
   }, []);
 
   useEffect(() => {
-    document.addEventListener("mousedown", closeTimesDisplay);
-
-    return () => {
-      document.removeEventListener("mousedown", closeTimesDisplay);
-    };
-  });
+    document.addEventListener(closeModalEvent, closeTimesDisplay);
+    return () =>
+      document.removeEventListener(closeModalEvent, closeTimesDisplay);
+  }, [closeModalEvent, closeTimesDisplay]);
 
   useKeyDown(e => {
     if (e.key === "Escape") closeTimesDisplay();
@@ -90,11 +92,18 @@ const TimeInput: FC<TimeInputProps> = ({
   );
 
   return (
-    <div className={styles.TimeInput} data-testid="TimeInput">
+    <div
+      className={styles.TimeInput}
+      data-testid="TimeInput"
+      onClick={e => {
+        onClick && onClick(e);
+        setTimeout(openModal);
+      }}>
       <Input
         tag={label}
         onClick={openModal}
         onBlur={onInputBlur}
+        backgroundColor={backgroundColor}
         small={true}
         onChange={e => onInputChange(e.currentTarget.value)}
         inputClassName={styles.input}
@@ -111,7 +120,8 @@ const TimeInput: FC<TimeInputProps> = ({
         height="200px"
         x={-50}
         y={60}
-        onMouseDown={stopPropagation}>
+        onMouseDown={stopPropagation}
+        onClick={stopPropagation}>
         {type === "start" ? (
           <StartTimeList onStartTimeChange={change} selected={time} />
         ) : (
