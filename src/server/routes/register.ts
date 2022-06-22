@@ -1,6 +1,8 @@
 import { Router } from "express";
 import User, { joiValidate } from "../db/user";
 import bcrypt from "bcrypt";
+import { Calendar } from "../db/calendarDB";
+import randomColor from "randomcolor";
 
 const router = Router();
 
@@ -12,8 +14,15 @@ router.post("/", async (req, res) => {
 
     req.body.password = await bcrypt.hash(req.body.password, 12);
 
-    await User.create(req.body);
-    res.send("/");
+    Calendar.create({
+      name: `${req.body.name} ${req.body.lastName}`,
+      color: randomColor(),
+      selected: true,
+    }).then(cal => {
+      const user = req.body;
+      user.calendars = [cal._id];
+      User.create(user).then(() => res.send("/"));
+    });
   } catch (err: any) {
     console.log(err);
     res.status(500).send(err);
