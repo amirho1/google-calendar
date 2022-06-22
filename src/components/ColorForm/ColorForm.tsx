@@ -1,5 +1,6 @@
-import React, { FC, useCallback, useMemo, useState } from "react";
+import React, { FC, useCallback, useContext, useMemo, useState } from "react";
 import { FaPlus } from "react-icons/fa";
+import { FadeContext } from "../../App";
 import Color from "../Color/Color";
 import ColorPicker from "../ColorPicker/ColorPicker";
 import { centerOFScreen } from "../Day/Day";
@@ -39,14 +40,22 @@ const ColorForm: FC<ColorFormProps> = ({
     ],
     []
   );
+  const { openFade, closeFade } = useContext(FadeContext);
 
   const { x, y } = useMemo(centerOFScreen, []);
 
-  const openAndCloseColorInp = useCallback(e => {
-    e.stopPropagation();
+  const openAndCloseColorInp = useCallback(
+    e => {
+      e.stopPropagation();
 
-    setColorInpDisplay(current => !current);
-  }, []);
+      setColorInpDisplay(current => {
+        if (current) closeFade();
+        else openFade();
+        return !current;
+      });
+    },
+    [closeFade, openFade]
+  );
 
   const closeColorIn = useCallback(() => {
     setColorInpDisplay(false);
@@ -60,6 +69,7 @@ const ColorForm: FC<ColorFormProps> = ({
         y={y}
         width="150"
         position="fixed"
+        zIndex={250}
         height="fit-content">
         <ColorPicker
           color={color}
@@ -89,9 +99,8 @@ const ColorForm: FC<ColorFormProps> = ({
           className={`pointer`}
           background={true}
           backgroundColor="var(--gray)"
-          hover={false}
-          onClick={openAndCloseColorInp}>
-          <div>
+          hover={false}>
+          <div onClick={openAndCloseColorInp}>
             <FaPlus />
           </div>
         </HoverCircle>

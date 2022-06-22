@@ -101,7 +101,7 @@ const CalMonth: FC<CalMonthProps> = ({
           month === currentMonth &&
           row[columnIndex] === currentDay &&
           currentIndex >= firstDayOfMonthInWeek &&
-          currentIndex <= monthDaysCount + firstDayOfMonthInWeek;
+          currentIndex <= monthDaysCount + firstDayOfMonthInWeek - 1;
 
         const isChosenDate =
           isSameDate(

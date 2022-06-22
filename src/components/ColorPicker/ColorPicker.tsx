@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { FC, useState } from "react";
+import React, { FC, useContext, useState } from "react";
+import { FadeContext } from "../../App";
 import Button from "../Button/Button";
 import ColorPickerBoard from "../ColorPickerBoard/ColorPickerBoard";
 import ColorsSlider from "../ColorsSlider/ColorsSlider";
@@ -15,7 +16,7 @@ interface ColorPickerProps {
 
 const ColorPicker: FC<ColorPickerProps> = ({ color, onColorChange, close }) => {
   const [colorPickerColor, setColorPickerColor] = useState(color);
-
+  const { closeFade } = useContext(FadeContext);
   return (
     <div className={`${styles.ColorPicker} owl-mtop`} data-testid="ColorPicker">
       <h2>انتخاب رنگ سفارشی</h2>
@@ -32,7 +33,12 @@ const ColorPicker: FC<ColorPickerProps> = ({ color, onColorChange, close }) => {
       <ColorsSlider setColorPickerColor={setColorPickerColor} />
 
       <div className={styles.btns}>
-        <Button className="hoverBGGray" onClick={close}>
+        <Button
+          className="hoverBGGray"
+          onClick={() => {
+            close();
+            closeFade();
+          }}>
           لغو
         </Button>
         <Button className="link" onClick={close}>

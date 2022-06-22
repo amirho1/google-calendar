@@ -24,6 +24,7 @@ import TestNetWorkConnection from "./components/TestNetWorkConnection/TestNetWor
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import UpdateOrCreate from "./components/UpdateOrCreate/UpdateOrCreate";
+import useKeyDown from "./hooks/useKeyDown";
 
 // it has some problems with types
 export const FadeContext = createContext({
@@ -93,6 +94,10 @@ function App() {
   const closeFade = useCallback(() => {
     setFadeDisplay(false);
   }, []);
+
+  useKeyDown(({ key }) => {
+    if (key === "Escape") closeFade();
+  });
 
   return (
     <SidebarContext.Provider value={{ display: sideBarDisplay }}>
